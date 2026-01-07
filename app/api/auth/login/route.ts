@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     const token = jwt.sign(
       {
-        sub: user.id,
+        userId: user.id,
         role: user.role,
       },
       process.env.JWT_SECRET!,
@@ -68,18 +68,6 @@ export async function POST(req: Request) {
     });
 
     return response;
-
-    // return NextResponse.json(
-    //   {
-    //     token,
-    //     user: {
-    //       id: user.id,
-    //       email: user.email,
-    //       role: user.role,
-    //     },
-    //   },
-    //   { status: 200 }
-    // );
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

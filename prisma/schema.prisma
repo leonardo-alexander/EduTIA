@@ -27,7 +27,7 @@ model Profile {
   companyName        String?
   companyWebsite     String?
   verificationDocUrl String?
-  corpStatus         CorporationStatus? @default(PENDING)
+  corpStatus         CorporationStatus?
   user               User               @relation(fields: [userId], references: [id])
   userId             String             @unique
 }
@@ -48,7 +48,7 @@ model Course {
   category     Category    @relation(fields: [categoryId], references: [id])
   level        CourseLevel @default(BEGINNER)
   duration     Int
-  thumbnailUrl String      @default("/public/thumbnail.jpeg")
+  thumbnailUrl String      @default("/thumbnail.jpeg")
   isPublished  Boolean     @default(false)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Dialog,
   DialogPanel,
@@ -11,6 +12,10 @@ import {
   PopoverButton,
   PopoverGroup,
   PopoverPanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
 } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -29,8 +34,35 @@ const categories = [
   },
 ];
 
+type User = {
+  userId: string;
+  email: string;
+  role: string;
+  imageUrl?: string;
+};
+
 export default function Navbar() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+        });
+        const data = await res.json();
+        setUser(data.user);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoadingUser(false);
+      }
+    }
+
+    loadUser();
+  }, []);
 
   return (
     <header className="sticky top-0 w-full shadow-md bg-white">
@@ -103,8 +135,10 @@ export default function Navbar() {
           {/* Search Bar */}
           <div className="flex items-center w-2xs rounded-4xl p-1.5 border">
             <MagnifyingGlassIcon className="size-5 text-gray-900" />
+            {/* text box */}
           </div>
         </PopoverGroup>
+
         <div className="hidden lg:flex lg:flex-2 lg:justify-end">
           <div className="flex items-center gap-x-8">
             <a href="#" className="text-sm font-semibold text-gray-900">
@@ -116,9 +150,59 @@ export default function Navbar() {
             <a href="#" className="text-sm font-semibold text-gray-900">
               About
             </a>
-            <a href="#" className="text-sm font-semibold text-gray-900">
-              Log in <span aria-hidden="true">&rarr;</span>
-            </a>
+            <div className="min-w-10 flex items-center justify-end">
+              {loadingUser && (
+                <div className="size-8 rounded-full bg-gray-200 animate-pulse" />
+              )}
+
+              {!loadingUser && !user && (
+                <Link
+                  href="/login"
+                  className="text-sm font-semibold text-gray-900 whitespace-nowrap"
+                >
+                  Log in →
+                </Link>
+              )}
+
+              {!loadingUser && user && (
+                <Menu as="div" className="relative">
+                  <MenuButton className="relative flex items-center rounded-full">
+                    <img
+                      src={user.imageUrl || "/avatars/male.svg"}
+                      className="size-8 rounded-full"
+                      alt="Avatar"
+                    />
+                  </MenuButton>
+
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white">
+                    <MenuItem>
+                      <Link
+                        href="/profile"
+                        className="block px-4 py-2 text-sm text-black"
+                      >
+                        Profile
+                      </Link>
+                    </MenuItem>
+
+                    <MenuItem>
+                      <button
+                        onClick={async () => {
+                          setLoadingUser(true);
+                          await fetch("/api/auth/logout", {
+                            method: "POST",
+                            credentials: "include",
+                          });
+                          window.location.href = "/";
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-black"
+                      >
+                        Logout
+                      </button>
+                    </MenuItem>
+                  </MenuItems>
+                </Menu>
+              )}
+            </div>
           </div>
         </div>
       </nav>
@@ -176,19 +260,19 @@ export default function Navbar() {
                   href="#"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
-                  Features
+                  Learning Paths
                 </a>
                 <a
                   href="#"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
-                  Marketplace
+                  Apply Jobs
                 </a>
                 <a
                   href="#"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
-                  Company
+                  About
                 </a>
               </div>
               <div className="py-6">

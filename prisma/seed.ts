@@ -20,7 +20,7 @@ async function main() {
   const student = await prisma.user.create({
     data: {
       email: "student@edutia.com",
-      password: await bcrypt.hash("hashed_student_password", 10),
+      password: await bcrypt.hash("halo", 10),
       role: "EDUCATEE",
     },
   });
@@ -52,6 +52,7 @@ async function main() {
       {
         userId: student.id,
         gender: "FEMALE",
+        pictureUrl: "/avatars/female.svg",
         bio: "Learner interested in technology",
       },
     ],
