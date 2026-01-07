@@ -1,17 +1,15 @@
+import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { AuthPayload } from "./types";
 
-type JwtPayload = {
-  userId: string;
-  role: string;
-};
+export async function getUserFromCookie(): Promise<AuthPayload | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
-export function getUserFromToken(authHeader: string | null): JwtPayload | null {
-  if (!authHeader) return null;
-
-  const token = authHeader.replace("Bearer ", "");
+  if (!token) return null;
 
   try {
-    return jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    return jwt.verify(token, process.env.JWT_SECRET!) as AuthPayload;
   } catch {
     return null;
   }

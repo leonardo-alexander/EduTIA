@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUserFromToken } from "@/lib/auth";
+import { getUserFromCookie } from "@/lib/auth";
 
 export async function GET() {
   try {
@@ -20,7 +20,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const user = getUserFromToken(req.headers.get("authorization"));
+    const user = await getUserFromCookie();
 
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -29,6 +29,7 @@ export async function POST(req: Request) {
     if (user.role !== "ADMIN") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
+
     const body = await req.json();
     const {
       title,

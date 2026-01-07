@@ -5,8 +5,7 @@ import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { email, password } = body;
+    const { email, password } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -20,19 +19,29 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { message: "Invalid credentials" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 401 });
     }
 
     const isValid = await bcrypt.compare(password, user.password);
+
+    // Debug login attempt
+    console.log("Login attempt:", {
+      email,
+      passwordProvided: password,
+      hashedPasswordInDB: user.password,
+      isValid,
+    });
 
     if (!isValid) {
       return NextResponse.json(
         { message: "Invalid credentials" },
         { status: 401 }
       );
+    }
+
+    // Debug JWT
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
     }
 
     const token = jwt.sign(
@@ -44,17 +53,30 @@ export async function POST(req: Request) {
       { expiresIn: "7d" }
     );
 
-    return NextResponse.json(
-      {
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        },
-      },
-      { status: 200 }
-    );
+    // cookie approach
+    const response = NextResponse.json({ success: true });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return response;
+
+    // return NextResponse.json(
+    //   {
+    //     token,
+    //     user: {
+    //       id: user.id,
+    //       email: user.email,
+    //       role: user.role,
+    //     },
+    //   },
+    //   { status: 200 }
+    // );
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

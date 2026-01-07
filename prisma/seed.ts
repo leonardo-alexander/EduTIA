@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       email: "admin@edutia.com",
-      password: "hashed_admin_password",
+      password: await bcrypt.hash("hashed_admin_password", 10),
       role: "ADMIN",
     },
   });
@@ -19,7 +20,7 @@ async function main() {
   const student = await prisma.user.create({
     data: {
       email: "student@edutia.com",
-      password: "hashed_student_password",
+      password: await bcrypt.hash("hashed_student_password", 10),
       role: "EDUCATEE",
     },
   });
@@ -27,7 +28,7 @@ async function main() {
   const corp1 = await prisma.user.create({
     data: {
       email: "corp@techcorp.com",
-      password: "hashed_corp_password",
+      password: await bcrypt.hash("hashed_corp_password", 10),
       role: "CORPORATION",
     },
   });
@@ -35,7 +36,7 @@ async function main() {
   const corp2 = await prisma.user.create({
     data: {
       email: "hr@innovate.io",
-      password: "hashed_corp_password",
+      password: await bcrypt.hash("hashed_corp_password", 10),
       role: "CORPORATION",
     },
   });
@@ -166,7 +167,7 @@ async function main() {
         isPublished: true,
       },
     ],
-  }); 
+  });
 
   console.log("Seeding completed.");
 }
