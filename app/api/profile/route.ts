@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUserFromToken } from "@/lib/auth";
+import { getUserFromCookie } from "@/lib/auth";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const authHeader = req.headers.get("authorization");
-    const user = getUserFromToken(authHeader);
+    const user = await getUserFromCookie();
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -31,8 +30,7 @@ export async function GET(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const authHeader = req.headers.get("authorization");
-    const user = getUserFromToken(authHeader);
+    const user = await getUserFromCookie();
 
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

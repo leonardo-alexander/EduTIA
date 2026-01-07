@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUserFromToken } from "@/lib/auth";
+import { getUserFromCookie } from "@/lib/auth";
 
 type Context = {
   params: Promise<{ id: string }>;
@@ -33,7 +33,7 @@ export async function GET(_: Request, context: Context) {
 
 export async function PUT(req: Request, context: Context) {
   try {
-    const user = getUserFromToken(req.headers.get("authorization"));
+    const user = await getUserFromCookie();
 
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -64,7 +64,7 @@ export async function PUT(req: Request, context: Context) {
 export async function DELETE(req: Request, context: Context) {
   try {
     const { id } = await context.params;
-    const user = getUserFromToken(req.headers.get("authorization"));
+    const user = await getUserFromCookie();
 
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
