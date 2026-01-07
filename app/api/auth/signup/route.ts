@@ -5,11 +5,11 @@ import bcrypt from "bcryptjs";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, password, name, gender } = body;
+    const { email, password, passwordConfirmation, role } = body;
 
-    if (!email || !password) {
+    if (!email || !password || !passwordConfirmation) {
       return NextResponse.json(
-        { message: "Email and password are required" },
+        { message: "Email, password, and password confirmation are required" },
         { status: 400 }
       );
     }
@@ -25,22 +25,31 @@ export async function POST(req: Request) {
       );
     }
 
+    if (password !== passwordConfirmation) {
+      return NextResponse.json(
+        { message: "Passwords do not match" },
+        { status: 400 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        role: "EDUCATEE",
-      },
-    });
+    const user = await prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          role: role ?? "EDUCATEE",
+        },
+      });
 
-    await prisma.profile.create({
-      data: {
-        userId: user.id,
-        name,
-        gender,
-      },
+      await tx.profile.create({
+        data: {
+          userId: createdUser.id,
+        },
+      });
+
+      return createdUser;
     });
 
     return NextResponse.json(

@@ -18,21 +18,34 @@ model User {
 }
 
 model Profile {
-  id         String    @id @default(uuid())
-  name       String?
-  dob        DateTime?
-  gender     Gender?
-  pictureUrl String    @default("/public/male-avatar.svg")
-  bio        String?
-  user       User      @relation(fields: [userId], references: [id])
-  userId     String    @unique
+  id                 String             @id @default(uuid())
+  name               String?
+  dob                DateTime?
+  gender             Gender?
+  pictureUrl         String?
+  bio                String?
+  companyName        String?
+  companyWebsite     String?
+  verificationDocUrl String?
+  corpStatus         CorporationStatus? @default(PENDING)
+  user               User               @relation(fields: [userId], references: [id])
+  userId             String             @unique
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  courses   Course[]
+  createdAt DateTime @default(now())
 }
 
 model Course {
   id           String      @id @default(uuid())
   title        String
   description  String
-  category     String
+  categoryId   String
+  category     Category    @relation(fields: [categoryId], references: [id])
   level        CourseLevel @default(BEGINNER)
   duration     Int
   thumbnailUrl String      @default("/public/thumbnail.jpeg")
@@ -50,6 +63,12 @@ enum Role {
 enum Gender {
   MALE
   FEMALE
+}
+
+enum CorporationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
 }
 
 enum CourseLevel {
