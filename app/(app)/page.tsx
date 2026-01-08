@@ -1,43 +1,49 @@
 "use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { 
-  CheckCircle2, 
+import React from "react";
+import Link from "next/link";
+import {
+  CheckCircle2,
   User,
   Briefcase,
   Waypoints,
   Users,
   Award,
   ArrowRight,
-  Quote
-} from 'lucide-react';
+  Quote,
+} from "lucide-react";
 
-const ACCENT_COLOR = '#2169EA';
+const ACCENT_COLOR = "#2169EA";
 
 // --- Data for specific courses requested ---
 const availableCourses = [
   {
     id: 1,
     title: "Complete Web Development Bootcamp",
-    description: "Master HTML, CSS, JavaScript, React, Node.js and more in this comprehensive bootcamp.",
-    image: "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=800",
-    category: "Development"
+    description:
+      "Master HTML, CSS, JavaScript, React, Node.js and more in this comprehensive bootcamp.",
+    image:
+      "https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=800",
+    category: "Development",
   },
   {
     id: 2,
     title: "Data Science & Machine Learning",
-    description: "Learn Python, statistics, machine learning algorithms, and data visualization techniques.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-    category: "Data Science"
+    description:
+      "Learn Python, statistics, machine learning algorithms, and data visualization techniques.",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
+    category: "Data Science",
   },
   {
     id: 3,
     title: "Digital Marketing Masterclass",
-    description: "Complete digital marketing course covering SEO, social media, email marketing, and analytics.",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&q=80&w=800",
-    category: "Marketing"
-  }
+    description:
+      "Complete digital marketing course covering SEO, social media, email marketing, and analytics.",
+    image:
+      "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&q=80&w=800",
+    category: "Marketing",
+  },
 ];
 
 const testimonials = [
@@ -45,79 +51,88 @@ const testimonials = [
     id: 1,
     name: "Sarah Jenkins",
     role: "Frontend Developer",
-    content: "EduTia changed the trajectory of my career. The React course was exactly what I needed to land my first dev job.",
-    image: "https://randomuser.me/api/portraits/women/1.jpg"
+    content:
+      "EduTia changed the trajectory of my career. The React course was exactly what I needed to land my first dev job.",
+    image: "https://randomuser.me/api/portraits/women/1.jpg",
   },
   {
     id: 2,
     name: "Michael Chen",
     role: "Data Analyst",
-    content: "The depth of the Data Science curriculum is unmatched. I went from knowing zero Python to building ML models in weeks.",
-    image: "https://randomuser.me/api/portraits/men/2.jpg"
+    content:
+      "The depth of the Data Science curriculum is unmatched. I went from knowing zero Python to building ML models in weeks.",
+    image: "https://randomuser.me/api/portraits/men/2.jpg",
   },
   {
     id: 3,
     name: "Jessica Williams",
     role: "Digital Marketer",
-    content: "Practical, hands-on, and up-to-date. The digital marketing masterclass gave me strategies.",
-    image: "https://randomuser.me/api/portraits/women/3.jpg"
+    content:
+      "Practical, hands-on, and up-to-date. The digital marketing masterclass gave me strategies.",
+    image: "https://randomuser.me/api/portraits/women/3.jpg",
   },
   {
     id: 4,
     name: "David Rodriguez",
     role: "UX Designer",
-    content: "The instructor feedback on my portfolio projects was invaluable. It helped me polish my work to professional standards.",
-    image: "https://randomuser.me/api/portraits/men/4.jpg"
+    content:
+      "The instructor feedback on my portfolio projects was invaluable. It helped me polish my work to professional standards.",
+    image: "https://randomuser.me/api/portraits/men/4.jpg",
   },
   {
     id: 5,
     name: "Emily Watson",
     role: "Product Manager",
-    content: "I took the business strategy course to better understand my role. It was a game-changer for my communication.",
-    image: "https://randomuser.me/api/portraits/women/5.jpg"
+    content:
+      "I took the business strategy course to better understand my role. It was a game-changer for my communication.",
+    image: "https://randomuser.me/api/portraits/women/5.jpg",
   },
   {
     id: 6,
     name: "James Kim",
     role: "Software Engineer",
-    content: "The backend bootcamp is brutal but worth it. You really learn how things work under the hood.",
-    image: "https://randomuser.me/api/portraits/men/6.jpg"
+    content:
+      "The backend bootcamp is brutal but worth it. You really learn how things work under the hood.",
+    image: "https://randomuser.me/api/portraits/men/6.jpg",
   },
   {
     id: 7,
     name: "Amanda Martinez",
     role: "Freelance Designer",
-    content: "Flexibility is key for me. EduTia allowed me to learn new design tools late at night after my client work was done.",
-    image: "https://randomuser.me/api/portraits/women/7.jpg"
+    content:
+      "Flexibility is key for me. EduTia allowed me to learn new design tools late at night after my client work was done.",
+    image: "https://randomuser.me/api/portraits/women/7.jpg",
   },
   {
     id: 8,
     name: "Robert Taylor",
     role: "Cybersecurity Analyst",
-    content: "Excellent content on network security. The labs were very realistic and prepared me well for my certification.",
-    image: "https://randomuser.me/api/portraits/men/8.jpg"
+    content:
+      "Excellent content on network security. The labs were very realistic and prepared me well for my certification.",
+    image: "https://randomuser.me/api/portraits/men/8.jpg",
   },
   {
     id: 9,
     name: "Lisa Anderson",
     role: "HR Specialist",
-    content: "We use EduTia for our internal team training. The progress tracking features make my job so much easier.",
-    image: "https://randomuser.me/api/portraits/women/9.jpg"
+    content:
+      "We use EduTia for our internal team training. The progress tracking features make my job so much easier.",
+    image: "https://randomuser.me/api/portraits/women/9.jpg",
   },
   {
     id: 10,
     name: "Thomas Wilson",
     role: "Mobile Developer",
-    content: "Flutter vs React Native? This platform helped me decide and master the right tool for my startup idea.",
-    image: "https://randomuser.me/api/portraits/men/10.jpg"
-  }
+    content:
+      "Flutter vs React Native? This platform helped me decide and master the right tool for my startup idea.",
+    image: "https://randomuser.me/api/portraits/men/10.jpg",
+  },
 ];
 
 export default function Homepage() {
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-100 flex flex-col">
-
-      <main className="flex-grow pt-24">
+      <main className="grow">
         <section className="relative bg-slate-50 overflow-hidden">
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
@@ -126,20 +141,24 @@ export default function Homepage() {
             <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
               <div className="lg:w-1/2 text-center lg:text-left">
                 <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6 leading-[1.15]">
-                  Learn Skills That <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Matter.</span>
+                  Learn Skills That{" "}
+                  <span className="text-transparent bg-clip-text bg-linear-to-r from-eduBlue to-purple-600">
+                    Matter.
+                  </span>
                 </h1>
                 <p className="text-lg text-slate-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                  We help learners build practical skills, gain knowledge, and bridge the gap between education and real-world opportunities.
+                  We help learners build practical skills, gain knowledge, and
+                  bridge the gap between education and real-world opportunities.
                 </p>
-                
+
                 <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                  <button 
+                  <button
                     className="px-8 py-4 rounded-xl font-bold text-white text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto"
                     style={{ backgroundColor: ACCENT_COLOR }}
                   >
                     Explore Courses
                   </button>
-                  <Link 
+                  <Link
                     href="/login"
                     className="px-8 py-4 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
                   >
@@ -150,54 +169,67 @@ export default function Homepage() {
 
               <div className="lg:w-1/2 relative">
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/10 border border-slate-200 bg-white">
-                    <img 
-                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" 
-                      alt="Students learning" 
-                      className="w-full h-auto object-cover"
-                    />
-                    
-                    {/* Floating Stats Card 1 */}
-                    <div className="absolute top-8 left-8 bg-white p-4 rounded-xl shadow-lg border border-slate-100 flex items-center gap-3 animate-bounce-slow">
-                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                          <CheckCircle2 className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div>
-                          <p className="text-xs text-slate-500 font-semibold">Success Rate</p>
-                          <p className="text-slate-900 font-bold">98% Hired</p>
-                      </div>
-                    </div>
+                  <img
+                    src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800"
+                    alt="Students learning"
+                    className="w-full h-auto object-cover"
+                  />
 
-                    {/* Floating Stats Card 2 */}
-                    <div className="absolute bottom-8 right-8 bg-white p-4 rounded-xl shadow-lg border border-slate-100 flex items-center gap-3 animate-bounce-slow" style={{ animationDelay: '1s' }}>
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <User className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div>
-                          <p className="text-xs text-slate-500 font-semibold">Active Learners</p>
-                          <p className="text-slate-900 font-bold">120k+ Students</p>
-                      </div>
+                  {/* Floating Stats Card 1 */}
+                  <div className="absolute top-8 left-8 bg-white p-4 rounded-xl shadow-lg border border-slate-100 flex items-center gap-3 animate-bounce-slow">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                      <CheckCircle2 className="w-6 h-6 text-green-600" />
                     </div>
+                    <div>
+                      <p className="text-xs text-slate-500 font-semibold">
+                        Success Rate
+                      </p>
+                      <p className="text-slate-900 font-bold">98% Hired</p>
+                    </div>
+                  </div>
+
+                  {/* Floating Stats Card 2 */}
+                  <div
+                    className="absolute bottom-8 right-8 bg-white p-4 rounded-xl shadow-lg border border-slate-100 flex items-center gap-3 animate-bounce-slow"
+                    style={{ animationDelay: "1s" }}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <User className="w-6 h-6 text-eduBlue" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 font-semibold">
+                        Active Learners
+                      </p>
+                      <p className="text-slate-900 font-bold">120k+ Students</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="py-20 text-white" style={{ backgroundColor: ACCENT_COLOR }}>
+        <section
+          className="py-20 text-white"
+          style={{ backgroundColor: ACCENT_COLOR }}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl font-bold mb-4">Core Features</h2>
-              <p className="text-blue-100 text-lg">Everything you need to bridge the gap to your dream career.</p>
+              <p className="text-blue-100 text-lg">
+                Everything you need to bridge the gap to your dream career.
+              </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col items-center text-center">
-                <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-eduBlue group-hover:bg-eduBlue group-hover:text-white transition-all duration-300">
                   <Waypoints className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Skill-sharing</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Curated learning paths tailored specifically for different job roles and industries.
+                  Curated learning paths tailored specifically for different job
+                  roles and industries.
                 </p>
               </div>
 
@@ -207,7 +239,8 @@ export default function Homepage() {
                 </div>
                 <h3 className="text-lg font-bold mb-2">Job Listing</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Exclusive access to job openings matched to your completed courses and skills.
+                  Exclusive access to job openings matched to your completed
+                  courses and skills.
                 </p>
               </div>
 
@@ -217,7 +250,8 @@ export default function Homepage() {
                 </div>
                 <h3 className="text-lg font-bold mb-2">Workshop</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Interactive hands-on sessions with experts to master practical skills in real-time.
+                  Interactive hands-on sessions with experts to master practical
+                  skills in real-time.
                 </p>
               </div>
 
@@ -227,10 +261,10 @@ export default function Homepage() {
                 </div>
                 <h3 className="text-lg font-bold mb-2">Certification & CV</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  Industry-recognized certificates and professional CV reviews to stand out.
+                  Industry-recognized certificates and professional CV reviews
+                  to stand out.
                 </p>
               </div>
-
             </div>
           </div>
         </section>
@@ -238,33 +272,42 @@ export default function Homepage() {
         <section className="py-24 bg-slate-50 border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">Available Courses</h2>
-              <p className="text-slate-600 text-lg">Start your journey with our top-rated programs.</p>
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                Available Courses
+              </h2>
+              <p className="text-slate-600 text-lg">
+                Start your journey with our top-rated programs.
+              </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
               {availableCourses.map((course) => (
-                <div key={course.id} className="group bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+                <div
+                  key={course.id}
+                  className="group bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
+                >
                   <div className="relative h-56 overflow-hidden">
-                    <img 
-                      src={course.image} 
-                      alt={course.title} 
+                    <img
+                      src={course.image}
+                      alt={course.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <span className="absolute top-4 left-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
                       {course.category}
                     </span>
                   </div>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+                  <div className="p-6 flex flex-col grow">
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-eduBlue transition-colors">
                       {course.title}
                     </h3>
-                    <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">
+                    <p className="text-slate-600 text-sm leading-relaxed mb-6 grow">
                       {course.description}
                     </p>
                     <div className="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
-                      <span className="font-bold text-blue-600 text-sm">View Syllabus</span>
-                      <button className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                      <span className="font-bold text-eduBlue text-sm">
+                        View Syllabus
+                      </span>
+                      <button className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-eduBlue transition-colors">
                         <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
                       </button>
                     </div>
@@ -272,7 +315,7 @@ export default function Homepage() {
                 </div>
               ))}
             </div>
-            
+
             <div className="mt-16 text-center">
               <button className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-xl shadow-slate-900/10">
                 View All Courses
@@ -284,34 +327,44 @@ export default function Homepage() {
         <section className="py-24 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
             <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">What our students say</h2>
-              <p className="text-slate-600 text-lg">Join thousands of satisfied learners achieving their goals.</p>
+              <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                What our students say
+              </h2>
+              <p className="text-slate-600 text-lg">
+                Join thousands of satisfied learners achieving their goals.
+              </p>
             </div>
           </div>
 
           <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10"></div>
-            
+            <div className="absolute left-0 top-0 bottom-0 w-20 bg-linear-to-r from-white to-transparent z-10"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-linear-to-l from-white to-transparent z-10"></div>
+
             <div className="flex gap-6 animate-scroll hover:pause-scroll w-max px-4">
               {[...testimonials, ...testimonials].map((testimonial, idx) => (
-                <div 
-                  key={`${testimonial.id}-${idx}`} 
-                  className="w-[350px] flex-shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow duration-300"
+                <div
+                  key={`${testimonial.id}-${idx}`}
+                  className="w-87.5 shrink-0 bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow duration-300"
                 >
                   <div className="mb-4">
                     <Quote className="w-6 h-6 text-blue-300 fill-current" />
                   </div>
-                  <p className="text-slate-700 mb-6 leading-relaxed italic text-sm line-clamp-4">"{testimonial.content}"</p>
+                  <p className="text-slate-700 mb-6 leading-relaxed italic text-sm line-clamp-4">
+                    "{testimonial.content}"
+                  </p>
                   <div className="flex items-center gap-3">
-                    <img 
-                      src={testimonial.image} 
-                      alt={testimonial.name} 
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
                       className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                     />
                     <div>
-                      <h4 className="font-bold text-slate-900 text-sm">{testimonial.name}</h4>
-                      <p className="text-slate-500 text-xs">{testimonial.role}</p>
+                      <h4 className="font-bold text-slate-900 text-sm">
+                        {testimonial.name}
+                      </h4>
+                      <p className="text-slate-500 text-xs">
+                        {testimonial.role}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -319,9 +372,7 @@ export default function Homepage() {
             </div>
           </div>
         </section>
-
       </main>
-
 
       <style>{`
         @keyframes bounce-slow {

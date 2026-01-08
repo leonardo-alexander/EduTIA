@@ -65,7 +65,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 w-full shadow-md bg-white z-50">
+    <header className="w-full border-b border-gray-300 bg-white">
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
@@ -135,7 +135,7 @@ export default function Header() {
 
           <div className="flex items-center w-64 rounded-full p-1.5 border border-gray-200">
             <MagnifyingGlassIcon className="size-5 text-gray-900 ml-2" />
-            <input 
+            <input
               type="text"
               placeholder="Search..."
               className="ml-2 w-full bg-transparent outline-none text-sm text-gray-900"
@@ -170,7 +170,7 @@ export default function Header() {
 
               {!loadingUser && user && (
                 <Menu as="div" className="relative">
-                  <MenuButton className="relative flex items-center rounded-full">
+                  <MenuButton className="relative flex items-center rounded-full focus:outline-none">
                     <img
                       src={user.imageUrl || "/avatars/male.svg"}
                       className="size-8 rounded-full"
@@ -178,11 +178,11 @@ export default function Header() {
                     />
                   </MenuButton>
 
-                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 rounded-lg bg-white overflow-hidden focus:outline-none">
                     <MenuItem>
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm text-black hover:bg-gray-100"
+                        className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
                       >
                         Profile
                       </Link>
@@ -198,7 +198,7 @@ export default function Header() {
                           });
                           window.location.href = "/";
                         }}
-                        className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-100"
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
                       >
                         Logout
                       </button>
