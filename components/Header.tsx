@@ -65,7 +65,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 w-full shadow-md bg-white">
+    <header className="fixed top-0 left-0 right-0 w-full shadow-md bg-white z-50">
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
@@ -80,7 +80,6 @@ export default function Header() {
           </a>
         </div>
 
-        {/* Mobile Button */}
         <div className="flex lg:hidden gap-5">
           <MagnifyingGlassIcon className="size-6" />
           <button
@@ -88,12 +87,13 @@ export default function Header() {
             onClick={() => setMobileMenuOpen(true)}
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
           >
+            <span className="sr-only">Open main menu</span>
             <Bars3Icon aria-hidden="true" className="size-6" />
           </button>
         </div>
         <PopoverGroup className="hidden lg:flex lg:gap-x-10 items-center">
           <Popover className="relative">
-            <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
+            <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900 focus:outline-none">
               Category
               <ChevronDownIcon
                 aria-hidden="true"
@@ -133,10 +133,13 @@ export default function Header() {
             </PopoverPanel>
           </Popover>
 
-          {/* Search Bar */}
-          <div className="flex items-center w-2xs rounded-4xl p-1.5 border">
-            <MagnifyingGlassIcon className="size-5 text-gray-900" />
-            {/* text box */}
+          <div className="flex items-center w-64 rounded-full p-1.5 border border-gray-200">
+            <MagnifyingGlassIcon className="size-5 text-gray-900 ml-2" />
+            <input 
+              type="text"
+              placeholder="Search..."
+              className="ml-2 w-full bg-transparent outline-none text-sm text-gray-900"
+            />
           </div>
         </PopoverGroup>
 
@@ -175,11 +178,11 @@ export default function Header() {
                     />
                   </MenuButton>
 
-                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white">
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <MenuItem>
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm text-black"
+                        className="block px-4 py-2 text-sm text-black hover:bg-gray-100"
                       >
                         Profile
                       </Link>
@@ -195,7 +198,7 @@ export default function Header() {
                           });
                           window.location.href = "/";
                         }}
-                        className="block w-full text-left px-4 py-2 text-sm text-black"
+                        className="block w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-100"
                       >
                         Logout
                       </button>
@@ -208,13 +211,12 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <Dialog
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
         className="lg:hidden"
       >
-        <div className="fixed inset-0 z-50" />
+        <div className="fixed inset-0 z-50 bg-black/30" />
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <a href="#" className="-m-1.5 p-1.5">
