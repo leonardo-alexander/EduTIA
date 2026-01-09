@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Dialog,
@@ -42,9 +43,11 @@ export default function HeaderClient({
 }: {
   categories: CategoryUI[];
 }) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const categoriesUI = (categories ?? []).map((c: CategoryUI) => ({
     id: c.id,
     name: c.name,
@@ -57,8 +60,14 @@ export default function HeaderClient({
         const res = await fetch("/api/auth/me", {
           credentials: "include",
         });
+
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
+
         const data = await res.json();
-        setUser(data.user);
+        setUser(data.user ?? null);
       } catch {
         setUser(null);
       } finally {
@@ -69,24 +78,29 @@ export default function HeaderClient({
     loadUser();
   }, []);
 
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    router.push(`/courses?search=${encodeURIComponent(query)}`);
+  }
+
   return (
-    <header className="w-full border-b border-gray-300 bg-white">
+    <header className="w-full border-b border-gray-300 bg-white fixed z-30">
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
       >
         <div className="flex lg:flex-1">
-          <a href="#">
+          <Link href="/">
             <img
               alt="EduTIA Logo"
               src="/logo/blue.svg"
               className="h-6 w-auto"
             />
-          </a>
+          </Link>
         </div>
 
         <div className="flex lg:hidden gap-5">
-          <MagnifyingGlassIcon className="size-6" />
+          <MagnifyingGlassIcon className="size-6" aria-label="Search" />
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -128,11 +142,15 @@ export default function HeaderClient({
 
           <div className="flex items-center w-64 rounded-full p-1.5 border border-gray-200">
             <MagnifyingGlassIcon className="size-5 text-gray-900 ml-2" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="ml-2 w-full bg-transparent outline-none text-sm text-gray-900"
-            />
+            <form onSubmit={handleSearch} className="flex-1">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search..."
+                className="ml-2 w-full bg-transparent outline-none text-sm text-gray-900"
+              />
+            </form>
           </div>
         </PopoverGroup>
 
@@ -189,7 +207,7 @@ export default function HeaderClient({
                             method: "POST",
                             credentials: "include",
                           });
-                          window.location.href = "/";
+                          router.replace("/");
                         }}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
                       >

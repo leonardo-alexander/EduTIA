@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
@@ -127,10 +128,34 @@ const testimonials = [
 ];
 
 export default function Homepage() {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
+
+        const data = await res.json();
+        setUser(data.user ?? null);
+      } catch {
+        setUser(null);
+      }
+    }
+
+    loadUser();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-100 flex flex-col">
       <main className="grow">
-        <section className="relative bg-slate-50 overflow-hidden">
+        <section className="relative bg-slate-50 overflow-hidden h-screen flex items-center">
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
 
@@ -149,15 +174,20 @@ export default function Homepage() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                  <button className="px-8 py-4 rounded-xl font-bold text-white text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto bg-eduBlue">
-                    Explore Courses
-                  </button>
                   <Link
-                    href="/login"
-                    className="px-8 py-4 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
+                    href="/courses"
+                    className="px-8 py-4 rounded-xl font-bold text-white text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto bg-eduBlue"
                   >
-                    Log in
+                    Explore Courses
                   </Link>
+                  {!user ? (
+                    <Link
+                      href="/login"
+                      className="px-8 py-4 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
+                    >
+                      Log in
+                    </Link>
+                  ) : null}
                 </div>
               </div>
 
@@ -203,7 +233,7 @@ export default function Homepage() {
           </div>
         </section>
 
-        <section className="py-20 text-white bg-eduBlue">
+        <section className="py-20 text-white bg-eduBlue h-screen flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl font-bold mb-4">Core Features</h2>
@@ -260,7 +290,7 @@ export default function Homepage() {
           </div>
         </section>
 
-        <section className="py-24 bg-slate-50 border-t border-slate-200">
+        <section className="py-24 bg-slate-50 border-t border-slate-200 h-min-screen flex flex-col items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
@@ -308,14 +338,17 @@ export default function Homepage() {
             </div>
 
             <div className="mt-16 text-center">
-              <button className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-xl shadow-slate-900/10">
+              <Link
+                href="/courses"
+                className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-xl shadow-slate-900/10"
+              >
                 View All Courses
-              </button>
+              </Link>
             </div>
           </div>
         </section>
 
-        <section className="py-24 bg-white overflow-hidden">
+        <section className="py-24 bg-white overflow-hidden h-screen flex flex-col items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
             <div className="text-center max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
