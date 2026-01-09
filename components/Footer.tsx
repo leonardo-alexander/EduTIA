@@ -10,7 +10,7 @@ export default async function Footer() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/categories`);
 
   const categories: CategoryUI[] = await res.json();
-  const categoriesUI = categories.map((category) => ({
+  const categoriesUI = (categories ?? []).map((category) => ({
     id: category.id,
     name: category.name,
     href: `/courses?category=${category.slug}`,
