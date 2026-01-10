@@ -18,7 +18,7 @@ export default async function Footer() {
 
   return (
     <footer className="bg-muted/30 bg-eduBlue text-white">
-      <div className="max-w-7xl mx-auto px-4 py-12 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center mb-4">
