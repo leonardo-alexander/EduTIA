@@ -118,7 +118,7 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-100 flex flex-col">
       <main className="grow">
-        <section className="relative bg-slate-50 overflow-hidden min-h-screen flex items-center justify-center">
+        <section className="min-h-screen pt-12 pb-20 lg:pt-16 lg:pb-28 flex items-center">
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
 
@@ -196,7 +196,7 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
           </div>
         </section>
 
-        <section className="py-20 text-white bg-eduBlue min-h-screen flex items-center justify-center">
+        <section className="py-24 text-white bg-eduBlue">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl font-bold mb-4">Core Features</h2>
@@ -253,7 +253,7 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
           </div>
         </section>
 
-        <section className="py-10 bg-slate-50 border-t border-slate-200 min-h-screen flex flex-col items-center justify-center">
+        <section className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-3xl font-bold text-slate-900 mb-4">
@@ -287,7 +287,7 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
           </div>
         </section>
 
-        <section className="py-24 bg-white overflow-hidden min-h-screen flex flex-col items-center justify-center">
+        <section className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
             <div className="text-center max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold text-slate-900 mb-4">

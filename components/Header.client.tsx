@@ -84,7 +84,7 @@ export default function HeaderClient({
   }
 
   return (
-    <header className="w-full border-b border-gray-300 bg-white fixed z-30">
+    <header className="sticky top-0 z-30 bg-white border-b border-gray-300">
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
