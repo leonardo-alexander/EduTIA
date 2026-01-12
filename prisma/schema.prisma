@@ -12,24 +12,44 @@ model User {
   email     String   @unique
   password  String
   role      Role     @default(EDUCATEE)
+
   profile   Profile?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  enrollments           Enrollment[]
+  workshopRegistrations WorkshopRegistration[]
+  jobPostings           JobPosting[]
+  jobApplications       JobApplication[]
+  skills                Skill[]
+  experiences           Experience[]
+  cvs                   CV[]
+  adminActions          AdminAction[]
 }
 
 model Profile {
-  id                 String             @id @default(uuid())
-  name               String?
-  dob                DateTime?
-  gender             Gender?
-  pictureUrl         String?
-  bio                String?
-  companyName        String?
-  companyWebsite     String?
-  verificationDocUrl String?
-  corpStatus         CorporationStatus?
-  user               User               @relation(fields: [userId], references: [id])
-  userId             String             @unique
+  id             String   @id @default(uuid())
+  name           String?
+  dob            DateTime?
+  gender         Gender?
+  pictureUrl     String?
+  bio            String?
+  companyName    String?
+  companyWebsite String?
+
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id])
+
+  verification   CorporationVerification?
+}
+
+model CorporationVerification {
+  id         String             @id @default(uuid())
+  status     CorporationStatus  @default(PENDING)
+  verifiedAt DateTime?
+
+  profileId  String   @unique
+  profile    Profile @relation(fields: [profileId], references: [id])
 }
 
 model Category {
@@ -44,16 +64,163 @@ model Course {
   id           String      @id @default(uuid())
   title        String
   description  String
-  categoryId   String
-  category     Category    @relation(fields: [categoryId], references: [id])
   level        CourseLevel @default(BEGINNER)
   duration     Int
   thumbnailUrl String      @default("/thumbnail.jpeg")
   rate         Float       @default(0)
   numberOfRate Int         @default(0)
   isPublished  Boolean     @default(false)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+
+  categoryId   String
+  category     Category   @relation(fields: [categoryId], references: [id])
+
+  modules      Module[]
+  enrollments  Enrollment[]
+  workshops    Workshop[]
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Module {
+  id        String @id @default(uuid())
+  title     String
+  contentUrl String
+  order     Int
+
+  courseId  String
+  course    Course @relation(fields: [courseId], references: [id])
+}
+
+model Enrollment {
+  id              String @id @default(uuid())
+  progressPercent Float  @default(0)
+  status           EnrollmentStatus @default(IN_PROGRESS)
+
+  userId          String
+  courseId        String
+  user            User   @relation(fields: [userId], references: [id])
+  course          Course @relation(fields: [courseId], references: [id])
+
+  certificate     Certificate?
+}
+
+model Certificate {
+  id              String   @id @default(uuid())
+  certificateCode String   @unique
+  issuedAt        DateTime @default(now())
+
+  enrollmentId    String   @unique
+  enrollment      Enrollment @relation(fields: [enrollmentId], references: [id])
+}
+
+model LearningPath {
+  id          String     @id @default(uuid())
+  title       String
+  description String
+  status      PathStatus @default(DRAFT)
+
+  items       LearningPathItem[]
+  createdAt   DateTime   @default(now())
+}
+
+model LearningPathItem {
+  id             String @id @default(uuid())
+  order          Int
+
+  learningPathId String
+  courseId       String
+
+  learningPath   LearningPath @relation(fields: [learningPathId], references: [id])
+  course         Course       @relation(fields: [courseId], references: [id])
+}
+
+model Workshop {
+  id          String @id @default(uuid())
+  title       String
+  instructions String
+
+  courseId    String?
+  course      Course? @relation(fields: [courseId], references: [id])
+
+  registrations WorkshopRegistration[]
+}
+
+model WorkshopRegistration {
+  id           String   @id @default(uuid())
+  registeredAt DateTime @default(now())
+
+  userId       String
+  workshopId   String
+
+  user         User     @relation(fields: [userId], references: [id])
+  workshop     Workshop @relation(fields: [workshopId], references: [id])
+}
+
+model JobPosting {
+  id        String    @id @default(uuid())
+  title     String
+  status    JobStatus @default(DRAFT)
+
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+
+  applications JobApplication[]
+}
+
+model JobApplication {
+  id        String    @id @default(uuid())
+  status    ApplicationStatus @default(APPLIED)
+  appliedAt DateTime @default(now())
+
+  userId    String
+  jobId     String
+
+  user      User       @relation(fields: [userId], references: [id])
+  job       JobPosting @relation(fields: [jobId], references: [id])
+}
+
+model Skill {
+  id     String @id @default(uuid())
+  name   String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Experience {
+  id          String   @id @default(uuid())
+  jobTitle    String
+  companyName String
+  startDate   DateTime
+  endDate     DateTime?
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model CV {
+  id          String   @id @default(uuid())
+  template    String
+  generatedAt DateTime @default(now())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model AdminAction {
+  id         String   @id @default(uuid())
+  actionType String
+  createdAt  DateTime @default(now())
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(uuid())
+  eventType String
+  timestamp DateTime @default(now())
 }
 
 enum Role {
@@ -77,4 +244,27 @@ enum CourseLevel {
   BEGINNER
   INTERMEDIATE
   ADVANCED
+}
+
+enum EnrollmentStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum PathStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum ApplicationStatus {
+  APPLIED
+  REVIEWED
+  ACCEPTED
+  REJECTED
 }
