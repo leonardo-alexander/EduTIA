@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdminUser } from "@/lib/auth";
+import { slugify } from "@/lib/slugify";
 import { Prisma, CourseLevel } from "@prisma/client";
 
 export async function GET(req: Request) {
@@ -17,9 +18,9 @@ export async function GET(req: Request) {
 
     let orderBy: Prisma.CourseOrderByWithRelationInput = { title: "asc" };
     if (sort === "rating") {
-      orderBy = { rate: "desc" };
+      orderBy = { avgRating: "desc" };
     } else if (sort === "review") {
-      orderBy = { numberOfRate: "desc" };
+      orderBy = { reviewCount: "desc" };
     } else if (sort === "newest") {
       orderBy = { createdAt: "desc" };
     }
@@ -108,6 +109,7 @@ export async function POST(req: Request) {
     const course = await prisma.course.create({
       data: {
         title,
+        slug: slugify(title),
         description,
         level,
         duration,

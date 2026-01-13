@@ -1,11 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/slugify";
 import bcrypt from "bcryptjs";
+import { Category, Course } from "@prisma/client";
 
 async function main() {
   // ===== CLEAN DATABASE =====
   await prisma.certificate.deleteMany();
   await prisma.enrollment.deleteMany();
   await prisma.workshopRegistration.deleteMany();
+  await prisma.workshopSubmission.deleteMany();
+  await prisma.courseItem.deleteMany();
   await prisma.workshop.deleteMany();
   await prisma.module.deleteMany();
   await prisma.course.deleteMany();
@@ -18,7 +22,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       email: "admin@edutia.com",
-      password: await bcrypt.hash("hashed_admin_password", 10),
+      password: await bcrypt.hash("admin123", 10),
       role: "ADMIN",
     },
   });
@@ -26,91 +30,67 @@ async function main() {
   const student = await prisma.user.create({
     data: {
       email: "student@edutia.com",
-      password: await bcrypt.hash("halo", 10),
+      password: await bcrypt.hash("student123", 10),
       role: "EDUCATEE",
     },
   });
 
-  const corp1 = await prisma.user.create({
+  const corp = await prisma.user.create({
     data: {
       email: "corp@techcorp.com",
-      password: await bcrypt.hash("hashed_corp_password", 10),
-      role: "CORPORATION",
-    },
-  });
-
-  const corp2 = await prisma.user.create({
-    data: {
-      email: "hr@innovate.io",
-      password: await bcrypt.hash("hashed_corp_password", 10),
+      password: await bcrypt.hash("corp123", 10),
       role: "CORPORATION",
     },
   });
 
   // ===== PROFILES =====
-  const adminProfile = await prisma.profile.create({
-    data: {
-      userId: admin.id,
-      gender: "MALE",
-      bio: "Platform administrator",
-    },
-  });
-
-  const studentProfile = await prisma.profile.create({
-    data: {
-      userId: student.id,
-      gender: "FEMALE",
-      pictureUrl: "/avatars/female.svg",
-      bio: "Learner interested in technology",
-    },
-  });
-
-  const corpProfile1 = await prisma.profile.create({
-    data: {
-      userId: corp1.id,
-      companyName: "TechCorp Solutions",
-      companyWebsite: "https://techcorp.com",
-      bio: "Enterprise technology solutions provider",
-    },
-  });
-
-  const corpProfile2 = await prisma.profile.create({
-    data: {
-      userId: corp2.id,
-      companyName: "Innovate IO",
-      companyWebsite: "https://innovate.io",
-      bio: "HR and talent development company",
-    },
-  });
-
-  // ===== CORPORATION VERIFICATION =====
-  await prisma.corporationVerification.createMany({
+  await prisma.profile.createMany({
     data: [
+      { userId: admin.id, gender: "MALE", bio: "Platform administrator" },
       {
-        profileId: corpProfile1.id,
-        status: "VERIFIED",
-        verifiedAt: new Date(),
+        userId: student.id,
+        gender: "FEMALE",
+        pictureUrl: "/avatars/female.svg",
+        bio: "Learner interested in technology",
       },
       {
-        profileId: corpProfile2.id,
-        status: "PENDING",
+        userId: corp.id,
+        companyName: "TechCorp Solutions",
+        companyWebsite: "https://techcorp.com",
+        bio: "Enterprise technology solutions provider",
       },
     ],
+  });
+
+  const corpProfile = await prisma.profile.findFirstOrThrow({
+    where: { userId: corp.id },
+  });
+
+  await prisma.corporationVerification.create({
+    data: {
+      profileId: corpProfile.id,
+      status: "VERIFIED",
+      verifiedAt: new Date(),
+    },
   });
 
   // ===== CATEGORIES =====
-  const categories = await prisma.category.createMany({
-    data: [
-      { name: "Development", slug: "development" },
-      { name: "Data Science", slug: "data-science" },
-      { name: "Design", slug: "design" },
-      { name: "IT & Software", slug: "it-software" },
-      { name: "Business", slug: "business" },
-    ],
-    skipDuplicates: true,
+  const categories = [
+    "Development",
+    "Data Science",
+    "Design",
+    "IT & Software",
+    "Business",
+  ];
+
+  await prisma.category.createMany({
+    data: categories.map((name) => ({
+      name,
+      slug: slugify(name),
+    })),
   });
 
-  const categoryList = await prisma.category.findMany();
+  const categoryList: Category[] = await prisma.category.findMany();
   const categoryMap = Object.fromEntries(
     categoryList.map((c) => [c.slug, c.id])
   );
@@ -120,65 +100,93 @@ async function main() {
     data: [
       {
         title: "Python for Data Analysis",
-        description:
-          "Analyze data using Python, Pandas, NumPy, and real-world datasets.",
+        slug: slugify("Python for Data Analysis"),
+        description: "Analyze data using Python.",
         categoryId: categoryMap["data-science"],
         level: "BEGINNER",
         duration: 180,
         isPublished: true,
       },
+    ],
+  });
+
+  const courseList: Course[] = await prisma.course.findMany();
+  const courseMap = Object.fromEntries(courseList.map((c) => [c.slug, c.id]));
+
+  const pythonCourseId = courseMap[slugify("Python for Data Analysis")];
+  if (!pythonCourseId) throw new Error("Python course not found");
+
+  // ===== MODULES =====
+  const module1 = await prisma.module.create({
+    data: {
+      title: "Python Basics",
+      contentUrl: "/thumbnail.jpeg",
+      courseId: pythonCourseId,
+    },
+  });
+
+  const module2 = await prisma.module.create({
+    data: {
+      title: "Data Analysis with Pandas",
+      contentUrl: "/thumbnail.jpeg",
+      courseId: pythonCourseId,
+    },
+  });
+
+  // ===== WORKSHOP =====
+  const workshop = await prisma.workshop.create({
+    data: {
+      title: "Python Hands-on Workshop",
+      instructions: "Complete the data analysis task.",
+      courseId: pythonCourseId,
+    },
+  });
+
+  // ===== COURSE TIMELINE =====
+  await prisma.courseItem.createMany({
+    data: [
       {
-        title: "React & Next.js Web Development",
-        description:
-          "Build production-ready web apps using React, Next.js, and REST APIs.",
-        categoryId: categoryMap["development"],
-        level: "INTERMEDIATE",
-        duration: 240,
-        isPublished: true,
+        courseId: pythonCourseId,
+        position: 1,
+        type: "MODULE",
+        moduleId: module1.id,
       },
       {
-        title: "Machine Learning A–Z",
-        description:
-          "Learn supervised and unsupervised machine learning techniques.",
-        categoryId: categoryMap["data-science"],
-        level: "ADVANCED",
-        duration: 300,
-        isPublished: false,
+        courseId: pythonCourseId,
+        position: 2,
+        type: "MODULE",
+        moduleId: module2.id,
       },
       {
-        title: "UI/UX Design Fundamentals",
-        description:
-          "Learn design principles, wireframing, and user experience basics.",
-        categoryId: categoryMap["design"],
-        level: "BEGINNER",
-        duration: 150,
-        isPublished: true,
-      },
-      {
-        title: "Cybersecurity Basics",
-        description:
-          "Understand networks, threats, and basic security best practices.",
-        categoryId: categoryMap["it-software"],
-        level: "BEGINNER",
-        duration: 200,
-        isPublished: true,
-      },
-      {
-        title: "Startup & Entrepreneurship",
-        description:
-          "Learn how to validate ideas, build startups, and scale businesses.",
-        categoryId: categoryMap["business"],
-        level: "INTERMEDIATE",
-        duration: 220,
-        isPublished: true,
+        courseId: pythonCourseId,
+        position: 3,
+        type: "WORKSHOP",
+        workshopId: workshop.id,
       },
     ],
+  });
+
+  // ===== WORKSHOP REGISTRATION =====
+  await prisma.workshopRegistration.create({
+    data: {
+      userId: student.id,
+      workshopId: workshop.id,
+    },
+  });
+
+  // ===== ENROLLMENT =====
+  await prisma.enrollment.create({
+    data: {
+      userId: student.id,
+      courseId: pythonCourseId,
+      progressPercent: 0,
+    },
   });
 }
 
 main()
-  .catch((error) => {
-    console.error("❌ Seeding error:", error);
+  .catch((e) => {
+    console.error("Seeding error:", e);
     process.exit(1);
   })
   .finally(async () => {

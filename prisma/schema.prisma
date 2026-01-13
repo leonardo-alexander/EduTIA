@@ -19,6 +19,7 @@ model User {
 
   enrollments           Enrollment[]
   workshopRegistrations WorkshopRegistration[]
+  workshopSubmissions   WorkshopSubmission[]
   jobPostings           JobPosting[]
   jobApplications       JobApplication[]
   skills                Skill[]
@@ -44,8 +45,8 @@ model Profile {
 }
 
 model CorporationVerification {
-  id         String             @id @default(uuid())
-  status     CorporationStatus  @default(PENDING)
+  id         String            @id @default(uuid())
+  status     CorporationStatus @default(PENDING)
   verifiedAt DateTime?
 
   profileId  String   @unique
@@ -63,35 +64,110 @@ model Category {
 model Course {
   id           String      @id @default(uuid())
   title        String
+  slug         String      @unique
   description  String
-  level        CourseLevel @default(BEGINNER)
+  level        CourseLevel
   duration     Int
   thumbnailUrl String      @default("/thumbnail.jpeg")
-  rate         Float       @default(0)
-  numberOfRate Int         @default(0)
   isPublished  Boolean     @default(false)
+
+  avgRating    Float       @default(0)
+  reviewCount  Int         @default(0)
 
   categoryId   String
   category     Category   @relation(fields: [categoryId], references: [id])
 
-  modules      Module[]
-  enrollments  Enrollment[]
-  workshops    Workshop[]
-
-  learningPathItems LearningPathItem[]
+  items              CourseItem[]
+  modules            Module[]
+  workshops          Workshop[]
+  learningPathItems  LearningPathItem[]
+  enrollments        Enrollment[]
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
 
-model Module {
-  id        String @id @default(uuid())
-  title     String
-  contentUrl String
-  order     Int
 
-  courseId  String
-  course    Course @relation(fields: [courseId], references: [id])
+model CourseItem {
+  id          String @id @default(uuid())
+  position    Int
+  type        CourseItemType
+
+  courseId    String
+  course      Course @relation(fields: [courseId], references: [id])
+
+  moduleId    String?
+  workshopId  String?
+
+  module      Module?   @relation(fields: [moduleId], references: [id])
+  workshop    Workshop? @relation(fields: [workshopId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([courseId, position])
+}
+
+model Module {
+  id         String @id @default(uuid())
+  title      String
+  contentUrl String
+
+  courseId   String
+  course     Course @relation(fields: [courseId], references: [id])
+
+  courseItems CourseItem[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Workshop {
+  id           String @id @default(uuid())
+  title        String
+  instructions String
+
+  courseId     String
+  course       Course @relation(fields: [courseId], references: [id])
+
+  courseItems  CourseItem[]
+
+  registrations WorkshopRegistration[]
+  submissions   WorkshopSubmission[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+
+model WorkshopRegistration {
+  id           String   @id @default(uuid())
+  registeredAt DateTime @default(now())
+  attended     Boolean  @default(false)
+
+  userId       String
+  workshopId   String
+
+  user         User     @relation(fields: [userId], references: [id])
+  workshop     Workshop @relation(fields: [workshopId], references: [id])
+
+  @@unique([userId, workshopId])
+}
+
+model WorkshopSubmission {
+  id            String   @id @default(uuid())
+  submissionUrl String
+  score         Int?
+  feedback      String?
+  submittedAt   DateTime @default(now())
+
+  userId        String
+  workshopId    String
+
+  user          User     @relation(fields: [userId], references: [id])
+  workshop      Workshop @relation(fields: [workshopId], references: [id])
+
+  @@unique([userId, workshopId])
 }
 
 model Enrollment {
@@ -101,10 +177,13 @@ model Enrollment {
 
   userId          String
   courseId        String
+
   user            User   @relation(fields: [userId], references: [id])
   course          Course @relation(fields: [courseId], references: [id])
 
   certificate     Certificate?
+
+  @@unique([userId, courseId])
 }
 
 model Certificate {
@@ -128,35 +207,15 @@ model LearningPath {
 
 model LearningPathItem {
   id             String @id @default(uuid())
-  order          Int
+  position       Int
 
   learningPathId String
   courseId       String
 
   learningPath   LearningPath @relation(fields: [learningPathId], references: [id])
   course         Course       @relation(fields: [courseId], references: [id])
-}
 
-model Workshop {
-  id          String @id @default(uuid())
-  title       String
-  instructions String
-
-  courseId    String?
-  course      Course? @relation(fields: [courseId], references: [id])
-
-  registrations WorkshopRegistration[]
-}
-
-model WorkshopRegistration {
-  id           String   @id @default(uuid())
-  registeredAt DateTime @default(now())
-
-  userId       String
-  workshopId   String
-
-  user         User     @relation(fields: [userId], references: [id])
-  workshop     Workshop @relation(fields: [workshopId], references: [id])
+  @@unique([learningPathId, position])
 }
 
 model JobPosting {
@@ -168,6 +227,8 @@ model JobPosting {
   user      User      @relation(fields: [userId], references: [id])
 
   applications JobApplication[]
+
+  createdAt DateTime @default(now())
 }
 
 model JobApplication {
@@ -188,6 +249,8 @@ model Skill {
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, name])
 }
 
 model Experience {
@@ -246,6 +309,11 @@ enum CourseLevel {
   BEGINNER
   INTERMEDIATE
   ADVANCED
+}
+
+enum CourseItemType {
+  MODULE
+  WORKSHOP
 }
 
 enum EnrollmentStatus {

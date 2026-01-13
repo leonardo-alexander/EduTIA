@@ -10,15 +10,19 @@ export async function GET(req: Request) {
       where: {
         isPublished: true,
       },
-      orderBy: [{ rate: "desc" }, { numberOfRate: "desc" }, { title: "asc" }],
+      orderBy: [
+        { avgRating: "desc" },
+        { reviewCount: "desc" },
+        { title: "asc" },
+      ],
       take: limit,
       select: {
         id: true,
         title: true,
         description: true,
         thumbnailUrl: true,
-        rate: true,
-        numberOfRate: true,
+        avgRating: true,
+        reviewCount: true,
         category: {
           select: {
             name: true,

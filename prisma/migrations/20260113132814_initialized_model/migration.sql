@@ -11,6 +11,9 @@ CREATE TYPE "CorporationStatus" AS ENUM ('UNVERIFIED', 'PENDING', 'VERIFIED');
 CREATE TYPE "CourseLevel" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
 
 -- CreateEnum
+CREATE TYPE "CourseItemType" AS ENUM ('MODULE', 'WORKSHOP');
+
+-- CreateEnum
 CREATE TYPE "EnrollmentStatus" AS ENUM ('IN_PROGRESS', 'COMPLETED');
 
 -- CreateEnum
@@ -73,12 +76,11 @@ CREATE TABLE "Category" (
 CREATE TABLE "Course" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "level" "CourseLevel" NOT NULL DEFAULT 'BEGINNER',
+    "level" "CourseLevel" NOT NULL,
     "duration" INTEGER NOT NULL,
     "thumbnailUrl" TEXT NOT NULL DEFAULT '/thumbnail.jpeg',
-    "rate" DOUBLE PRECISION NOT NULL DEFAULT 0,
-    "numberOfRate" INTEGER NOT NULL DEFAULT 0,
     "isPublished" BOOLEAN NOT NULL DEFAULT false,
     "categoryId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -88,14 +90,65 @@ CREATE TABLE "Course" (
 );
 
 -- CreateTable
+CREATE TABLE "CourseItem" (
+    "id" TEXT NOT NULL,
+    "position" INTEGER NOT NULL,
+    "type" "CourseItemType" NOT NULL,
+    "courseId" TEXT NOT NULL,
+    "moduleId" TEXT,
+    "workshopId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "CourseItem_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Module" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "contentUrl" TEXT NOT NULL,
-    "order" INTEGER NOT NULL,
     "courseId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Module_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Workshop" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "instructions" TEXT NOT NULL,
+    "courseId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Workshop_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "WorkshopRegistration" (
+    "id" TEXT NOT NULL,
+    "registeredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "attended" BOOLEAN NOT NULL DEFAULT false,
+    "userId" TEXT NOT NULL,
+    "workshopId" TEXT NOT NULL,
+
+    CONSTRAINT "WorkshopRegistration_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "WorkshopSubmission" (
+    "id" TEXT NOT NULL,
+    "submissionUrl" TEXT NOT NULL,
+    "score" INTEGER,
+    "feedback" TEXT,
+    "submittedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL,
+    "workshopId" TEXT NOT NULL,
+
+    CONSTRAINT "WorkshopSubmission_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -133,31 +186,11 @@ CREATE TABLE "LearningPath" (
 -- CreateTable
 CREATE TABLE "LearningPathItem" (
     "id" TEXT NOT NULL,
-    "order" INTEGER NOT NULL,
+    "position" INTEGER NOT NULL,
     "learningPathId" TEXT NOT NULL,
     "courseId" TEXT NOT NULL,
 
     CONSTRAINT "LearningPathItem_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Workshop" (
-    "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "instructions" TEXT NOT NULL,
-    "courseId" TEXT,
-
-    CONSTRAINT "Workshop_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "WorkshopRegistration" (
-    "id" TEXT NOT NULL,
-    "registeredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" TEXT NOT NULL,
-    "workshopId" TEXT NOT NULL,
-
-    CONSTRAINT "WorkshopRegistration_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -166,6 +199,7 @@ CREATE TABLE "JobPosting" (
     "title" TEXT NOT NULL,
     "status" "JobStatus" NOT NULL DEFAULT 'DRAFT',
     "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "JobPosting_pkey" PRIMARY KEY ("id")
 );
@@ -247,10 +281,31 @@ CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
 CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Course_slug_key" ON "Course"("slug");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CourseItem_courseId_position_key" ON "CourseItem"("courseId", "position");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "WorkshopRegistration_userId_workshopId_key" ON "WorkshopRegistration"("userId", "workshopId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "WorkshopSubmission_userId_workshopId_key" ON "WorkshopSubmission"("userId", "workshopId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Enrollment_userId_courseId_key" ON "Enrollment"("userId", "courseId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Certificate_certificateCode_key" ON "Certificate"("certificateCode");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Certificate_enrollmentId_key" ON "Certificate"("enrollmentId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LearningPathItem_learningPathId_position_key" ON "LearningPathItem"("learningPathId", "position");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Skill_userId_name_key" ON "Skill"("userId", "name");
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -262,7 +317,31 @@ ALTER TABLE "CorporationVerification" ADD CONSTRAINT "CorporationVerification_pr
 ALTER TABLE "Course" ADD CONSTRAINT "Course_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "CourseItem" ADD CONSTRAINT "CourseItem_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CourseItem" ADD CONSTRAINT "CourseItem_moduleId_fkey" FOREIGN KEY ("moduleId") REFERENCES "Module"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CourseItem" ADD CONSTRAINT "CourseItem_workshopId_fkey" FOREIGN KEY ("workshopId") REFERENCES "Workshop"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Module" ADD CONSTRAINT "Module_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Workshop" ADD CONSTRAINT "Workshop_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WorkshopRegistration" ADD CONSTRAINT "WorkshopRegistration_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WorkshopRegistration" ADD CONSTRAINT "WorkshopRegistration_workshopId_fkey" FOREIGN KEY ("workshopId") REFERENCES "Workshop"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WorkshopSubmission" ADD CONSTRAINT "WorkshopSubmission_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WorkshopSubmission" ADD CONSTRAINT "WorkshopSubmission_workshopId_fkey" FOREIGN KEY ("workshopId") REFERENCES "Workshop"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Enrollment" ADD CONSTRAINT "Enrollment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -278,15 +357,6 @@ ALTER TABLE "LearningPathItem" ADD CONSTRAINT "LearningPathItem_learningPathId_f
 
 -- AddForeignKey
 ALTER TABLE "LearningPathItem" ADD CONSTRAINT "LearningPathItem_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Workshop" ADD CONSTRAINT "Workshop_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WorkshopRegistration" ADD CONSTRAINT "WorkshopRegistration_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WorkshopRegistration" ADD CONSTRAINT "WorkshopRegistration_workshopId_fkey" FOREIGN KEY ("workshopId") REFERENCES "Workshop"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "JobPosting" ADD CONSTRAINT "JobPosting_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
