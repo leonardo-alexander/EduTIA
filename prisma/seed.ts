@@ -77,6 +77,11 @@ async function main() {
   // ===== CATEGORIES =====
   const categories = [
     "Development",
+    "Web Development",
+    "Backend",
+    "Software Engineering",
+    "Mobile Development",
+    "DevOps",
     "Data Science",
     "Design",
     "IT & Software",

@@ -82,6 +82,8 @@ CREATE TABLE "Course" (
     "duration" INTEGER NOT NULL,
     "thumbnailUrl" TEXT NOT NULL DEFAULT '/thumbnail.jpeg',
     "isPublished" BOOLEAN NOT NULL DEFAULT false,
+    "avgRating" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "reviewCount" INTEGER NOT NULL DEFAULT 0,
     "categoryId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
