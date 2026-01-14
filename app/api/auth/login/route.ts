@@ -36,7 +36,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Debug JWT
     if (!process.env.JWT_SECRET) {
       throw new Error("JWT_SECRET is not defined");
     }
@@ -50,7 +49,6 @@ export async function POST(req: Request) {
       { expiresIn: "7d" }
     );
 
-    // cookie approach
     const response = NextResponse.json({
       user: {
         id: user.id,
