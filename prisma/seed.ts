@@ -5,17 +5,17 @@ import { Category, Course } from "@prisma/client";
 
 async function main() {
   // ===== CLEAN DATABASE =====
-  await prisma.certificate.deleteMany();
-  await prisma.enrollment.deleteMany();
-  await prisma.workshopRegistration.deleteMany();
   await prisma.workshopSubmission.deleteMany();
+  await prisma.workshopRegistration.deleteMany();
   await prisma.courseItem.deleteMany();
   await prisma.workshop.deleteMany();
   await prisma.module.deleteMany();
+  await prisma.enrollment.deleteMany();
+  await prisma.certificate.deleteMany();
   await prisma.course.deleteMany();
   await prisma.category.deleteMany();
-  await prisma.corporationVerification.deleteMany();
   await prisma.profile.deleteMany();
+  await prisma.corporationVerification.deleteMany();
   await prisma.user.deleteMany();
 
   // ===== USERS =====
@@ -202,15 +202,12 @@ async function main() {
   const courseList: Course[] = await prisma.course.findMany();
   const courseMap = Object.fromEntries(courseList.map((c) => [c.slug, c.id]));
 
-  const pythonCourseId = courseMap[slugify("Python for Data Analysis")];
-  if (!pythonCourseId) throw new Error("Python course not found");
-
   // ===== MODULES =====
   const module1 = await prisma.module.create({
     data: {
       title: "Python Basics",
       contentUrl: "/thumbnail.jpeg",
-      courseId: pythonCourseId,
+      courseId: courseMap[slugify("Python for Data Analysis")],
     },
   });
 
@@ -218,7 +215,7 @@ async function main() {
     data: {
       title: "Data Analysis with Pandas",
       contentUrl: "/thumbnail.jpeg",
-      courseId: pythonCourseId,
+      courseId: courseMap[slugify("Python for Data Analysis")],
     },
   });
 
@@ -227,7 +224,7 @@ async function main() {
     data: {
       title: "Python Hands-on Workshop",
       instructions: "Complete the data analysis task.",
-      courseId: pythonCourseId,
+      courseId: courseMap[slugify("Python for Data Analysis")],
     },
   });
 
@@ -235,19 +232,19 @@ async function main() {
   await prisma.courseItem.createMany({
     data: [
       {
-        courseId: pythonCourseId,
+        courseId: courseMap[slugify("Python for Data Analysis")],
         position: 1,
         type: "MODULE",
         moduleId: module1.id,
       },
       {
-        courseId: pythonCourseId,
+        courseId: courseMap[slugify("Python for Data Analysis")],
         position: 2,
         type: "MODULE",
         moduleId: module2.id,
       },
       {
-        courseId: pythonCourseId,
+        courseId: courseMap[slugify("Python for Data Analysis")],
         position: 3,
         type: "WORKSHOP",
         workshopId: workshop.id,
@@ -267,9 +264,29 @@ async function main() {
   await prisma.enrollment.create({
     data: {
       userId: student.id,
-      courseId: pythonCourseId,
+      courseId: courseMap[slugify("Python for Data Analysis")],
       progressPercent: 0,
     },
+  });
+
+  // ===== LEARNING PATH =====
+  const ds_path = await prisma.learningPath.create({
+    data: {
+      title: "Data Science",
+      description: "Data science path that provides with ...",
+      status: "PUBLISHED",
+    },
+  });
+
+  // ===== PATH TIMELINE =====
+  await prisma.learningPathItem.createMany({
+    data: [
+      {
+        position: 1,
+        learningPathId: ds_path.id,
+        courseId: courseMap[slugify("Python for Data Analysis")],
+      },
+    ],
   });
 }
 
