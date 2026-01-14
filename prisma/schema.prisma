@@ -20,6 +20,7 @@ model User {
   enrollments           Enrollment[]
   workshopRegistrations WorkshopRegistration[]
   workshopSubmissions   WorkshopSubmission[]
+  moduleProgresses      ModuleProgress[]
   jobPostings           JobPosting[]
   jobApplications       JobApplication[]
   skills                Skill[]
@@ -117,9 +118,21 @@ model Module {
   course     Course @relation(fields: [courseId], references: [id])
 
   courseItems CourseItem[]
+  progresses  ModuleProgress[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model ModuleProgress {
+  userId      String
+  moduleId    String
+  completedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id])
+  module Module @relation(fields: [moduleId], references: [id])
+
+  @@unique([userId, moduleId])
 }
 
 model Workshop {
@@ -139,11 +152,9 @@ model Workshop {
   updatedAt     DateTime @updatedAt
 }
 
-
 model WorkshopRegistration {
   id           String   @id @default(uuid())
   registeredAt DateTime @default(now())
-  attended     Boolean  @default(false)
 
   userId       String
   workshopId   String
@@ -173,7 +184,7 @@ model WorkshopSubmission {
 model Enrollment {
   id              String @id @default(uuid())
   progressPercent Float  @default(0)
-  status           EnrollmentStatus @default(IN_PROGRESS)
+  status          EnrollmentStatus @default(IN_PROGRESS)
 
   userId          String
   courseId        String

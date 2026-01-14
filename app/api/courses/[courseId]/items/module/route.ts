@@ -1,3 +1,4 @@
+import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -6,6 +7,8 @@ export async function POST(
   { params }: { params: { courseId: string } }
 ) {
   try {
+    await requireAdminUser();
+
     const { title, contentUrl, position } = await req.json();
 
     if (!title || !contentUrl || position === undefined) {

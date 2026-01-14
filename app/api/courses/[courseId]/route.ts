@@ -3,13 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { requireAdminUser } from "@/lib/auth";
 
 type Context = {
-  params: { id: string };
+  params: { courseId: string };
 };
 
 export async function GET(_: Request, { params }: Context) {
   try {
     const course = await prisma.course.findUnique({
-      where: { id: params.id },
+      where: { id: params.courseId },
     });
 
     if (!course) {
@@ -44,7 +44,7 @@ export async function PUT(req: Request, { params }: Context) {
     }
 
     const course = await prisma.course.update({
-      where: { id: params.id },
+      where: { id: params.courseId },
       data: { title, description },
     });
 
@@ -78,7 +78,7 @@ export async function DELETE(_: Request, { params }: Context) {
     await requireAdminUser();
 
     await prisma.course.delete({
-      where: { id: params.id },
+      where: { id: params.courseId },
     });
 
     return NextResponse.json({

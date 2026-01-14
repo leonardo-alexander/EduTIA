@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const category = searchParams.get("category");
     const levels = searchParams.getAll("level");
     const durations = searchParams.getAll("duration");
-    const rate = Number(searchParams.get("rate"));
+    const avgRating = Number(searchParams.get("avgRating"));
     const sort = searchParams.get("sort");
 
     let orderBy: Prisma.CourseOrderByWithRelationInput = { title: "asc" };
@@ -67,7 +67,7 @@ export async function GET(req: Request) {
           }),
         }),
 
-        ...(rate && { rate: { gte: rate } }),
+        ...(avgRating && { avgRating: { gte: avgRating } }),
 
         isPublished: true,
       },

@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const limit = Number(searchParams.get("limit")) || 3;
+    const rawLimit = Number(searchParams.get("limit"));
+    const limit = rawLimit > 0 && rawLimit <= 20 ? rawLimit : 3;
 
     const courses = await prisma.course.findMany({
       where: {
