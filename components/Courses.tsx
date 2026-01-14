@@ -22,7 +22,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<CourseLevel[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<"newest" | "rating" | "popular">("newest");
+  const [sortBy, setSortBy] = useState<"default" | "ascending" | "descending">("default");
 
   useEffect(() => {
     // search parameter
@@ -71,10 +71,13 @@ export default function Courses({ courses, categories }: CoursesProps) {
         return matchesSearch && matchesCategory && matchesLevel;
       })
       .sort((a, b) => {
-        if (sortBy === "rating") return b.avgRating - a.avgRating;
-        if (sortBy === "popular") return b.reviewCount - a.reviewCount;
-        // defaults to newwst
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        if (sortBy === "ascending") {
+          return a.title.localeCompare(b.title);
+        }
+        else if (sortBy === "descending") {
+          return b.title.localeCompare(a.title);
+        }
+        return 0;
       });
   }, [courses, searchQuery, selectedCategories, selectedLevels, sortBy]);
 
@@ -114,7 +117,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
           
           {/* sidebar */}
           <aside className={`
-            fixed inset-0 z-40 bg-white lg:bg-transparent 
+            fixed inset-0 bg-white lg:bg-transparent 
             lg:sticky lg:top-6 lg:w-64 lg:block lg:h-[calc(100vh-3rem)] lg:overflow-y-auto 
             overflow-y-auto transition-transform duration-300 ease-in-out
             ${mobileFiltersOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
@@ -216,9 +219,9 @@ export default function Courses({ courses, categories }: CoursesProps) {
                     onChange={(e) => setSortBy(e.target.value as any)}
                     className="appearance-none bg-white border border-slate-200 pl-4 pr-10 py-2 rounded-lg text-sm font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-eduBlue/20 focus:border-eduBlue"
                   >
-                    <option value="newest">Newest</option>
-                    <option value="rating">Highest Rated</option>
-                    <option value="popular">Most Popular</option>
+                    <option value="default">Default</option>
+                    <option value="ascending">Ascending</option>
+                    <option value="descending">Descending</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                 </div>

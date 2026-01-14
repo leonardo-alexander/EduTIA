@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   Dialog,
@@ -52,8 +52,17 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
     router.push(`/courses?search=${encodeURIComponent(query)}`);
   }
 
+  // check if in all courses page
+  const pathname = usePathname();
+  const isCoursesPage = pathname === "/courses";
+
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-gray-300">
+    <header
+      // header behavior condition on diff pages
+      className={`${
+        isCoursesPage ? "relative" : "sticky top-0"
+      } z-30 bg-white border-b border-gray-300 transition-all`}>
+
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
@@ -80,34 +89,37 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
           </button>
         </div>
         <PopoverGroup className="hidden lg:flex lg:gap-x-10 items-center">
-          <Popover className="relative">
-            <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900 focus:outline-none">
-              Category
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="size-5 flex-none text-gray-400"
-              />
-            </PopoverButton>
+          {/* category dropdown hidden when on all coruses page */}
+          {!isCoursesPage && (
+            <Popover className="relative">
+              <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900 focus:outline-none">
+                Category
+                <ChevronDownIcon
+                  aria-hidden="true"
+                  className="size-5 flex-none text-gray-400"
+                />
+              </PopoverButton>
 
-            <PopoverPanel
-              transition
-              className="absolute left-1/2 z-40 mt-3 w-50 max-w-md -translate-x-1/2 overflow-hidden rounded-3xl bg-white shadow-lg outline-1 outline-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
-            >
-              <div className="p-2">
-                {categoriesUI.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={category.href}
-                    className="group flex items-center gap-x-6 rounded-lg p-4 text-sm hover:bg-gray-50"
-                  >
-                    <span className="font-semibold text-gray-900">
-                      {category.name}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </PopoverPanel>
-          </Popover>
+              <PopoverPanel
+                transition
+                className="absolute left-1/2 z-40 mt-3 w-50 max-w-md -translate-x-1/2 overflow-hidden rounded-3xl bg-white shadow-lg outline-1 outline-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+              >
+                <div className="p-2">
+                  {categoriesUI.map((category) => (
+                    <Link
+                      key={category.id}
+                      href={category.href}
+                      className="group flex items-center gap-x-6 rounded-lg p-4 text-sm hover:bg-gray-50"
+                    >
+                      <span className="font-semibold text-gray-900">
+                        {category.name}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </PopoverPanel>
+            </Popover>
+          )}
 
           <div className="flex items-center w-64 rounded-full p-1.5 border border-gray-200">
             <MagnifyingGlassIcon className="size-5 text-gray-900 ml-2" />
