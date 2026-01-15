@@ -5,7 +5,7 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const rawLimit = Number(searchParams.get("limit"));
-    const limit = rawLimit > 0 && rawLimit <= 20 ? rawLimit : 3;
+    const limit = rawLimit > 0 && rawLimit <= 20 ? rawLimit : 6;
 
     const courses = await prisma.course.findMany({
       where: {

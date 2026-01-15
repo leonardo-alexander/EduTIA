@@ -116,9 +116,9 @@ const testimonials = [
 
 export default function Homepage({ user, topCourses }: HomepageProps) {
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 selection:bg-blue-100 flex flex-col">
+    <div className="min-h-screen w-full bg-white font-sans text-slate-900 selection:bg-blue-100 flex flex-col overflow-hidden">
       <main className="grow">
-        <section className="flex items-center">
+        <section className="relative flex items-center">
           <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
           <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
 
@@ -205,7 +205,7 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mx-15 lg:mx-0">
               <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col items-center text-center">
                 <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-eduBlue group-hover:bg-eduBlue group-hover:text-white transition-all duration-300">
                   <Waypoints className="w-7 h-7" />
@@ -264,7 +264,7 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 mx-15 lg:mx-0">
               {topCourses?.length ? (
                 topCourses.map((course) => (
                   <CourseCard key={course.id} course={course} />
