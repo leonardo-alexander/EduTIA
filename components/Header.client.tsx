@@ -131,7 +131,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
             <a href="#" className="text-sm font-semibold text-gray-900">
               Dashboard
             </a>
-            <a href="#" className="text-sm font-semibold text-gray-900">
+            <a href="/path" className="text-sm font-semibold text-gray-900">
               Learning Paths
             </a>
             <a href="#" className="text-sm font-semibold text-gray-900">
