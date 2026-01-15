@@ -1,12 +1,7 @@
 import HeaderClient from "./Header.client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-
-type CategoryUI = {
-  id: string;
-  name: string;
-  slug: string;
-};
+import { CategoryUI } from "@/types/category-ui";
 
 export default async function Header() {
   const user = await getCurrentUser();

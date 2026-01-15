@@ -4,25 +4,23 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search, Filter, ChevronDown, X } from "lucide-react";
 import CourseCard from "@/components/CourseCard";
-import { Course, Category, CourseLevel } from "@prisma/client";
-
-type CourseWithCategory = Course & {
-  category: Category;
-};
+import { Category, CourseLevel } from "@prisma/client";
+import { CourseUI } from "@/types/course-ui";
 
 type CoursesProps = {
-  courses: CourseWithCategory[];
+  courses: CourseUI[];
   categories: Category[];
 };
 
 export default function Courses({ courses, categories }: CoursesProps) {
   const searchParams = useSearchParams();
-  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLevels, setSelectedLevels] = useState<CourseLevel[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<"default" | "ascending" | "descending">("default");
+  const [sortBy, setSortBy] = useState<"default" | "ascending" | "descending">(
+    "default"
+  );
 
   useEffect(() => {
     // search parameter
@@ -42,7 +40,11 @@ export default function Courses({ courses, categories }: CoursesProps) {
   }, [searchParams, categories]);
 
   //toggle selection helper
-  const toggleSelection = <T,>(item: T, list: T[], setList: (l: T[]) => void) => {
+  const toggleSelection = <T,>(
+    item: T,
+    list: T[],
+    setList: (l: T[]) => void
+  ) => {
     if (list.includes(item)) {
       setList(list.filter((i) => i !== item));
     } else {
@@ -62,7 +64,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
         // filter by category
         const matchesCategory =
           selectedCategories.length === 0 ||
-          selectedCategories.includes(course.categoryId);
+          selectedCategories.includes(course.category.id);
 
         // filter diffculty level
         const matchesLevel =
@@ -73,8 +75,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
       .sort((a, b) => {
         if (sortBy === "ascending") {
           return a.title.localeCompare(b.title);
-        }
-        else if (sortBy === "descending") {
+        } else if (sortBy === "descending") {
           return b.title.localeCompare(a.title);
         }
         return 0;
@@ -83,30 +84,20 @@ export default function Courses({ courses, categories }: CoursesProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* semi header */} 
+      {/* semi header */}
       <div className="bg-white border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <h1 className="text-lg font-bold text-slate-900">All Courses</h1>
-
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <div className="relative grow md:grow-0 md:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search courses..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-slate-50 outline-none"
-              />
-            </div>
-              
-              <button
-                onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-                className="md:hidden p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-              >
-                <Filter className="w-5 h-5" />
-              </button>
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-3  md:flex-row">
+            <h1 className="text-lg font-bold text-slate-900">All Courses</h1>
+            <div className="flex-1">
+              <div className="flex items-center justify-end gap-2 w-full md:w-auto">
+                <button
+                  onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+                  className="lg:hidden p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                >
+                  <Filter className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -114,14 +105,19 @@ export default function Courses({ courses, categories }: CoursesProps) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          
           {/* sidebar */}
-          <aside className={`
+          <aside
+            className={` z-40
             fixed inset-0 bg-white lg:bg-transparent 
             lg:sticky lg:top-6 lg:w-64 lg:block lg:h-[calc(100vh-3rem)] lg:overflow-y-auto 
             overflow-y-auto transition-transform duration-300 ease-in-out
-            ${mobileFiltersOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-          `}>
+            ${
+              mobileFiltersOpen
+                ? "translate-x-0 sm:w-100"
+                : "-translate-x-full lg:translate-x-0"
+            }
+          `}
+          >
             <div className="p-6 lg:p-0 h-full">
               <div className="flex items-center justify-between lg:hidden mb-6">
                 <h2 className="text-xl font-bold">Filters</h2>
@@ -132,15 +128,26 @@ export default function Courses({ courses, categories }: CoursesProps) {
 
               {/* filter by category */}
               <div className="mb-8">
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">Categories</h3>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
+                  Categories
+                </h3>
                 <div className="space-y-3">
                   {categories.map((category) => (
-                    <label key={category.id} className="flex items-center gap-3 group cursor-pointer">
+                    <label
+                      key={category.id}
+                      className="flex items-center gap-3 group cursor-pointer"
+                    >
                       <div className="relative flex items-center">
                         <input
                           type="checkbox"
                           checked={selectedCategories.includes(category.id)}
-                          onChange={() => toggleSelection(category.id, selectedCategories, setSelectedCategories)}
+                          onChange={() =>
+                            toggleSelection(
+                              category.id,
+                              selectedCategories,
+                              setSelectedCategories
+                            )
+                          }
                           className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
                         <svg
@@ -150,10 +157,16 @@ export default function Courses({ courses, categories }: CoursesProps) {
                           stroke="currentColor"
                           strokeWidth="3"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
                       </div>
-                      <span className="text-slate-600 group-hover:text-eduBlue transition-colors">{category.name}</span>
+                      <span className="text-slate-600 group-hover:text-eduBlue transition-colors">
+                        {category.name}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -161,15 +174,28 @@ export default function Courses({ courses, categories }: CoursesProps) {
 
               {/* levels difficulty filter */}
               <div className="mb-8">
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">Level</h3>
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
+                  Level
+                </h3>
                 <div className="space-y-3">
                   {["BEGINNER", "INTERMEDIATE", "ADVANCED"].map((level) => (
-                    <label key={level} className="flex items-center gap-3 group cursor-pointer">
-                       <div className="relative flex items-center">
+                    <label
+                      key={level}
+                      className="flex items-center gap-3 group cursor-pointer"
+                    >
+                      <div className="relative flex items-center">
                         <input
                           type="checkbox"
-                          checked={selectedLevels.includes(level as CourseLevel)}
-                          onChange={() => toggleSelection(level as CourseLevel, selectedLevels, setSelectedLevels)}
+                          checked={selectedLevels.includes(
+                            level as CourseLevel
+                          )}
+                          onChange={() =>
+                            toggleSelection(
+                              level as CourseLevel,
+                              selectedLevels,
+                              setSelectedLevels
+                            )
+                          }
                           className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
                         <svg
@@ -179,7 +205,11 @@ export default function Courses({ courses, categories }: CoursesProps) {
                           stroke="currentColor"
                           strokeWidth="3"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
                       </div>
                       <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
@@ -190,7 +220,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={() => {
                   setSelectedCategories([]);
                   setSelectedLevels([]);
@@ -208,11 +238,17 @@ export default function Courses({ courses, categories }: CoursesProps) {
             {/* sort toolbar */}
             <div className="flex items-center justify-between mb-6">
               <p className="text-slate-500 font-medium">
-                Showing <span className="text-slate-900 font-bold">{filteredCourses.length}</span> courses
+                Showing{" "}
+                <span className="text-slate-900 font-bold">
+                  {filteredCourses.length}
+                </span>{" "}
+                courses
               </p>
-              
+
               <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-500 hidden sm:inline">Sort by:</span>
+                <span className="text-sm text-slate-500 hidden sm:inline">
+                  Sort by:
+                </span>
                 <div className="relative group">
                   <select
                     value={sortBy}
@@ -230,7 +266,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
 
             {/* courses grid */}
             {filteredCourses.length > 0 ? (
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid gap-6 mx-10 sm:grid-cols-2 sm:mx-0 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
                 {filteredCourses.map((course) => (
                   <CourseCard key={course.id} course={course} />
                 ))}
@@ -240,11 +276,14 @@ export default function Courses({ courses, categories }: CoursesProps) {
                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-slate-300" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">No courses found</h3>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">
+                  No courses found
+                </h3>
                 <p className="text-slate-500">
-                  Try adjusting your search or filters to find what you're looking for.
+                  Try adjusting your search or filters to find what you're
+                  looking for.
                 </p>
-                <button 
+                <button
                   onClick={() => {
                     setSelectedCategories([]);
                     setSelectedLevels([]);

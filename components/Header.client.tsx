@@ -25,12 +25,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { getCurrentUser } from "@/lib/auth";
-
-type CategoryUI = {
-  id: string;
-  name: string;
-  slug: string;
-};
+import { CategoryUI } from "@/types/category-ui";
 
 type HeaderProps = {
   user: Awaited<ReturnType<typeof getCurrentUser>>;
@@ -134,13 +129,13 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
         <div className="hidden lg:flex lg:flex-2 lg:justify-end">
           <div className="flex items-center gap-x-8">
             <a href="#" className="text-sm font-semibold text-gray-900">
+              Dashboard
+            </a>
+            <a href="#" className="text-sm font-semibold text-gray-900">
               Learning Paths
             </a>
             <a href="#" className="text-sm font-semibold text-gray-900">
               Apply Jobs
-            </a>
-            <a href="#" className="text-sm font-semibold text-gray-900">
-              My Learnings
             </a>
             <div className="min-w-10 flex items-center justify-end">
               {!user && (
@@ -246,6 +241,12 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                   href="#"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
+                  Dashboard
+                </a>
+                <a
+                  href="#"
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                >
                   Learning Paths
                 </a>
                 <a
@@ -253,12 +254,6 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Apply Jobs
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  About
                 </a>
               </div>
               <div className="py-6">

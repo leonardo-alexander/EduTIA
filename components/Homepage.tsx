@@ -12,23 +12,11 @@ import {
 } from "lucide-react";
 import CourseCard from "@/components/CourseCard";
 import { getCurrentUser } from "@/lib/auth";
-
-type TopCourse = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  rate: number;
-  numberOfRate: number;
-  category: {
-    name: string;
-    slug: string;
-  };
-};
+import { CourseUI } from "@/types/course-ui";
 
 type HomepageProps = {
   user: Awaited<ReturnType<typeof getCurrentUser>>;
-  topCourses: TopCourse[];
+  topCourses: CourseUI[];
 };
 
 const testimonials = [

@@ -21,6 +21,6 @@ export default async function Page() {
       name: "asc",
     },
   });
-  
+
   return <Courses courses={courses} categories={categories} />;
 }

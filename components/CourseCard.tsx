@@ -1,14 +1,10 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Course, Category } from "@prisma/client";
+import { CourseUI } from "@/types/course-ui";
 
-type CourseWithCategory = Course & {
-  category: Category;
-};
-
-export default function CourseCard({ course }: { course: CourseWithCategory }) {
+export default function CourseCard({ course }: { course: CourseUI }) {
   return (
-    <Link 
+    <Link
       href={`/courses/${course.id}`}
       key={course.id}
       className="group bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer"

@@ -12,7 +12,9 @@ interface PageProps {
   }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { courseId } = await params;
   const course = await prisma.course.findUnique({
     where: { id: courseId },
@@ -57,21 +59,23 @@ export default async function CourseDetailsPage({ params }: PageProps) {
   }
 
   // user enrollment check
-  const enrollment = user ? await prisma.enrollment.findUnique({
-    where: {
-      userId_courseId: {
-        userId: user.id,
-        courseId: course.id,
-      },
-    },
-  }) : null;
+  const enrollment = user
+    ? await prisma.enrollment.findUnique({
+        where: {
+          userId_courseId: {
+            userId: user.id,
+            courseId: course.id,
+          },
+        },
+      })
+    : null;
 
   // component render
   return (
-    <CourseDetails 
-      course={course} 
-      isEnrolled={!!enrollment} 
-      currentUserId={user?.id} 
+    <CourseDetails
+      course={course}
+      isEnrolled={!!enrollment}
+      currentUserId={user?.id}
     />
   );
 }

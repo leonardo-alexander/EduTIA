@@ -118,6 +118,13 @@ CREATE TABLE "Module" (
 );
 
 -- CreateTable
+CREATE TABLE "ModuleProgress" (
+    "userId" TEXT NOT NULL,
+    "moduleId" TEXT NOT NULL,
+    "completedAt" TIMESTAMP(3)
+);
+
+-- CreateTable
 CREATE TABLE "Workshop" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -133,7 +140,6 @@ CREATE TABLE "Workshop" (
 CREATE TABLE "WorkshopRegistration" (
     "id" TEXT NOT NULL,
     "registeredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "attended" BOOLEAN NOT NULL DEFAULT false,
     "userId" TEXT NOT NULL,
     "workshopId" TEXT NOT NULL,
 
@@ -289,6 +295,9 @@ CREATE UNIQUE INDEX "Course_slug_key" ON "Course"("slug");
 CREATE UNIQUE INDEX "CourseItem_courseId_position_key" ON "CourseItem"("courseId", "position");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "ModuleProgress_userId_moduleId_key" ON "ModuleProgress"("userId", "moduleId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "WorkshopRegistration_userId_workshopId_key" ON "WorkshopRegistration"("userId", "workshopId");
 
 -- CreateIndex
@@ -329,6 +338,12 @@ ALTER TABLE "CourseItem" ADD CONSTRAINT "CourseItem_workshopId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "Module" ADD CONSTRAINT "Module_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ModuleProgress" ADD CONSTRAINT "ModuleProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ModuleProgress" ADD CONSTRAINT "ModuleProgress_moduleId_fkey" FOREIGN KEY ("moduleId") REFERENCES "Module"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Workshop" ADD CONSTRAINT "Workshop_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
