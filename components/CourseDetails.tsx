@@ -49,6 +49,9 @@ export default async function CourseDetails({
     }).format(date);
   };
 
+  const rawProgress = await getCourseProgress(course.id);
+  const progress = Math.min(100, Math.max(0, Number(rawProgress ?? 0)));
+
   const nextItem = await getNextCourseItem(course.id);
   const startUrl = nextItem
     ? `/courses/${course.slug}/learn/${nextItem.id}`
@@ -95,31 +98,40 @@ export default async function CourseDetails({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* side bar */}
+          {/* Sidebar */}
           <div className="lg:col-span-1 lg:order-last relative lg:pb-12">
             <div className="relative lg:-mt-48 z-10 lg:sticky top-24 self-start">
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 overflow-hidden">
-                <div className="aspect-video relative bg-slate-100 border-b border-slate-100">
+              <div className="bg-white rounded-2xl border border-slate-200/60 shadow-2xl shadow-slate-900/5 overflow-hidden">
+                <div className="aspect-video relative bg-slate-100 border-b border-slate-200/60">
                   <img
                     src={course.thumbnailUrl || "/thumbnail.jpeg"}
                     alt={course.title}
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute top-4 left-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">
+                  <div className="absolute inset-0 bg-linear-to-t from-black/30 via-black/10 to-transparent" />
+                  <span className="absolute top-4 left-4 bg-white/80 backdrop-blur-md text-slate-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
                     {course.category.name}
                   </span>
                 </div>
 
-                <div className="p-6 flex flex-col gap-5">
-                  <div>
-                    {/* not done, dont forget rating */}
-                    <span>Completion: {getCourseProgress(course.id)}%</span>
+                <div className="p-6 flex flex-col gap-6">
+                  <div className="space-y-1">
+                    <span className="text-sm font-medium text-slate-600">
+                      {progress}% completed
+                    </span>
+                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-5">
+
+                  <div className="flex flex-col gap-4">
                     {isEnrolled ? (
                       <Link
                         href={startUrl}
-                        className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+                        className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg py-4 rounded-xl transition-all shadow-sm active:scale-[0.98]"
                       >
                         <Play className="w-5 h-5 fill-current" />
                         Continue Learning
@@ -130,7 +142,7 @@ export default async function CourseDetails({
                       >
                         <button
                           type="submit"
-                          className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-blue-600 text-white font-bold text-lg py-4 rounded-xl transition-all"
+                          className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-eduBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98]"
                         >
                           Start Learning Now
                         </button>
@@ -138,27 +150,17 @@ export default async function CourseDetails({
                     ) : (
                       <Link
                         href="/login"
-                        className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-blue-600 text-white font-bold text-lg py-4 rounded-xl transition-all"
+                        className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-eduBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98]"
                       >
                         Start Learning Now
                       </Link>
                     )}
                   </div>
 
-                  <div className="space-y-4">
-                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
+                  <div className="pt-4 border-t border-slate-200/60 space-y-4">
+                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
                       Course Details
                     </h3>
-
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <Star className="w-5 h-5 text-slate-400" />
-                        <span>Rating</span>
-                      </div>
-                      <span className="font-semibold text-slate-900">
-                        {course.avgRating.toFixed(1)}
-                      </span>
-                    </div>
 
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-3 text-slate-600">
@@ -173,40 +175,10 @@ export default async function CourseDetails({
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-3 text-slate-600">
                         <Users className="w-5 h-5 text-slate-400" />
-                        <span>Students Enrolled</span>
+                        <span>Students</span>
                       </div>
                       <span className="font-semibold text-slate-900">
                         {course.enrollmentCount.toLocaleString()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <BarChart className="w-5 h-5 text-slate-400" />
-                        <span>Level</span>
-                      </div>
-                      <span className="font-semibold text-slate-900">
-                        {formatLevel(course.level)}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <Clock className="w-5 h-5 text-slate-400" />
-                        <span>Duration</span>
-                      </div>
-                      <span className="font-semibold text-slate-900">
-                        {formatDuration(course.duration)}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-3 text-slate-600">
-                        <BookOpen className="w-5 h-5 text-slate-400" />
-                        <span>Lessons</span>
-                      </div>
-                      <span className="font-semibold text-slate-900">
-                        {course.items.length}
                       </span>
                     </div>
 
@@ -238,7 +210,24 @@ export default async function CourseDetails({
           {/* main content */}
           <div className="lg:col-span-2 py-12 space-y-8">
             {/* highlights */}
-            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-wrap justify-between gap-6">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-yellow-50 text-yellow-500 rounded-lg">
+                  <Star className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold uppercase">
+                    Rating
+                  </p>
+                  <span className="font-bold text-slate-900">
+                    {course.avgRating.toFixed(1)}
+                  </span>{" "}
+                  <span className="font-bold text-slate-600">
+                    ({course.reviewCount})
+                  </span>
+                </div>
+              </div>
+
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                   <BarChart className="w-6 h-6" />
@@ -268,7 +257,7 @@ export default async function CourseDetails({
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                <div className="p-2 bg-amber-50 text-amber-700 rounded-lg">
                   <BookOpen className="w-6 h-6" />
                 </div>
                 <div>
@@ -278,18 +267,6 @@ export default async function CourseDetails({
                   <p className="font-bold text-slate-900">
                     {course.items.length}
                   </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                  <Award className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500 font-semibold uppercase">
-                    Certificate
-                  </p>
-                  <p className="font-bold text-slate-900">Included</p>
                 </div>
               </div>
             </div>
