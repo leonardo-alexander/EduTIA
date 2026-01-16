@@ -12,32 +12,25 @@ import {
   Lock,
   CheckCircle,
   Play,
+  Star,
+  MessageCircle,
 } from "lucide-react";
-import { Course, Category, CourseItem, Module, Workshop } from "@prisma/client";
-
-type CourseWithRelations = Course & {
-  category: Category;
-  items: (CourseItem & {
-    module: Module | null;
-    workshop: Workshop | null;
-  })[];
-  _count: {
-    enrollments: number;
-  };
-};
+import { CourseDetailUI } from "@/types/course-ui";
+import { enrollCourse } from "@/actions/enroll";
+import { getNextCourseItem } from "@/actions/resume";
+import { getCourseProgress } from "@/actions/progress";
 
 interface CourseDetailsProps {
-  course: CourseWithRelations;
+  course: CourseDetailUI;
   isEnrolled: boolean;
-  currentUserId?: string; // check if user is logged in
+  currentUserId?: string;
 }
 
-export default function CourseDetails({
+export default async function CourseDetails({
   course,
   isEnrolled,
   currentUserId,
 }: CourseDetailsProps) {
-  // helper functions
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -56,9 +49,9 @@ export default function CourseDetails({
     }).format(date);
   };
 
-  const firstLessonId = course.items[0]?.id;
-  const startUrl = firstLessonId
-    ? `/courses/${course.id}/learn/${firstLessonId}`
+  const nextItem = await getNextCourseItem(course.id);
+  const startUrl = nextItem
+    ? `/courses/${course.slug}/learn/${nextItem.id}`
     : "#";
 
   return (
@@ -117,28 +110,40 @@ export default function CourseDetails({
                   </span>
                 </div>
 
-                <div className="p-6">
-                  {isEnrolled ? (
-                    <Link
-                      href={startUrl}
-                      className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 mb-8"
-                    >
-                      <Play className="w-5 h-5 fill-current" />
-                      Continue Learning
-                    </Link>
-                  ) : (
-                    <Link
-                      // login check
-                      href={
-                        currentUserId
-                          ? `/api/courses/${course.id}/enroll`
-                          : "/login"
-                      }
-                      className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-blue-600 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 mb-8"
-                    >
-                      Start Learning Now
-                    </Link>
-                  )}
+                <div className="p-6 flex flex-col gap-5">
+                  <div>
+                    {/* not done, dont forget rating */}
+                    <span>Completion: {getCourseProgress(course.id)}%</span>
+                  </div>
+                  <div className="flex flex-col gap-5">
+                    {isEnrolled ? (
+                      <Link
+                        href={startUrl}
+                        className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+                      >
+                        <Play className="w-5 h-5 fill-current" />
+                        Continue Learning
+                      </Link>
+                    ) : currentUserId ? (
+                      <form
+                        action={enrollCourse.bind(null, course.id, course.slug)}
+                      >
+                        <button
+                          type="submit"
+                          className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-blue-600 text-white font-bold text-lg py-4 rounded-xl transition-all"
+                        >
+                          Start Learning Now
+                        </button>
+                      </form>
+                    ) : (
+                      <Link
+                        href="/login"
+                        className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-blue-600 text-white font-bold text-lg py-4 rounded-xl transition-all"
+                      >
+                        Start Learning Now
+                      </Link>
+                    )}
+                  </div>
 
                   <div className="space-y-4">
                     <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
@@ -147,11 +152,31 @@ export default function CourseDetails({
 
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-3 text-slate-600">
+                        <Star className="w-5 h-5 text-slate-400" />
+                        <span>Rating</span>
+                      </div>
+                      <span className="font-semibold text-slate-900">
+                        {course.avgRating.toFixed(1)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <MessageCircle className="w-5 h-5 text-slate-400" />
+                        <span>Reviews</span>
+                      </div>
+                      <span className="font-semibold text-slate-900">
+                        {course.reviewCount}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-3 text-slate-600">
                         <Users className="w-5 h-5 text-slate-400" />
                         <span>Students Enrolled</span>
                       </div>
                       <span className="font-semibold text-slate-900">
-                        {course._count.enrollments.toLocaleString()}
+                        {course.enrollmentCount.toLocaleString()}
                       </span>
                     </div>
 
@@ -283,16 +308,14 @@ export default function CourseDetails({
                 ) : (
                   <div className="divide-y divide-slate-100">
                     {course.items.map((item, index) => {
-                      const isModule = item.type === "MODULE";
-                      const title = isModule
-                        ? item.module?.title
-                        : item.workshop?.title;
+                      const { id, type, title } = item;
+                      const isModule = type === "MODULE";
                       const Icon = isModule ? PlayCircle : Code;
 
                       const isLocked = !isEnrolled;
                       const itemUrl = isLocked
                         ? "#"
-                        : `/courses/${course.id}/learn/${item.id}`;
+                        : `/courses/${course.slug}/learn/${item.id}`;
 
                       return (
                         <Link

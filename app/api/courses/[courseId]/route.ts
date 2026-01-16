@@ -6,30 +6,6 @@ type Context = {
   params: { courseId: string };
 };
 
-// maybe not needed
-export async function GET(_: Request, { params }: Context) {
-  try {
-    const course = await prisma.course.findUnique({
-      where: { id: params.courseId },
-    });
-
-    if (!course) {
-      return NextResponse.json(
-        { message: "Course not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(course);
-  } catch (error) {
-    console.error("Get course error:", error);
-    return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
-
 export async function PUT(req: Request, { params }: Context) {
   try {
     await requireAdminUser();

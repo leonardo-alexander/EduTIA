@@ -96,6 +96,7 @@ export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
     select: {
       id: true,
       title: true,
+      slug: true,
       description: true,
       level: true,
       duration: true,

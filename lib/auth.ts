@@ -6,6 +6,8 @@ export async function getCurrentUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
+  console.log(token);
+
   if (!token) return null;
 
   try {
@@ -18,8 +20,8 @@ export async function getCurrentUser() {
       where: { id: payload.userId },
       include: { profile: true },
     });
-  } catch (err) {
-    console.error("getCurrentUser error:", err);
+  } catch (error) {
+    console.error("getCurrentUser error:", error);
     return null;
   }
 }

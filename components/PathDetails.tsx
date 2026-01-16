@@ -159,7 +159,7 @@ export default function PathDetails({ path }: { path: DetailedLearningPath }) {
                   {/* card */}
                   <Link
                     href={`/courses/${course.id}`}
-                    className="flex-grow bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 hover:border-eduBlue/30 transition-all duration-300 group-hover:-translate-y-1"
+                    className="grow bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 hover:border-eduBlue/30 transition-all duration-300 group-hover:-translate-y-1"
                   >
                     <div className="flex flex-col sm:flex-row gap-6">
                       {/* thumbnail */}

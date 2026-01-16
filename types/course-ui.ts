@@ -1,8 +1,9 @@
-import { CourseLevel } from "@prisma/client";
+import { CourseItemType, CourseLevel } from "@prisma/client";
 
 export type CourseUI = {
   id: string;
   title: string;
+  slug: string;
   description: string;
   level: CourseLevel;
   duration: number;
@@ -14,4 +15,15 @@ export type CourseUI = {
     name: string;
     slug: string;
   };
+};
+
+export type CourseDetailUI = CourseUI & {
+  updatedAt: Date;
+  items: {
+    id: string;
+    type: CourseItemType;
+    title: string;
+    position: number;
+  }[];
+  enrollmentCount: number;
 };

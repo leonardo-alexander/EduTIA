@@ -5,8 +5,8 @@ import { CourseUI } from "@/types/course-ui";
 export default function CourseCard({ course }: { course: CourseUI }) {
   return (
     <Link
-      href={`/courses/${course.id}`}
       key={course.id}
+      href={`/courses/${course.slug}`}
       className="group bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full cursor-pointer"
     >
       <div className="relative h-56 overflow-hidden">
