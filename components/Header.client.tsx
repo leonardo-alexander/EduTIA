@@ -202,11 +202,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                     <MenuItem>
                       <button
                         onClick={async () => {
-                          await fetch("/api/auth/logout", {
-                            method: "POST",
-                            credentials: "include",
-                          });
-                          router.refresh();
+                          window.location.href = "/api/auth/logout";
                         }}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
                       >
