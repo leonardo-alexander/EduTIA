@@ -5,14 +5,12 @@ import { Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type RatingProps = {
-  value?: number;
   userRating?: number;
   onRate?: (rating: number, comment: string) => void;
   isAuthenticated: boolean;
 };
 
 export default function RatingPopover({
-  value = 0,
   userRating,
   onRate,
   isAuthenticated,
@@ -27,8 +25,6 @@ export default function RatingPopover({
   useEffect(() => {
     setRating(userRating ?? 0);
   }, [userRating]);
-
-  const display = hovered ?? rating;
 
   const closeModal = () => {
     setOpen(false);
@@ -64,7 +60,7 @@ export default function RatingPopover({
             <Star
               className={`h-4 w-4 transition-colors ${
                 isAuthenticated &&
-                i <= (open ? rating : hovered ?? userRating ?? 0)
+                i <= (open ? rating : (hovered ?? userRating ?? 0))
                   ? "fill-yellow-400 text-yellow-400"
                   : "text-slate-300"
               }`}

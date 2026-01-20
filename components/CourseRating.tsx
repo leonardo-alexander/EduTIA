@@ -6,14 +6,12 @@ import { rateCourse } from "@/actions/rate-course";
 
 type Props = {
   courseId: string;
-  avgRating: number;
   userRating?: number;
   isAuthenticated: boolean;
 };
 
 export default function CourseRating({
   courseId,
-  avgRating,
   userRating = 0,
   isAuthenticated,
 }: Props) {
@@ -21,7 +19,6 @@ export default function CourseRating({
 
   return (
     <RatingPopover
-      value={avgRating}
       userRating={userRating}
       isAuthenticated={isAuthenticated}
       onRate={(rating, comment) => {

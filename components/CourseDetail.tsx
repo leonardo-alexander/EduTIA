@@ -126,7 +126,6 @@ export default async function CourseDetails({
                       </span>
                       <CourseRating
                         courseId={course.id}
-                        avgRating={course.avgRating}
                         userRating={course.userRating}
                         isAuthenticated={isAuthenticated}
                       />

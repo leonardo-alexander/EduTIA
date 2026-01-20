@@ -21,7 +21,7 @@ export function ActiveCourseBanner({
 }: ActiveCourseBannerProps) {
   if (!activeEnrollment) {
     return (
-      <div className="w-full p-8 bg-slate-50 rounded-3xl border border-slate-100 text-center flex flex-col items-center justify-center min-h-[230px]">
+      <div className="w-full p-8 bg-slate-50 rounded-3xl border border-slate-100 text-center flex flex-col items-center justify-center min-h-57.5">
         <p className="text-slate-500 mb-5 text-base">
           You haven't enrolled in any courses yet.
         </p>
@@ -38,7 +38,7 @@ export function ActiveCourseBanner({
   return (
     <section className="w-full">
       <Link href={`/courses/${activeEnrollment.course.slug}`}>
-        <div className="w-full bg-eduBlue rounded-3xl p-6 shadow-xl shadow-blue-900/10 text-white relative overflow-hidden group transition-transform active:scale-[0.99] duration-200 min-h-[230px] flex flex-col justify-between">
+        <div className="w-full bg-eduBlue rounded-3xl p-6 shadow-xl shadow-blue-900/10 text-white relative overflow-hidden group transition-transform active:scale-[0.99] duration-200 min-h-57.5 flex flex-col justify-between">
           <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col gap-4">

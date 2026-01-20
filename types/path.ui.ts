@@ -13,6 +13,7 @@ export type PathUI = LearningPath & {
       id: string;
       title: string;
       slug: string;
+      duration: number;
     };
   }[];
 };

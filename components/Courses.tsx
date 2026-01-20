@@ -33,7 +33,7 @@ export default function Courses({
 
   const params = useMemo(
     () => new URLSearchParams(searchParams.toString()),
-    [searchParams]
+    [searchParams],
   );
 
   function getCategory(): string {
@@ -250,7 +250,7 @@ export default function Courses({
                           {DURATION_LABELS[duration]}
                         </span>
                       </label>
-                    )
+                    ),
                   )}
                 </div>
               </div>
