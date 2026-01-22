@@ -48,7 +48,7 @@ export function DashboardStats({
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1.5 hover:bg-slate-100 transition-colors"
+          className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1.5"
         >
           <div
             className={`w-9 h-9 rounded-full flex items-center justify-center mb-0.5 ${stat.bgClass} ${stat.colorClass}`}
