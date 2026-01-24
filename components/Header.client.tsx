@@ -197,7 +197,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                     <MenuItem>
                       <Link
                         href="/profile"
-                        className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
+                        className="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition"
                       >
                         Profile
                       </Link>
@@ -210,11 +210,22 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                           await logoutAction();
                           window.location.href = "/";
                         }}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
+                        className="block w-full text-left px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition"
                       >
                         Logout
                       </button>
                     </MenuItem>
+
+                    {user.role === "ADMIN" && (
+                      <MenuItem>
+                        <Link
+                          href="/admin"
+                          className="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition"
+                        >
+                          Admin Dashboard
+                        </Link>
+                      </MenuItem>
+                    )}
                   </MenuItems>
                 </Menu>
               )}

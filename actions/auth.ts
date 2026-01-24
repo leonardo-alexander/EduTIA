@@ -42,7 +42,17 @@ export async function loginAction(_prevState: any, formData: FormData) {
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    return { success: true, role: user.role };
+    const profile = await prisma.profile.findFirst({
+      where: { userId: user.id },
+    });
+
+    const incomplete =
+      (user.role === "EDUCATEE" &&
+        (!profile || !profile.name || !profile.dob || !profile.gender)) ||
+      (user.role === "CORPORATION" &&
+        (!profile || !profile.companyName || !profile.companyWebsite));
+
+    return { success: true, role: user.role, status: incomplete };
   } catch (error) {
     console.error(error);
     return { error: "Something went wrong" };

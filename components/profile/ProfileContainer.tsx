@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Profile, User } from "@prisma/client";
 import ProfileView from "./ProfileView";
 import ProfileForm from "./ProfileForm";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type ProfileContainerProps = {
   user: User;
@@ -16,9 +17,29 @@ export default function ProfileContainer({
 }: ProfileContainerProps) {
   const [isEditing, setIsEditing] = useState(false);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isEditParam = useMemo(
+    () => searchParams.get("edit") === "true",
+    [searchParams],
+  );
+
+  useEffect(() => {
+    if (isEditParam) {
+      setIsEditing(true);
+      router.replace(pathname);
+    }
+  }, [isEditParam, router, pathname]);
+
   if (isEditing) {
     return (
-      <ProfileForm profile={profile} onCancel={() => setIsEditing(false)} />
+      <ProfileForm
+        user={user}
+        profile={profile}
+        onCancel={() => setIsEditing(false)}
+      />
     );
   }
 

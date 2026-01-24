@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Profile, User } from "@prisma/client";
 import {
@@ -15,77 +15,32 @@ import {
   Save,
   Loader2,
 } from "lucide-react";
+import { updateProfile } from "@/actions/profile";
 
 type ProfileFormProps = {
   profile: Profile | null;
+  user: User;
   onCancel: () => void;
 };
 
 export default function ProfileForm({
   profile,
+  user,
   onCancel,
 }: ProfileFormProps) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: profile?.name || "",
-    dob: profile?.dob ? new Date(profile.dob).toISOString().split("T")[0] : "",
-    gender: profile?.gender || "",
-    pictureUrl: profile?.pictureUrl || "",
-    bio: profile?.bio || "",
-    companyName: profile?.companyName || "",
-    companyWebsite: profile?.companyWebsite || "",
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          gender: formData.gender === "" ? null : formData.gender,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to update profile");
-      }
-
-      router.refresh();
-      onCancel();
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [state, formAction, isPending] = useActionState(updateProfile, null);
 
   return (
     <form
-      onSubmit={handleSubmit}
+      action={formAction}
       className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50/30"
     >
       <div className="bg-eduBlue">
         <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <img
-              src={formData.pictureUrl || "/avatars/male.svg"}
+              src={profile?.pictureUrl || "/avatars/male.svg"}
               alt="Avatar"
               className="h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover bg-white"
             />
@@ -95,7 +50,10 @@ export default function ProfileForm({
                 Edit Profile
               </h1>
               <p className="mt-1 text-white/70 text-sm">
-                Update your personal information and company details
+                Update your{" "}
+                {user.role === "CORPORATION"
+                  ? "company details"
+                  : "personal information"}
               </p>
             </div>
 
@@ -110,15 +68,15 @@ export default function ProfileForm({
               </button>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isPending}
                 className="flex items-center gap-2 px-5 py-2.5 bg-white text-eduBlue font-semibold rounded-full shadow-md hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md transition-all duration-200"
               >
-                {loading ? (
+                {isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Save className="w-4 h-4" />
                 )}
-                {loading ? "Saving..." : "Save Changes"}
+                {isPending ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </div>
@@ -127,152 +85,147 @@ export default function ProfileForm({
 
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {(() => {
+            switch (user.role) {
+              case "CORPORATION":
+                return (
+                  <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-indigo-50 rounded-xl">
+                          <Building2 className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <h2 className="text-lg font-semibold text-slate-900">
+                          Company
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="p-6 space-y-5 flex-1 flex flex-col">
+                      <FormField
+                        icon={<Building2 className="w-4 h-4" />}
+                        label="Company Name"
+                        iconBg="bg-orange-50"
+                        iconColor="text-orange-600"
+                      >
+                        <input
+                          type="text"
+                          name="companyName"
+                          placeholder="Your company name"
+                          className="form-input"
+                        />
+                      </FormField>
+
+                      <FormField
+                        icon={<Globe className="w-4 h-4" />}
+                        label="Company Website"
+                        iconBg="bg-cyan-50"
+                        iconColor="text-cyan-600"
+                      >
+                        <input
+                          type="text"
+                          name="companyWebsite"
+                          placeholder="https://company.com"
+                          className="form-input"
+                        />
+                      </FormField>
+                    </div>
+                  </div>
+                );
+
+              default:
+                return (
+                  <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-indigo-50 rounded-xl">
+                          <UserIcon className="w-5 h-5 text-indigo-600" />
+                        </div>
+                        <h2 className="text-lg font-semibold text-slate-900">
+                          Personal Information
+                        </h2>
+                      </div>
+                    </div>
+                    <div className="p-6 space-y-5">
+                      <FormField
+                        icon={<Image className="w-4 h-4" />}
+                        label="Profile Picture URL"
+                        iconBg="bg-violet-50"
+                        iconColor="text-violet-600"
+                      >
+                        <input
+                          type="text"
+                          name="pictureUrl"
+                          placeholder="https://example.com/your-photo.jpg"
+                          className="form-input"
+                        />
+                      </FormField>
+
+                      <FormField
+                        icon={<UserIcon className="w-4 h-4" />}
+                        label="Full Name"
+                        iconBg="bg-blue-50"
+                        iconColor="text-blue-600"
+                      >
+                        <input
+                          type="text"
+                          name="name"
+                          placeholder="Enter your full name"
+                          className="form-input"
+                        />
+                      </FormField>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <FormField
+                          icon={<Calendar className="w-4 h-4" />}
+                          label="Date of Birth"
+                          iconBg="bg-purple-50"
+                          iconColor="text-purple-600"
+                        >
+                          <input
+                            type="date"
+                            name="dob"
+                            className="form-input"
+                          />
+                        </FormField>
+
+                        <FormField
+                          icon={<Users className="w-4 h-4" />}
+                          label="Gender"
+                          iconBg="bg-emerald-50"
+                          iconColor="text-emerald-600"
+                        >
+                          <select name="gender" className="form-input">
+                            <option value="">Select Gender</option>
+                            <option value="MALE">Male</option>
+                            <option value="FEMALE">Female</option>
+                          </select>
+                        </FormField>
+                      </div>
+                    </div>
+                  </div>
+                );
+            }
+          })()}
+
           <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-eduBlue/10 rounded-xl">
-                  <UserIcon className="w-5 h-5 text-eduBlue" />
+                <div className="p-2 bg-amber-50 rounded-xl">
+                  <FileText className="w-5 h-5 text-amber-600" />
                 </div>
                 <h2 className="text-lg font-semibold text-slate-900">
-                  Personal Information
+                  About Me
                 </h2>
               </div>
             </div>
-            <div className="p-6 space-y-6">
-              <FormField
-                icon={<Image className="w-4 h-4" />}
-                label="Profile Picture URL"
-                iconBg="bg-violet-50"
-                iconColor="text-violet-600"
-              >
-                <input
-                  type="text"
-                  name="pictureUrl"
-                  value={formData.pictureUrl}
-                  onChange={handleChange}
-                  placeholder="https://example.com/your-photo.jpg"
-                  className="form-input"
-                />
-              </FormField>
-
-              <FormField
-                icon={<UserIcon className="w-4 h-4" />}
-                label="Full Name"
-                iconBg="bg-blue-50"
-                iconColor="text-blue-600"
-              >
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  className="form-input"
-                />
-              </FormField>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <FormField
-                  icon={<Calendar className="w-4 h-4" />}
-                  label="Date of Birth"
-                  iconBg="bg-purple-50"
-                  iconColor="text-purple-600"
-                >
-                  <input
-                    type="date"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </FormField>
-
-                <FormField
-                  icon={<Users className="w-4 h-4" />}
-                  label="Gender"
-                  iconBg="bg-emerald-50"
-                  iconColor="text-emerald-600"
-                >
-                  <select
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    className="form-input"
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
-                  </select>
-                </FormField>
-              </div>
+            <div className="p-6">
+              <textarea
+                name="bio"
+                rows={4}
+                placeholder="Tell us a bit about yourself..."
+                className="form-input resize-none"
+              />
             </div>
-          </div>
-
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-50 rounded-xl">
-                  <Building2 className="w-5 h-5 text-indigo-600" />
-                </div>
-                <h2 className="text-lg font-semibold text-slate-900">
-                  Company
-                </h2>
-              </div>
-            </div>
-            <div className="p-6 space-y-6">
-              <FormField
-                icon={<Building2 className="w-4 h-4" />}
-                label="Company Name"
-                iconBg="bg-orange-50"
-                iconColor="text-orange-600"
-              >
-                <input
-                  type="text"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  placeholder="Your company name"
-                  className="form-input"
-                />
-              </FormField>
-
-              <FormField
-                icon={<Globe className="w-4 h-4" />}
-                label="Company Website"
-                iconBg="bg-cyan-50"
-                iconColor="text-cyan-600"
-              >
-                <input
-                  type="text"
-                  name="companyWebsite"
-                  value={formData.companyWebsite}
-                  onChange={handleChange}
-                  placeholder="https://company.com"
-                  className="form-input"
-                />
-              </FormField>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-50 rounded-xl">
-                <FileText className="w-5 h-5 text-amber-600" />
-              </div>
-              <h2 className="text-lg font-semibold text-slate-900">About Me</h2>
-            </div>
-          </div>
-          <div className="p-6">
-            <textarea
-              name="bio"
-              rows={4}
-              value={formData.bio}
-              onChange={handleChange}
-              placeholder="Tell us a bit about yourself..."
-              className="form-input resize-none"
-            />
           </div>
         </div>
       </div>

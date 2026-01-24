@@ -14,6 +14,8 @@ export default function Login() {
 
     if (state.role === "ADMIN") {
       router.push("/admin");
+    } else if (state.status) {
+      router.push("/profile?edit=true");
     } else {
       router.push("/dashboard");
     }
