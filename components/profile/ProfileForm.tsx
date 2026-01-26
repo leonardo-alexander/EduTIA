@@ -58,7 +58,7 @@ export default function ProfileForm({
               </h1>
               <p className="mt-1 text-white/70 text-sm">
                 Update your{" "}
-                {user.role === "CORPORATION"
+                {user.role === "COMPANY"
                   ? "company details"
                   : "personal information"}
               </p>
@@ -94,7 +94,7 @@ export default function ProfileForm({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {(() => {
             switch (user.role) {
-              case "CORPORATION":
+              case "COMPANY":
                 return (
                   <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">

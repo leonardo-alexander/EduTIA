@@ -3,7 +3,6 @@ import {
   Clock,
   BarChart,
   BookOpen,
-  ChevronRight,
   Users,
   Calendar,
   Award,
@@ -18,6 +17,7 @@ import { FavoriteButton } from "./FavoriteButton";
 import { CourseItem } from "@prisma/client";
 import CourseRating from "./CourseRating";
 import CourseItemCard from "./ItemCard";
+import BackButton from "./BackButton";
 
 interface CourseDetailsProps {
   course: CourseDetailUI;
@@ -61,14 +61,7 @@ export default async function CourseDetails({
       {/* header */}
       <div className="bg-slate-900 text-white border-b border-slate-800 relative z-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center gap-2 font-bold text-sm mb-4">
-            <Link href="/courses" className="text-eduBlue hover:underline">
-              Courses
-            </Link>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-300">{course.title}</span>
-          </div>
-
+          <BackButton />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
             <div className="lg:col-span-2 space-y-6">
               <div className="flex items-center gap-3">
@@ -132,7 +125,7 @@ export default async function CourseDetails({
                     </div>
                     <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-emerald-500 rounded-full transition-all"
+                        className="h-full bg-eduBlue rounded-full transition-all"
                         style={{ width: `${safeProgress}%` }}
                       />
                     </div>
@@ -149,7 +142,7 @@ export default async function CourseDetails({
                     ) : safeProgress === 100 ? (
                       <Link
                         href={`/courses/${course.slug}/certificate`}
-                        className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg py-4 rounded-xl ring-emerald-300 shadow-sm"
+                        className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-eduBlue/95 text-white font-medium text-lg py-4 rounded-xl ring-emerald-300 shadow-sm"
                       >
                         View Certificate
                       </Link>

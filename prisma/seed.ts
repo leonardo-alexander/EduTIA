@@ -5,17 +5,23 @@ import { Category, Course } from "@prisma/client";
 
 async function main() {
   // ===== CLEAN DATABASE =====
-  await prisma.workshopSubmission.deleteMany();
-  await prisma.workshopRegistration.deleteMany();
-  await prisma.courseItem.deleteMany();
-  await prisma.workshop.deleteMany();
-  await prisma.module.deleteMany();
+  await prisma.jobApplication.deleteMany();
+  await prisma.jobPosting.deleteMany();
+  await prisma.jobCategory.deleteMany();
+  await prisma.learningPathItem.deleteMany();
+  await prisma.learningPath.deleteMany();
   await prisma.enrollment.deleteMany();
   await prisma.certificate.deleteMany();
+  await prisma.workshopSubmission.deleteMany();
+  await prisma.workshopRegistration.deleteMany();
+  await prisma.workshop.deleteMany();
+  await prisma.moduleProgress.deleteMany();
+  await prisma.courseItem.deleteMany();
+  await prisma.module.deleteMany();
   await prisma.course.deleteMany();
   await prisma.category.deleteMany();
+  await prisma.companyVerification.deleteMany();
   await prisma.profile.deleteMany();
-  await prisma.corporationVerification.deleteMany();
   await prisma.user.deleteMany();
 
   // ===== USERS =====
@@ -47,7 +53,7 @@ async function main() {
     data: {
       email: "corp@techcorp.com",
       password: await bcrypt.hash("corp123", 10),
-      role: "CORPORATION",
+      role: "COMPANY",
     },
   });
 
@@ -74,9 +80,10 @@ async function main() {
     where: { userId: corp.id },
   });
 
-  await prisma.corporationVerification.create({
+  await prisma.companyVerification.create({
     data: {
       profileId: corpProfile.id,
+      status: "VERIFIED",
       verifiedAt: new Date(),
     },
   });
@@ -232,6 +239,14 @@ async function main() {
     },
   });
 
+  await prisma.moduleProgress.create({
+    data: {
+      userId: student.id,
+      moduleId: module2.id,
+      completedAt: new Date(),
+    },
+  });
+
   // ===== WORKSHOP =====
   const workshop = await prisma.workshop.create({
     data: {
@@ -315,6 +330,49 @@ async function main() {
         courseId: courseMap[slugify("Python for Data Analysis")],
       },
     ],
+  });
+
+  // ===== JOBS =====
+  const jobCategories = [
+    { name: "Software Development", slug: "software-development" },
+    { name: "Data & AI", slug: "data-ai" },
+    { name: "Design & Creative", slug: "design-creative" },
+    { name: "IT & Infrastructure", slug: "it-infrastructure" },
+    { name: "Business & Management", slug: "business-management" },
+    { name: "Marketing & Sales", slug: "marketing-sales" },
+    { name: "Finance & Accounting", slug: "finance-accounting" },
+    { name: "Human Resources", slug: "human-resources" },
+    { name: "Product Management", slug: "product-management" },
+    { name: "Customer Support", slug: "customer-support" },
+  ];
+
+  await prisma.jobCategory.createMany({
+    data: jobCategories,
+  });
+
+  const jobCategoryList = await prisma.jobCategory.findMany();
+
+  const jobCategoryMap = Object.fromEntries(
+    jobCategoryList.map((c) => [c.slug, c.id]),
+  );
+
+  await prisma.jobPosting.create({
+    data: {
+      title: "Data Analyst",
+      slug: slugify("Data Analyst"),
+      description: "Analyze business and product data to support decisions.",
+      status: "PUBLISHED",
+
+      categoryId: jobCategoryMap["data-ai"],
+
+      type: "FULL_TIME",
+      workMode: "REMOTE",
+
+      salaryMin: 600,
+      salaryMax: 1200,
+
+      userId: corp.id,
+    },
   });
 }
 

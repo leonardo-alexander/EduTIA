@@ -1,11 +1,11 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('ADMIN', 'CORPORATION', 'EDUCATEE');
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'COMPANY', 'EDUCATEE');
 
 -- CreateEnum
 CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE');
 
 -- CreateEnum
-CREATE TYPE "CorporationStatus" AS ENUM ('UNVERIFIED', 'PENDING', 'VERIFIED');
+CREATE TYPE "CompanyStatus" AS ENUM ('UNVERIFIED', 'PENDING', 'VERIFIED');
 
 -- CreateEnum
 CREATE TYPE "CourseLevel" AS ENUM ('BEGINNER', 'INTERMEDIATE', 'ADVANCED');
@@ -20,10 +20,16 @@ CREATE TYPE "EnrollmentStatus" AS ENUM ('IN_PROGRESS', 'COMPLETED');
 CREATE TYPE "JobStatus" AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED');
 
 -- CreateEnum
+CREATE TYPE "JobType" AS ENUM ('FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE', 'INTERNSHIP');
+
+-- CreateEnum
+CREATE TYPE "WorkMode" AS ENUM ('ONSITE', 'REMOTE', 'HYBRID');
+
+-- CreateEnum
 CREATE TYPE "ApplicationStatus" AS ENUM ('APPLIED', 'REVIEWED', 'ACCEPTED', 'REJECTED');
 
 -- CreateEnum
-CREATE TYPE "AdminActionType" AS ENUM ('APPROVE_COURSE', 'VERIFY_CORPORATION');
+CREATE TYPE "AdminActionType" AS ENUM ('APPROVE_COURSE', 'VERIFY_COMPANY');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -47,19 +53,20 @@ CREATE TABLE "Profile" (
     "bio" TEXT,
     "companyName" TEXT,
     "companyWebsite" TEXT,
+    "companyAddress" TEXT,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "CorporationVerification" (
+CREATE TABLE "CompanyVerification" (
     "id" TEXT NOT NULL,
-    "status" "CorporationStatus" NOT NULL DEFAULT 'PENDING',
+    "status" "CompanyStatus" NOT NULL DEFAULT 'PENDING',
     "verifiedAt" TIMESTAMP(3),
     "profileId" TEXT NOT NULL,
 
-    CONSTRAINT "CorporationVerification_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "CompanyVerification_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -225,12 +232,31 @@ CREATE TABLE "LearningPathItem" (
 );
 
 -- CreateTable
+CREATE TABLE "JobCategory" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "JobCategory_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "JobPosting" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "categoryId" TEXT NOT NULL,
     "status" "JobStatus" NOT NULL DEFAULT 'DRAFT',
+    "type" "JobType" NOT NULL,
+    "workMode" "WorkMode" NOT NULL,
+    "salaryMin" INTEGER,
+    "salaryMax" INTEGER,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "expiresAt" TIMESTAMP(3),
 
     CONSTRAINT "JobPosting_pkey" PRIMARY KEY ("id")
 );
@@ -294,7 +320,7 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CorporationVerification_profileId_key" ON "CorporationVerification"("profileId");
+CREATE UNIQUE INDEX "CompanyVerification_profileId_key" ON "CompanyVerification"("profileId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
@@ -363,13 +389,31 @@ CREATE UNIQUE INDEX "LearningPath_slug_key" ON "LearningPath"("slug");
 CREATE UNIQUE INDEX "LearningPathItem_learningPathId_position_key" ON "LearningPathItem"("learningPathId", "position");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "JobCategory_slug_key" ON "JobCategory"("slug");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "JobPosting_slug_key" ON "JobPosting"("slug");
+
+-- CreateIndex
+CREATE INDEX "JobPosting_slug_idx" ON "JobPosting"("slug");
+
+-- CreateIndex
+CREATE INDEX "JobPosting_status_idx" ON "JobPosting"("status");
+
+-- CreateIndex
+CREATE INDEX "JobPosting_categoryId_idx" ON "JobPosting"("categoryId");
+
+-- CreateIndex
+CREATE INDEX "JobPosting_userId_idx" ON "JobPosting"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Skill_userId_name_key" ON "Skill"("userId", "name");
 
 -- AddForeignKey
 ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "CorporationVerification" ADD CONSTRAINT "CorporationVerification_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "CompanyVerification" ADD CONSTRAINT "CompanyVerification_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Course" ADD CONSTRAINT "Course_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -427,6 +471,9 @@ ALTER TABLE "LearningPathItem" ADD CONSTRAINT "LearningPathItem_learningPathId_f
 
 -- AddForeignKey
 ALTER TABLE "LearningPathItem" ADD CONSTRAINT "LearningPathItem_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "JobPosting" ADD CONSTRAINT "JobPosting_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "JobCategory"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "JobPosting" ADD CONSTRAINT "JobPosting_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

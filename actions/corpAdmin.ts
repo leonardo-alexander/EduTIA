@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 export async function verifyCorp(formData: FormData) {
   const id = formData.get("id") as string;
 
-  const data = await prisma.corporationVerification.findUnique({
+  const data = await prisma.companyVerification.findUnique({
     where: { id },
     include: {
       profile: { include: { user: true } },
@@ -17,7 +17,7 @@ export async function verifyCorp(formData: FormData) {
   if (!data) return;
 
   await prisma.$transaction([
-    prisma.corporationVerification.update({
+    prisma.companyVerification.update({
       where: { id },
       data: {
         status: "VERIFIED",
@@ -26,18 +26,18 @@ export async function verifyCorp(formData: FormData) {
     }),
     prisma.user.update({
       where: { id: data.profile.userId },
-      data: { role: "CORPORATION" },
+      data: { role: "COMPANY" },
     }),
   ]);
 
-  revalidatePath(`/admin/corporations/${id}`);
-  redirect(`/admin/corporations/${id}`);
+  revalidatePath(`/admin/companies/${id}`);
+  redirect(`/admin/companies/${id}`);
 }
 
 export async function unverifyCorp(formData: FormData) {
   const id = formData.get("id") as string;
 
-  const data = await prisma.corporationVerification.findUnique({
+  const data = await prisma.companyVerification.findUnique({
     where: { id },
     include: {
       profile: { include: { user: true } },
@@ -47,7 +47,7 @@ export async function unverifyCorp(formData: FormData) {
   if (!data) return;
 
   await prisma.$transaction([
-    prisma.corporationVerification.update({
+    prisma.companyVerification.update({
       where: { id },
       data: {
         status: "UNVERIFIED",
@@ -56,10 +56,10 @@ export async function unverifyCorp(formData: FormData) {
     }),
     prisma.user.update({
       where: { id: data.profile.userId },
-      data: { role: "CORPORATION" },
+      data: { role: "COMPANY" },
     }),
   ]);
 
-  revalidatePath(`/admin/corporations/${id}`);
-  redirect(`/admin/corporations/${id}`);
+  revalidatePath(`/admin/companies/${id}`);
+  redirect(`/admin/companies/${id}`);
 }

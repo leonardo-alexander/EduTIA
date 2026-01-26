@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
-export default async function AdminCorporationsPage() {
-  const requests = await prisma.corporationVerification.findMany({
+export default async function AdminCompanysPage() {
+  const requests = await prisma.companyVerification.findMany({
     include: {
       profile: {
         include: { user: true },
@@ -13,7 +13,7 @@ export default async function AdminCorporationsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Corporation Applications</h1>
+      <h1 className="text-2xl font-bold mb-6">Company Applications</h1>
 
       <table className="w-full bg-white rounded shadow">
         <thead className="bg-gray-100">
@@ -32,7 +32,7 @@ export default async function AdminCorporationsPage() {
               <td className="p-3 border-l text-center">{r.status}</td>
               <td className="p-3 border-l text-center">
                 <Link
-                  href={`/admin/corporations/${r.id}`}
+                  href={`/admin/companies/${r.id}`}
                   className="text-blue-600 hover:underline"
                 >
                   Review

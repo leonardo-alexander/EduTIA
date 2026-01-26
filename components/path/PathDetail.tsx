@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, PlayCircle } from "lucide-react";
 import { PathDetailUI } from "@/types/path.ui";
 import { FavoriteButton } from "../FavoriteButton";
+import BackButton from "../BackButton";
 
 export default function PathDetails({
   path,
@@ -26,13 +27,7 @@ export default function PathDetails({
       {/* sub header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-          <div className="flex items-center gap-2 font-bold text-sm mb-4">
-            <Link href="/path" className="text-eduBlue hover:underline">
-              Learning Paths
-            </Link>
-            <ArrowRight className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-500">{path.title}</span>
-          </div>
+          <BackButton />
 
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
             {path.title}

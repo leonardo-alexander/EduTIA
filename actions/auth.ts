@@ -49,7 +49,7 @@ export async function loginAction(_prevState: any, formData: FormData) {
     const incomplete =
       (user.role === "EDUCATEE" &&
         (!profile || !profile.name || !profile.dob || !profile.gender)) ||
-      (user.role === "CORPORATION" &&
+      (user.role === "COMPANY" &&
         (!profile || !profile.companyName || !profile.companyWebsite));
 
     return { success: true, role: user.role, status: incomplete };
@@ -71,7 +71,7 @@ export async function signupAction(_prevState: any, formData: FormData) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const passwordConfirmation = formData.get("passwordConfirmation") as string;
-    const role = formData.get("role") as "EDUCATEE" | "CORPORATION";
+    const role = formData.get("role") as "EDUCATEE" | "COMPANY";
 
     if (!email || !password || !passwordConfirmation) {
       return { error: "All fields are required" };

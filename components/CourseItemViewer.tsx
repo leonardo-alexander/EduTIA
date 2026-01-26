@@ -10,6 +10,7 @@ import {
   XCircle,
   ExternalLink,
 } from "lucide-react";
+import BackButton from "./BackButton";
 
 interface CourseItemViewerProps {
   item: {
@@ -63,9 +64,8 @@ export default function CourseItemViewer({
           });
         }
       } else {
-        
       }
-      
+
       router.refresh();
     } catch (error) {
       console.error("Error updating status:", error);
@@ -86,14 +86,7 @@ export default function CourseItemViewer({
     <div className="space-y-8">
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100">
-          <div className="flex items-center justify-between mb-4">
-            <Link
-              href={`/courses/${courseSlug}`}
-              className="text-sm text-slate-500 hover:text-slate-800 transition-colors flex items-center gap-1 font-medium"
-            >
-              <ChevronLeft className="w-4 h-4" /> Back to Course
-            </Link>
-          </div>
+          <BackButton />
           <div className="flex items-center gap-3 mb-2">
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
@@ -140,7 +133,7 @@ export default function CourseItemViewer({
                 />
               </div>
             ) : (
-              <div className="flex flex-col h-[600px] border-b border-slate-200">
+              <div className="flex flex-col h-150 border-b border-slate-200">
                 <iframe
                   src={item.module.contentUrl}
                   className="w-full flex-1 border-0 bg-white"

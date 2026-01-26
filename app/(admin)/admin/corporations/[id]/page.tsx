@@ -10,7 +10,7 @@ export default async function ReviewCorp({
 }) {
   const { id } = await params;
 
-  const data = await prisma.corporationVerification.findUnique({
+  const data = await prisma.companyVerification.findUnique({
     where: { id },
     include: {
       profile: {
@@ -23,11 +23,11 @@ export default async function ReviewCorp({
 
   return (
     <div className="space-y-4">
-      <Link href={"/admin/corporations"} className="flex items-center gap-1">
+      <Link href={"/admin/companies"} className="flex items-center gap-1">
         <ArrowLeft className="h-5 w-5" />
-        <span className="leading-none">Back to corporations</span>
+        <span className="leading-none">Back to companies</span>
       </Link>
-      <h1 className="text-xl font-bold">Corporation Review</h1>
+      <h1 className="text-xl font-bold">Company Review</h1>
 
       <p>
         <b>Email:</b> {data.profile.user.email}

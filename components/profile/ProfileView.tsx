@@ -82,7 +82,7 @@ export default function ProfileView({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {(() => {
             switch (user.role) {
-              case "CORPORATION":
+              case "COMPANY":
                 return (
                   <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">

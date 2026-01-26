@@ -40,16 +40,17 @@ model Profile {
   bio            String?
   companyName    String?
   companyWebsite String?
+  companyAddress String?
 
   userId         String   @unique
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  verification   CorporationVerification?
+  verification   CompanyVerification?
 }
 
-model CorporationVerification {
+model CompanyVerification {
   id         String            @id @default(uuid())
-  status     CorporationStatus @default(PENDING)
+  status     CompanyStatus @default(PENDING)
   verifiedAt DateTime?
 
   profileId  String   @unique
@@ -262,17 +263,44 @@ model LearningPathItem {
   @@unique([learningPathId, position])
 }
 
-model JobPosting {
-  id        String    @id @default(uuid())
-  title     String
-  status    JobStatus @default(DRAFT)
+model JobCategory {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
 
-  userId    String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs      JobPosting[]
+}
+
+model JobPosting {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  description String
+
+  categoryId  String
+  category    JobCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  status      JobStatus @default(DRAFT)
+  type        JobType
+  workMode    WorkMode
+
+  salaryMin   Int?
+  salaryMax   Int?
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   applications JobApplication[]
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  expiresAt   DateTime?
+
+  @@index([slug])
+  @@index([status])
+  @@index([categoryId])
+  @@index([userId])
 }
 
 model JobApplication {
@@ -328,7 +356,7 @@ model AdminAction {
 
 enum Role {
   ADMIN
-  CORPORATION
+  COMPANY
   EDUCATEE
 }
 
@@ -337,7 +365,7 @@ enum Gender {
   FEMALE
 }
 
-enum CorporationStatus {
+enum CompanyStatus {
   UNVERIFIED
   PENDING
   VERIFIED
@@ -365,6 +393,20 @@ enum JobStatus {
   CLOSED
 }
 
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+  INTERNSHIP
+}
+
+enum WorkMode {
+  ONSITE
+  REMOTE
+  HYBRID
+}
+
 enum ApplicationStatus {
   APPLIED
   REVIEWED
@@ -374,5 +416,5 @@ enum ApplicationStatus {
 
 enum AdminActionType {
   APPROVE_COURSE
-  VERIFY_CORPORATION
+  VERIFY_COMPANY
 }

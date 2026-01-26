@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
-export default async function CorporationApplyPage() {
+export default async function CompanyApplyPage() {
   const user = await getCurrentUser();
 
   if (!user) redirect("/login");
@@ -27,7 +27,7 @@ export default async function CorporationApplyPage() {
 
     if (!profile) return;
 
-    await prisma.corporationVerification.upsert({
+    await prisma.companyVerification.upsert({
       where: { profileId: profile.id },
       update: { status: "PENDING" },
       create: {
@@ -36,12 +36,12 @@ export default async function CorporationApplyPage() {
       },
     });
 
-    redirect("/corporation/apply");
+    redirect("/company/apply");
   }
 
   return (
     <form action={apply} className="max-w-md space-y-4">
-      <h1 className="text-xl font-bold">Apply as Corporation</h1>
+      <h1 className="text-xl font-bold">Apply as Company</h1>
 
       <p>By applying, your company profile will be reviewed by our admins.</p>
 
