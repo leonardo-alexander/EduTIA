@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Search, Filter, ChevronDown, X, Star } from "lucide-react";
 import JobCard from "./JobCard";
-import { CourseUI } from "@/types/course.ui";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CategoryUI } from "@/types/category.ui";
 import { JobUI } from "@/types/job.ui";
+import { JobType, WorkMode } from "@prisma/client";
 
 type CoursesProps = {
   jobs: JobUI[];
@@ -15,13 +15,22 @@ type CoursesProps = {
   isAuthenticated: boolean;
 };
 
-const DURATION_LABELS: Record<string, string> = {
-  extraShort: "0–2 hours",
-  short: "2–5 hours",
-  medium: "5–10 hours",
-  long: "10–20 hours",
-  extraLong: "20+ hours",
+const TYPE_LABELS: Record<JobType, string> = {
+  FULL_TIME: "Full Time",
+  PART_TIME: "Part Time",
+  CONTRACT: "Contract",
+  FREELANCE: "Freelance",
+  INTERNSHIP: "Internship",
 };
+
+const SALARY_OPTIONS = [
+  { label: "Any", value: "" },
+  { label: "5 jt", value: "5000000" },
+  { label: "10 jt", value: "10000000" },
+  { label: "15 jt", value: "15000000" },
+  { label: "20 jt", value: "20000000" },
+  { label: "25 jt", value: "25000000" },
+];
 
 export default function Jobs({
   jobs,
@@ -37,59 +46,72 @@ export default function Jobs({
     [searchParams],
   );
 
-  function getCategory(): string {
-    const categorySlug = params.get("category");
-
-    if (!categorySlug) return "All";
-
-    const category = categories.find((cat) => cat.slug === categorySlug);
-
-    return category?.name ?? "All";
-  }
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
 
   function updateParams(mutator: (params: URLSearchParams) => void) {
-    const next = new URLSearchParams(searchParams.toString());
+    const next = new URLSearchParams(params);
     mutator(next);
-    router.push(`/courses?${next.toString()}`, { scroll: false });
+    router.push(`/jobs?${next.toString()}`, { scroll: false });
   }
 
-  function handleRatingToggle(rating: string): void {
+  function handleCategoryToggle(category: string): void {
     updateParams((params) => {
-      params.get("rating") === rating
-        ? params.delete("rating")
-        : params.set("rating", rating);
-    });
-  }
+      const selected = params.getAll("category");
+      params.delete("category");
 
-  function handleLevelToggle(level: string): void {
-    updateParams((params) => {
-      const selected = params.getAll("level");
-      params.delete("level");
-
-      if (selected.includes(level)) {
+      if (selected.includes(category)) {
         selected
-          .filter((l) => l !== level)
-          .forEach((l) => params.append("level", l));
+          .filter((l) => l !== category)
+          .forEach((l) => params.append("category", l));
       } else {
-        selected.forEach((l) => params.append("level", l));
-        params.append("level", level);
+        selected.forEach((l) => params.append("category", l));
+        params.append("category", category);
       }
     });
   }
 
-  function handleDurationToggle(duration: string): void {
+  function handleTypeToggle(type: string): void {
     updateParams((params) => {
-      const selected = params.getAll("duration");
-      params.delete("duration");
+      const selected = params.getAll("type");
+      params.delete("type");
 
-      if (selected.includes(duration)) {
+      if (selected.includes(type)) {
         selected
-          .filter((d) => d !== duration)
-          .forEach((d) => params.append("duration", d));
+          .filter((l) => l !== type)
+          .forEach((l) => params.append("type", l));
       } else {
-        selected.forEach((d) => params.append("duration", d));
-        params.append("duration", duration);
+        selected.forEach((l) => params.append("type", l));
+        params.append("type", type);
       }
+    });
+  }
+
+  function handleModeToggle(mode: string): void {
+    updateParams((params) => {
+      const selected = params.getAll("mode");
+      params.delete("mode");
+
+      if (selected.includes(mode)) {
+        selected
+          .filter((l) => l !== mode)
+          .forEach((l) => params.append("mode", l));
+      } else {
+        selected.forEach((l) => params.append("mode", l));
+        params.append("mode", mode);
+      }
+    });
+  }
+
+  function applySalaryFilter() {
+    if (salaryMin && salaryMax && Number(salaryMin) > Number(salaryMax)) {
+      alert("Minimum salary cannot be higher than maximum salary");
+      return;
+    }
+
+    updateParams((params) => {
+      salaryMin ? params.set("min", salaryMin) : params.delete("min");
+      salaryMax ? params.set("max", salaryMax) : params.delete("max");
     });
   }
 
@@ -125,7 +147,7 @@ export default function Jobs({
             className={`z-40
             fixed inset-0 bg-white lg:bg-transparent 
             lg:sticky lg:top-6 lg:w-64 lg:block lg:h-[calc(100vh-3rem)] lg:overflow-y-auto 
-            overflow-y-auto transition-transform duration-300 ease-in-out
+            overflow-y-auto transition-transform duration-300 ease-in-out lg:px-2
             ${
               mobileFiltersOpen
                 ? "translate-x-0 sm:w-80"
@@ -157,6 +179,7 @@ export default function Jobs({
                           checked={params
                             .getAll("category")
                             .includes(category.slug)}
+                          onChange={() => handleCategoryToggle(category.slug)}
                           className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
                         <svg
@@ -186,22 +209,16 @@ export default function Jobs({
                   Types
                 </h3>
                 <div className="space-y-3">
-                  {[
-                    "FULL_TIME",
-                    "PART_TIME",
-                    "CONTRACT",
-                    "FREELANCE",
-                    "INTERNSHIP",
-                  ].map((level) => (
+                  {Object.values(JobType).map((type) => (
                     <label
-                      key={level}
+                      key={type}
                       className="flex items-center gap-3 group cursor-pointer"
                     >
                       <div className="relative flex items-center">
                         <input
                           type="checkbox"
-                          checked={params.getAll("level").includes(level)}
-                          onChange={() => handleLevelToggle(level)}
+                          checked={params.getAll("type").includes(type)}
+                          onChange={() => handleTypeToggle(type)}
                           className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
                         <svg
@@ -219,7 +236,7 @@ export default function Jobs({
                         </svg>
                       </div>
                       <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
-                        {level.toLowerCase()}
+                        {TYPE_LABELS[type]}
                       </span>
                     </label>
                   ))}
@@ -231,16 +248,16 @@ export default function Jobs({
                   Work Modes
                 </h3>
                 <div className="space-y-3">
-                  {["ONSITE", "REMOTE", "HYBRID"].map((level) => (
+                  {Object.values(WorkMode).map((mode) => (
                     <label
-                      key={level}
+                      key={mode}
                       className="flex items-center gap-3 group cursor-pointer"
                     >
                       <div className="relative flex items-center">
                         <input
                           type="checkbox"
-                          checked={params.getAll("level").includes(level)}
-                          onChange={() => handleLevelToggle(level)}
+                          checked={params.getAll("mode").includes(mode)}
+                          onChange={() => handleModeToggle(mode)}
                           className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
                         <svg
@@ -258,7 +275,7 @@ export default function Jobs({
                         </svg>
                       </div>
                       <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
-                        {level.toLowerCase()}
+                        {mode.toLowerCase()}
                       </span>
                     </label>
                   ))}
@@ -269,48 +286,47 @@ export default function Jobs({
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
                   Salary
                 </h3>
-                <div className="space-y-3">
-                  {["< 5 mil", "5-10 mil", "10-20 mil", "> 20 mil"].map(
-                    (duration) => (
-                      <label
-                        key={duration}
-                        className="flex items-center gap-3 group cursor-pointer"
-                      >
-                        <div className="relative flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={params
-                              .getAll("duration")
-                              .includes(duration)}
-                            onChange={() => handleDurationToggle(duration)}
-                            className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
-                          />
-                          <svg
-                            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="3"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        </div>
 
-                        <span className="text-slate-600 group-hover:text-eduBlue transition-colors">
-                          {duration}
-                        </span>
-                      </label>
-                    ),
-                  )}
+                <div className="flex items-center gap-2">
+                  <select
+                    value={salaryMin}
+                    onChange={(e) => setSalaryMin(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
+                  >
+                    <option value="">Min</option>
+                    {SALARY_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span className="text-slate-400">—</span>
+
+                  <select
+                    value={salaryMax}
+                    onChange={(e) => setSalaryMax(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
+                  >
+                    <option value="">Max</option>
+                    {SALARY_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                <button
+                  onClick={applySalaryFilter}
+                  className="mt-3 w-full bg-eduBlue text-white py-2 rounded-lg text-sm font-semibold hover:bg-eduBlue/90 transition"
+                >
+                  Apply
+                </button>
               </div>
 
               <Link
-                href="/courses"
+                href="/jobs"
                 className="mt-6 block w-full text-center py-3 text-sm font-bold text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
                 Clear Filters
@@ -350,7 +366,11 @@ export default function Jobs({
             {jobs.length > 0 ? (
               <div className="grid gap-6 mx-10 md:grid-cols-2 sm:mx-0">
                 {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} />
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    isAuthenticated={isAuthenticated}
+                  />
                 ))}
               </div>
             ) : (
@@ -366,7 +386,7 @@ export default function Jobs({
                   looking for.
                 </p>
                 <Link
-                  href="/courses"
+                  href="/jobs"
                   className="mt-6 inline-block px-1 py-2 text-sm font-bold text-eduBlue hover:underline hover:text-eduBlue/80 transition-colors"
                 >
                   Clear all filters

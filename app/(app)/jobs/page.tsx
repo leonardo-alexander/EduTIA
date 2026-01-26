@@ -1,5 +1,6 @@
 import Jobs from "@/components/jobs/Jobs";
 import { getCurrentUser } from "@/lib/auth";
+import { getJobs } from "@/lib/data/jobs";
 import { prisma } from "@/lib/prisma";
 import { JobUI } from "@/types/job.ui";
 
@@ -23,18 +24,7 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   const categories = await prisma.jobCategory.findMany();
-
-  const jobs: JobUI[] = await prisma.jobPosting.findMany({
-    where: { status: "PUBLISHED" },
-    include: {
-      category: true,
-      user: {
-        include: {
-          profile: true,
-        },
-      },
-    },
-  });
+  const jobs: JobUI[] = await getJobs(params);
 
   return <Jobs jobs={jobs} categories={categories} isAuthenticated={!!user} />;
 }

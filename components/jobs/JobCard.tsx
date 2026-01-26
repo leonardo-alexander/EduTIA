@@ -2,7 +2,13 @@ import Link from "next/link";
 import { JobUI } from "@/types/job.ui";
 import { JobType, WorkMode } from "@prisma/client";
 
-export default function JobCard({ job }: { job: JobUI }) {
+export default function JobCard({
+  job,
+  isAuthenticated,
+}: {
+  job: JobUI;
+  isAuthenticated: boolean;
+}) {
   const JOB_TYPE_LABELS: Record<JobType, string> = {
     FULL_TIME: "Full Time",
     PART_TIME: "Part Time",

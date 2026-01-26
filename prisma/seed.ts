@@ -357,23 +357,73 @@ async function main() {
     jobCategoryList.map((c) => [c.slug, c.id]),
   );
 
-  await prisma.jobPosting.create({
-    data: {
-      title: "Data Analyst",
-      slug: slugify("Data Analyst"),
-      description: "Analyze business and product data to support decisions.",
-      status: "PUBLISHED",
+  await prisma.jobPosting.createMany({
+    data: [
+      {
+        title: "Data Analyst",
+        slug: slugify("Data Analyst"),
+        description: "Analyze business and product data to support decisions.",
+        status: "PUBLISHED",
 
-      categoryId: jobCategoryMap["data-ai"],
+        categoryId: jobCategoryMap["data-ai"],
 
-      type: "FULL_TIME",
-      workMode: "REMOTE",
+        type: "FULL_TIME",
+        workMode: "REMOTE",
 
-      salaryMin: 600,
-      salaryMax: 1200,
+        salaryMin: 600,
+        salaryMax: 1200,
 
-      userId: corp.id,
-    },
+        userId: corp.id,
+      },
+      {
+        title: "Data Scientist",
+        slug: slugify("Data Scientist"),
+        description: "Analyze business and product data to support decisions.",
+        status: "PUBLISHED",
+
+        categoryId: jobCategoryMap["data-ai"],
+
+        type: "FULL_TIME",
+        workMode: "REMOTE",
+
+        salaryMin: 600,
+        salaryMax: 1200,
+
+        userId: corp.id,
+      },
+      {
+        title: "Data Engineer",
+        slug: slugify("Data Engineer"),
+        description: "Analyze business and product data to support decisions.",
+        status: "PUBLISHED",
+
+        categoryId: jobCategoryMap["data-ai"],
+
+        type: "FULL_TIME",
+        workMode: "REMOTE",
+
+        salaryMin: 600,
+        salaryMax: 1200,
+
+        userId: corp.id,
+      },
+      {
+        title: "UI/UX Designer",
+        slug: slugify("UI/UX Designer"),
+        description: "Analyze business and product data to support decisions.",
+        status: "PUBLISHED",
+
+        categoryId: jobCategoryMap["data-ai"],
+
+        type: "PART_TIME",
+        workMode: "HYBRID",
+
+        salaryMin: 600,
+        salaryMax: 1200,
+
+        userId: corp.id,
+      },
+    ],
   });
 }
 

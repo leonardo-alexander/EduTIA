@@ -25,77 +25,68 @@ export async function getCourses(
   if (sort === "review") orderBy = { reviewCount: "desc" };
   if (sort === "newest") orderBy = { createdAt: "desc" };
 
+  const and: Prisma.CourseWhereInput[] = [];
+
+  if (keywords.length) {
+    for (const word of keywords) {
+      and.push({
+        OR: [
+          {
+            title: { contains: word, mode: "insensitive" },
+          },
+          {
+            description: { contains: word, mode: "insensitive" },
+          },
+        ],
+      });
+    }
+  }
+
+  if (category) {
+    and.push({
+      category: {
+        slug: category,
+      },
+    });
+  }
+
+  if (levels.length) {
+    and.push({
+      level: { in: levels },
+    });
+  }
+
+  if (durations.length) {
+    and.push({
+      OR: durations.flatMap<Prisma.CourseWhereInput>((d) => {
+        switch (d) {
+          case "extraShort":
+            return [{ duration: { gte: 0, lte: 120 } }];
+          case "short":
+            return [{ duration: { gt: 120, lte: 300 } }];
+          case "medium":
+            return [{ duration: { gt: 300, lte: 600 } }];
+          case "long":
+            return [{ duration: { gt: 600, lte: 1200 } }];
+          case "extraLong":
+            return [{ duration: { gt: 1200 } }];
+          default:
+            return [];
+        }
+      }),
+    });
+  }
+
+  if (rating !== undefined) {
+    and.push({
+      avgRating: { gte: rating },
+    });
+  }
+
   const courses = await prisma.course.findMany({
     where: {
       isPublished: true,
-
-      AND: [
-        ...keywords.map((word) => ({
-          OR: [
-            {
-              title: {
-                contains: word,
-                mode: Prisma.QueryMode.insensitive,
-              },
-            },
-            {
-              description: {
-                contains: word,
-                mode: Prisma.QueryMode.insensitive,
-              },
-            },
-          ],
-        })),
-
-        ...(category
-          ? [
-              {
-                category: {
-                  slug: category,
-                },
-              },
-            ]
-          : []),
-
-        ...(levels.length
-          ? [
-              {
-                level: {
-                  in: levels,
-                },
-              },
-            ]
-          : []),
-
-        ...(durations.length
-          ? [
-              {
-                OR: durations.flatMap<Prisma.CourseWhereInput>((d) => {
-                  if (d === "extraShort")
-                    return [{ duration: { gte: 0, lte: 120 } }];
-                  if (d === "short")
-                    return [{ duration: { gt: 120, lte: 300 } }];
-                  if (d === "medium")
-                    return [{ duration: { gt: 300, lte: 600 } }];
-                  if (d === "long")
-                    return [{ duration: { gt: 600, lte: 1200 } }];
-                  if (d === "extraLong") return [{ duration: { gt: 1200 } }];
-                  return [];
-                }),
-              },
-            ]
-          : []),
-
-        ...(rating !== undefined
-          ? [
-              {
-                avgRating: {
-                  gte: rating,
-                },
-              },
-            ]
-          : []),
-      ],
+      AND: and.length ? and : undefined,
     },
     select: {
       id: true,
@@ -108,17 +99,10 @@ export async function getCourses(
       avgRating: true,
       reviewCount: true,
       category: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-        },
+        select: { id: true, name: true, slug: true },
       },
       favorites: userId
-        ? {
-            where: { userId },
-            select: { userId: true },
-          }
+        ? { where: { userId }, select: { userId: true } }
         : false,
     },
     orderBy,
