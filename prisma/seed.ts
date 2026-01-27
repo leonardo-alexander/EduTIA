@@ -369,6 +369,7 @@ async function main() {
 
         type: "FULL_TIME",
         workMode: "REMOTE",
+        level: "JUNIOR",
 
         salaryMin: 600,
         salaryMax: 1200,
@@ -385,6 +386,7 @@ async function main() {
 
         type: "FULL_TIME",
         workMode: "REMOTE",
+        level: "SENIOR",
 
         salaryMin: 600,
         salaryMax: 1200,
@@ -401,6 +403,7 @@ async function main() {
 
         type: "FULL_TIME",
         workMode: "REMOTE",
+        level: "MID",
 
         salaryMin: 600,
         salaryMax: 1200,
@@ -417,6 +420,7 @@ async function main() {
 
         type: "PART_TIME",
         workMode: "HYBRID",
+        level: "LEAD",
 
         salaryMin: 600,
         salaryMax: 1200,

@@ -278,12 +278,16 @@ model JobPosting {
   slug        String   @unique
   description String
 
+  applicators Int @default(0)
+  hired       Int @default(0)
+
   categoryId  String
   category    JobCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   status      JobStatus @default(DRAFT)
   type        JobType
   workMode    WorkMode
+  level       ExperienceLevel
 
   salaryMin   Int?
   salaryMax   Int?
@@ -301,6 +305,7 @@ model JobPosting {
   @@index([status])
   @@index([categoryId])
   @@index([userId])
+  @@index([status, categoryId])
 }
 
 model JobApplication {
@@ -405,6 +410,13 @@ enum WorkMode {
   ONSITE
   REMOTE
   HYBRID
+}
+
+enum ExperienceLevel {
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
 }
 
 enum ApplicationStatus {

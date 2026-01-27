@@ -26,6 +26,9 @@ CREATE TYPE "JobType" AS ENUM ('FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE'
 CREATE TYPE "WorkMode" AS ENUM ('ONSITE', 'REMOTE', 'HYBRID');
 
 -- CreateEnum
+CREATE TYPE "ExperienceLevel" AS ENUM ('JUNIOR', 'MID', 'SENIOR', 'LEAD');
+
+-- CreateEnum
 CREATE TYPE "ApplicationStatus" AS ENUM ('APPLIED', 'REVIEWED', 'ACCEPTED', 'REJECTED');
 
 -- CreateEnum
@@ -247,10 +250,13 @@ CREATE TABLE "JobPosting" (
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "applicators" INTEGER NOT NULL DEFAULT 0,
+    "hired" INTEGER NOT NULL DEFAULT 0,
     "categoryId" TEXT NOT NULL,
     "status" "JobStatus" NOT NULL DEFAULT 'DRAFT',
     "type" "JobType" NOT NULL,
     "workMode" "WorkMode" NOT NULL,
+    "level" "ExperienceLevel" NOT NULL,
     "salaryMin" INTEGER,
     "salaryMax" INTEGER,
     "userId" TEXT NOT NULL,
@@ -405,6 +411,9 @@ CREATE INDEX "JobPosting_categoryId_idx" ON "JobPosting"("categoryId");
 
 -- CreateIndex
 CREATE INDEX "JobPosting_userId_idx" ON "JobPosting"("userId");
+
+-- CreateIndex
+CREATE INDEX "JobPosting_status_categoryId_idx" ON "JobPosting"("status", "categoryId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Skill_userId_name_key" ON "Skill"("userId", "name");
