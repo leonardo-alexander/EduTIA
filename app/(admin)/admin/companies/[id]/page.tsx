@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { verifyCorp, unverifyCorp } from "@/actions/corpAdmin";
+import { verifyCorp, unverifyCorp } from "@/actions/compAdmin";
 
 export default async function ReviewCorp({
   params,

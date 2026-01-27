@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { CompanyVerification, Profile, User } from "@prisma/client";
 import ProfileView from "./ProfileView";
 import ProfileForm from "./ProfileForm";
@@ -34,6 +34,10 @@ export default function ProfileContainer({
     [searchParams],
   );
 
+  const handleIncompleteProfile = useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
   useEffect(() => {
     if (isEditParam) {
       setIsEditing(true);
@@ -60,6 +64,7 @@ export default function ProfileContainer({
       completedEnrollments={completedEnrollments}
       totalJobApplications={totalJobApplications}
       onEdit={() => setIsEditing(true)}
+      onIncompleteProfile={handleIncompleteProfile}
     />
   );
 }

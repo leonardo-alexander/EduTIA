@@ -1,6 +1,8 @@
 "use client";
 
+import { verifyCompany } from "@/actions/verify";
 import { CompanyVerification, Profile, User } from "@prisma/client";
+import { useEffect, useActionState } from "react";
 import {
   User as UserIcon,
   Calendar,
@@ -29,6 +31,7 @@ type ProfileViewProps = {
   completedEnrollments: number;
   totalJobApplications: number;
   onEdit: () => void;
+  onIncompleteProfile: () => void;
 };
 
 export default function ProfileView({
@@ -39,7 +42,10 @@ export default function ProfileView({
   completedEnrollments,
   totalJobApplications,
   onEdit,
+  onIncompleteProfile,
 }: ProfileViewProps) {
+  const [state, formAction, isPending] = useActionState(verifyCompany, null);
+
   const websiteUrl = profile?.companyWebsite
     ? profile.companyWebsite.startsWith("http")
       ? profile.companyWebsite
@@ -62,6 +68,20 @@ export default function ProfileView({
     return gender.charAt(0) + gender.slice(1).toLowerCase();
   };
 
+  const isProfileComplete =
+    !!profile?.name && !!profile?.companyAddress && !!profile?.companyWebsite;
+
+  useEffect(() => {
+    if (state?.success) {
+      window.location.reload();
+    }
+
+    if (state?.incomplete) {
+      onIncompleteProfile();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [state, onIncompleteProfile]);
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50/30">
       <div className="bg-eduBlue">
@@ -82,12 +102,46 @@ export default function ProfileView({
               </div>
             </div>
 
-            {((user.role === "COMPANY" && !verification) ||
-              verification?.status === "UNVERIFIED") && (
-              <button className="flex items-center gap-2 px-5 py-2.5 bg-white text-eduBlue font-semibold rounded-full shadow-md hover:shadow-2xl transition-all duration-200">
-                Verify Company
-              </button>
-            )}
+            {user.role === "COMPANY" &&
+              (!verification || verification.status === "UNVERIFIED") && (
+                <form action={formAction}>
+                  <input type="hidden" name="userId" value={user.id} />
+
+                  <button
+                    type="submit"
+                    disabled={!isProfileComplete || isPending}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-all ${isProfileComplete && !isPending ? "bg-white text-eduBlue hover:shadow-2xl" : "bg-gray-300 text-gray-500 cursor-not-allowed"}`}
+                  >
+                    {isPending ? (
+                      <>
+                        <svg
+                          className="animate-spin h-4 w-4 text-eduBlue"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                          />
+                        </svg>
+                        Verifying...
+                      </>
+                    ) : (
+                      "Verify Company"
+                    )}
+                  </button>
+                </form>
+              )}
             <button
               onClick={onEdit}
               className="flex items-center gap-2 px-5 py-2.5 bg-white text-eduBlue font-semibold rounded-full shadow-md hover:shadow-2xl transition-all duration-200"
@@ -98,6 +152,16 @@ export default function ProfileView({
           </div>
         </div>
       </div>
+
+      {!isProfileComplete && (
+        <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
+          <strong>Profile incomplete.</strong>
+          <p className="mt-1">
+            Please complete your company name, address, and website before
+            requesting verification.
+          </p>
+        </div>
+      )}
 
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -121,14 +185,14 @@ export default function ProfileView({
                         <DetailItem
                           icon={<CaseSensitive className="w-4 h-4" />}
                           label="Company Name"
-                          value={profile?.name}
+                          value={profile?.name || null}
                           iconBg="bg-blue-50"
                           iconColor="text-blue-600"
                         />
                         <DetailItem
                           icon={<MapPinned className="w-4 h-4" />}
                           label="Company Address"
-                          value={profile?.companyAddress}
+                          value={profile?.companyAddress || null}
                           iconBg="bg-purple-50"
                           iconColor="text-purple-600"
                         />
@@ -229,13 +293,6 @@ export default function ProfileView({
                           iconBg="bg-emerald-50"
                           iconColor="text-emerald-600"
                         />
-                        {/* <DetailItem
-                          icon={<Mail className="w-4 h-4" />}
-                          label="Email"
-                          value={user.email}
-                          iconBg="bg-rose-50"
-                          iconColor="text-rose-600"
-                        /> */}
                       </div>
                       <div className="pt-0 p-6 sm:pt-6 space-y-5 flex-1 flex flex-col">
                         <DetailItem

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useState, useActionState, useEffect } from "react";
 import { Profile, User } from "@prisma/client";
 import {
   User as UserIcon,
@@ -32,12 +32,20 @@ export default function ProfileForm({
 }: ProfileFormProps) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(updateProfile, null);
+  const [isFinishing, setIsFinishing] = useState(false);
+  const loading = isPending || isFinishing;
 
   useEffect(() => {
-    if (state?.success) {
+    if (!state?.success) return;
+
+    setIsFinishing(true);
+
+    const t = setTimeout(() => {
       router.refresh();
       onCancel();
-    }
+    }, 600);
+
+    return () => clearTimeout(t);
   }, [state, router, onCancel]);
 
   return (
@@ -77,15 +85,20 @@ export default function ProfileForm({
               </button>
               <button
                 type="submit"
-                disabled={isPending}
-                className="flex items-center gap-2 px-5 py-2.5 bg-white text-eduBlue font-semibold rounded-full shadow-md hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md transition-all duration-200"
+                disabled={loading}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-all ${loading ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-white text-eduBlue hover:shadow-2xl"}`}
               >
-                {isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
                 ) : (
-                  <Save className="w-4 h-4" />
+                  <>
+                    <Save className="w-4 h-4" />
+                    Save Changes
+                  </>
                 )}
-                {isPending ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </div>
@@ -133,9 +146,9 @@ export default function ProfileForm({
                       >
                         <input
                           type="text"
-                          name="name"
-                          defaultValue={profile?.name ?? ""}
-                          placeholder="Your company name"
+                          name="companyAddress"
+                          defaultValue={profile?.companyAddress ?? ""}
+                          placeholder="Your company address"
                           className="form-input"
                         />
                       </FormField>
