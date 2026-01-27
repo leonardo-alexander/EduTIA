@@ -7,12 +7,19 @@ import JobCard from "./JobCard";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CategoryUI } from "@/types/category.ui";
 import { JobUI } from "@/types/job.ui";
-import { JobType, WorkMode } from "@prisma/client";
+import { ExperienceLevel, JobType, WorkMode } from "@prisma/client";
 
 type CoursesProps = {
   jobs: JobUI[];
   categories: CategoryUI[];
   isAuthenticated: boolean;
+};
+
+const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
+  JUNIOR: "Junior",
+  MID: "Mid",
+  SENIOR: "Senior",
+  LEAD: "Lead",
 };
 
 const TYPE_LABELS: Record<JobType, string> = {
@@ -67,6 +74,22 @@ export default function Jobs({
       } else {
         selected.forEach((l) => params.append("category", l));
         params.append("category", category);
+      }
+    });
+  }
+
+  function handleLevelToggle(level: string): void {
+    updateParams((params) => {
+      const selected = params.getAll("level");
+      params.delete("level");
+
+      if (selected.includes(level)) {
+        selected
+          .filter((l) => l !== level)
+          .forEach((l) => params.append("level", l));
+      } else {
+        selected.forEach((l) => params.append("level", l));
+        params.append("level", level);
       }
     });
   }
@@ -198,6 +221,45 @@ export default function Jobs({
                       </div>
                       <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
                         {category.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
+                  Levels
+                </h3>
+                <div className="space-y-3">
+                  {Object.values(ExperienceLevel).map((level) => (
+                    <label
+                      key={level}
+                      className="flex items-center gap-3 group cursor-pointer"
+                    >
+                      <div className="relative flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={params.getAll("level").includes(level)}
+                          onChange={() => handleLevelToggle(level)}
+                          className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
+                        />
+                        <svg
+                          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
+                        {EXPERIENCE_LEVEL_LABELS[level]}
                       </span>
                     </label>
                   ))}

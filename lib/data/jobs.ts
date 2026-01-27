@@ -1,12 +1,13 @@
 import { JobUI } from "@/types/job.ui";
 import { prisma } from "../prisma";
-import { JobType, Prisma, WorkMode } from "@prisma/client";
+import { ExperienceLevel, JobType, Prisma, WorkMode } from "@prisma/client";
 
 export async function getJobs(
   params: URLSearchParams = new URLSearchParams(),
   userId?: string,
 ): Promise<JobUI[]> {
   const categories = params.getAll("category");
+  const levels = params.getAll("level") as ExperienceLevel[];
   const types = params.getAll("type") as JobType[];
   const modes = params.getAll("mode") as WorkMode[];
   const min = params.get("min") ? Number(params.get("min")) : undefined;
@@ -23,6 +24,14 @@ export async function getJobs(
         slug: {
           in: categories,
         },
+      },
+    });
+  }
+
+  if (levels.length) {
+    and.push({
+      level: {
+        in: levels,
       },
     });
   }

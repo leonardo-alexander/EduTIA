@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { JobUI } from "@/types/job.ui";
-import { JobType, WorkMode } from "@prisma/client";
+import { JobType, WorkMode, ExperienceLevel } from "@prisma/client";
 
 export default function JobCard({
   job,
@@ -9,6 +9,13 @@ export default function JobCard({
   job: JobUI;
   isAuthenticated: boolean;
 }) {
+  const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
+    JUNIOR: "Junior",
+    MID: "Mid",
+    SENIOR: "Senior",
+    LEAD: "Lead",
+  };
+
   const JOB_TYPE_LABELS: Record<JobType, string> = {
     FULL_TIME: "Full Time",
     PART_TIME: "Part Time",
@@ -21,6 +28,13 @@ export default function JobCard({
     ONSITE: "On-site",
     REMOTE: "Remote",
     HYBRID: "Hybrid",
+  };
+
+  const EXPERIENCE_LEVEL_STYLES: Record<ExperienceLevel, string> = {
+    JUNIOR: "bg-green-100 text-green-700",
+    MID: "bg-yellow-100 text-yellow-700",
+    SENIOR: "bg-orange-100 text-orange-700",
+    LEAD: "bg-red-100 text-red-700",
   };
 
   const JOB_TYPE_STYLES: Record<JobType, string> = {
@@ -85,6 +99,11 @@ export default function JobCard({
             <p className="text-sm font-semibold text-black">Tags:</p>
 
             <div className="flex items-center gap-2 flex-wrap pt-2">
+              <span
+                className={`text-xs font-semibold px-3 py-1 rounded-full ${EXPERIENCE_LEVEL_STYLES[job.level]}`}
+              >
+                {EXPERIENCE_LEVEL_LABELS[job.level]}
+              </span>
               <span
                 className={`text-xs font-semibold px-3 py-1 rounded-full ${JOB_TYPE_STYLES[job.type]}`}
               >
