@@ -54,7 +54,6 @@ CREATE TABLE "Profile" (
     "name" TEXT,
     "dob" TIMESTAMP(3),
     "gender" "Gender",
-    "companyName" TEXT,
     "companyWebsite" TEXT,
     "companyAddress" TEXT,
     "totalJobs" INTEGER NOT NULL DEFAULT 0,

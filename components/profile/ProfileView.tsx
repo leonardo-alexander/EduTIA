@@ -1,6 +1,6 @@
 "use client";
 
-import { Profile, User } from "@prisma/client";
+import { CompanyVerification, Profile, User } from "@prisma/client";
 import {
   User as UserIcon,
   Calendar,
@@ -15,17 +15,29 @@ import {
   TicketCheck,
   FileUser,
   MapPinned,
+  ChartArea,
+  Rss,
+  ListCheck,
 } from "lucide-react";
+import Link from "next/link";
 
 type ProfileViewProps = {
   profile: Profile | null;
   user: User;
+  verification: CompanyVerification | null;
+  totalEnrollments: number;
+  completedEnrollments: number;
+  totalJobApplications: number;
   onEdit: () => void;
 };
 
 export default function ProfileView({
   profile,
   user,
+  verification,
+  totalEnrollments,
+  completedEnrollments,
+  totalJobApplications,
   onEdit,
 }: ProfileViewProps) {
   const websiteUrl = profile?.companyWebsite
@@ -60,7 +72,6 @@ export default function ProfileView({
               alt="Avatar"
               className="h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover bg-white"
             />
-
             <div className="flex-1 text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                 {displayName}
@@ -71,6 +82,12 @@ export default function ProfileView({
               </div>
             </div>
 
+            {((user.role === "COMPANY" && !verification) ||
+              verification?.status === "UNVERIFIED") && (
+              <button className="flex items-center gap-2 px-5 py-2.5 bg-white text-eduBlue font-semibold rounded-full shadow-md hover:shadow-2xl transition-all duration-200">
+                Verify Company
+              </button>
+            )}
             <button
               onClick={onEdit}
               className="flex items-center gap-2 px-5 py-2.5 bg-white text-eduBlue font-semibold rounded-full shadow-md hover:shadow-2xl transition-all duration-200"
@@ -102,15 +119,22 @@ export default function ProfileView({
                     <div className="sm:grid sm:grid-cols-2">
                       <div className="pb-5 p-6 sm:pb-6 space-y-5 flex-1 flex flex-col">
                         <DetailItem
-                          icon={<Building2 className="w-4 h-4" />}
+                          icon={<CaseSensitive className="w-4 h-4" />}
                           label="Company Name"
-                          value={profile?.companyName}
-                          iconBg="bg-orange-50"
-                          iconColor="text-orange-600"
+                          value={profile?.name}
+                          iconBg="bg-blue-50"
+                          iconColor="text-blue-600"
+                        />
+                        <DetailItem
+                          icon={<MapPinned className="w-4 h-4" />}
+                          label="Company Address"
+                          value={profile?.companyAddress}
+                          iconBg="bg-purple-50"
+                          iconColor="text-purple-600"
                         />
                         <DetailItem
                           icon={<Globe className="w-4 h-4" />}
-                          label="Website"
+                          label="Company Website"
                           value={
                             profile?.companyWebsite ? (
                               <a
@@ -136,32 +160,33 @@ export default function ProfileView({
                               </a>
                             ) : null
                           }
-                          iconBg="bg-cyan-50"
-                          iconColor="text-cyan-600"
-                        />
-
-                        <DetailItem
-                          icon={<MapPinned className="w-4 h-4" />}
-                          label="Company Address"
-                          value={profile?.companyAddress}
-                          iconBg="bg-blue-50"
-                          iconColor="text-blue-600"
+                          iconBg="bg-emerald-50"
+                          iconColor="text-emerald-600"
                         />
                       </div>
                       <div className="pt-0 p-6 sm:pt-6 space-y-5 flex-1 flex flex-col">
+                        <div>
+                          <DetailItem
+                            icon={<ChartArea className="w-4 h-4" />}
+                            label="Company Status"
+                            value={verification?.status ?? "UNVERIFIED"}
+                            iconBg="bg-yellow-50"
+                            iconColor="text-yellow-600"
+                          />
+                        </div>
                         <DetailItem
-                          icon={<MapPinned className="w-4 h-4" />}
+                          icon={<Rss className="w-4 h-4" />}
                           label="Job Postings"
                           value={profile?.totalJobs}
-                          iconBg="bg-blue-50"
-                          iconColor="text-blue-600"
+                          iconBg="bg-orange-50"
+                          iconColor="text-orange-600"
                         />
                         <DetailItem
-                          icon={<MapPinned className="w-4 h-4" />}
+                          icon={<ListCheck className="w-4 h-4" />}
                           label="Hired Educatee"
                           value={profile?.totalHired}
-                          iconBg="bg-blue-50"
-                          iconColor="text-blue-600"
+                          iconBg="bg-cyan-50"
+                          iconColor="text-cyan-600"
                         />
                       </div>
                     </div>
@@ -186,7 +211,7 @@ export default function ProfileView({
                         <DetailItem
                           icon={<CaseSensitive className="w-4 h-4" />}
                           label="Full Name"
-                          value={profile?.name}
+                          value={profile?.name || null}
                           iconBg="bg-blue-50"
                           iconColor="text-blue-600"
                         />
@@ -204,33 +229,33 @@ export default function ProfileView({
                           iconBg="bg-emerald-50"
                           iconColor="text-emerald-600"
                         />
-                        <DetailItem
+                        {/* <DetailItem
                           icon={<Mail className="w-4 h-4" />}
                           label="Email"
                           value={user.email}
                           iconBg="bg-rose-50"
                           iconColor="text-rose-600"
-                        />
+                        /> */}
                       </div>
                       <div className="pt-0 p-6 sm:pt-6 space-y-5 flex-1 flex flex-col">
                         <DetailItem
                           icon={<HeartHandshake className="w-4 h-4" />}
                           label="Enrollments"
-                          value={profile?.name}
+                          value={totalEnrollments}
                           iconBg="bg-yellow-50"
                           iconColor="text-yellow-600"
                         />
                         <DetailItem
                           icon={<TicketCheck className="w-4 h-4" />}
                           label="Certificates"
-                          value={formatDate(profile?.dob)}
+                          value={completedEnrollments}
                           iconBg="bg-orange-50"
                           iconColor="text-orange-600"
                         />
                         <DetailItem
                           icon={<FileUser className="w-4 h-4" />}
-                          label="Jobs applications"
-                          value={formatGender(profile?.gender)}
+                          label="Job applications"
+                          value={totalJobApplications}
                           iconBg="bg-cyan-50"
                           iconColor="text-cyan-600"
                         />
@@ -291,7 +316,7 @@ function DetailItem({
           {label}
         </p>
         <div className="text-slate-900 mt-0.5 wrap-break-words">
-          {value || <span className="text-slate-400">Not provided</span>}
+          {value ?? <span className="text-slate-400">Not provided</span>}
         </div>
       </div>
     </div>

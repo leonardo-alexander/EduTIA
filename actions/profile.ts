@@ -11,8 +11,8 @@ export async function updateProfile(_prevState: any, formData: FormData) {
 
     const name = formData.get("name") as string | null;
     const bio = formData.get("bio") as string | null;
-    const companyName = formData.get("companyName") as string | null;
     const companyWebsite = formData.get("companyWebsite") as string | null;
+    const companyAddress = formData.get("companyAddress") as string | null;
 
     const dobRaw = formData.get("dob");
     let dob: Date | null = null;
@@ -46,8 +46,8 @@ export async function updateProfile(_prevState: any, formData: FormData) {
         gender,
         bio,
         pictureUrl,
-        companyName,
         companyWebsite,
+        companyAddress,
       },
       create: {
         userId,
@@ -56,8 +56,8 @@ export async function updateProfile(_prevState: any, formData: FormData) {
         gender,
         bio,
         pictureUrl,
-        companyName,
         companyWebsite,
+        companyAddress,
       },
     });
 

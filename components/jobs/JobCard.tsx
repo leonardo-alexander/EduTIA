@@ -77,7 +77,7 @@ export default function JobCard({
           </h3>
 
           <p className="text-black text-sm leading-relaxed">
-            {job.user.profile?.companyName} <br />
+            {job.user.profile?.name} <br />
             {job.user.profile?.companyAddress}
           </p>
 

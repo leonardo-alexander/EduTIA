@@ -33,7 +33,7 @@ export default async function ReviewCorp({
         <b>Email:</b> {data.profile.user.email}
       </p>
       <p>
-        <b>Company:</b> {data.profile.companyName}
+        <b>Company:</b> {data.profile.name}
       </p>
       <p>
         <b>Status:</b> {data.status}

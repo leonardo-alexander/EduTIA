@@ -28,7 +28,7 @@ export default async function AdminCompanysPage() {
           {requests.map((r) => (
             <tr key={r.id} className="border-t">
               <td className="p-3">{r.profile.user.email}</td>
-              <td className="p-3 border-l">{r.profile.companyName}</td>
+              <td className="p-3 border-l">{r.profile.name}</td>
               <td className="p-3 border-l text-center">{r.status}</td>
               <td className="p-3 border-l text-center">
                 <Link

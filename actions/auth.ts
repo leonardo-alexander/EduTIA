@@ -48,7 +48,7 @@ export async function loginAction(_prevState: any, formData: FormData) {
     const incomplete =
       user.role === "EDUCATEE"
         ? !user.profile?.name || !user.profile?.dob
-        : !user.profile?.companyName || !user.profile?.companyWebsite;
+        : !user.profile?.name || !user.profile?.companyWebsite;
 
     return { success: true, role: user.role, status: incomplete };
   } catch (error) {

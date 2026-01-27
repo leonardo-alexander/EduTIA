@@ -13,6 +13,8 @@ import {
   X,
   Save,
   Loader2,
+  CaseSensitive,
+  MapPinned,
 } from "lucide-react";
 import { updateProfile } from "@/actions/profile";
 import { useRouter } from "next/navigation";
@@ -109,15 +111,30 @@ export default function ProfileForm({
                     </div>
                     <div className="p-6 space-y-5 flex-1 flex flex-col">
                       <FormField
-                        icon={<Building2 className="w-4 h-4" />}
+                        icon={<CaseSensitive className="w-4 h-4" />}
                         label="Company Name"
-                        iconBg="bg-orange-50"
-                        iconColor="text-orange-600"
+                        iconBg="bg-blue-50"
+                        iconColor="text-blue-600"
                       >
                         <input
                           type="text"
-                          name="companyName"
-                          defaultValue={profile?.companyName ?? ""}
+                          name="name"
+                          defaultValue={profile?.name ?? ""}
+                          placeholder="Your company name"
+                          className="form-input"
+                        />
+                      </FormField>
+
+                      <FormField
+                        icon={<MapPinned className="w-4 h-4" />}
+                        label="Company Address"
+                        iconBg="bg-purple-50"
+                        iconColor="text-purple-600"
+                      >
+                        <input
+                          type="text"
+                          name="name"
+                          defaultValue={profile?.name ?? ""}
                           placeholder="Your company name"
                           className="form-input"
                         />
@@ -126,8 +143,8 @@ export default function ProfileForm({
                       <FormField
                         icon={<Globe className="w-4 h-4" />}
                         label="Company Website"
-                        iconBg="bg-cyan-50"
-                        iconColor="text-cyan-600"
+                        iconBg="bg-emerald-50"
+                        iconColor="text-emerald-600"
                       >
                         <input
                           type="text"

@@ -40,13 +40,11 @@ model Profile {
   dob            DateTime?
   gender         Gender?
 
-  companyName     String?
   companyWebsite  String?
   companyAddress  String?
   totalJobs       Int @default(0)
   totalApplicants Int @default(0)
   totalHired      Int @default(0)
-
 
   userId         String   @unique
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

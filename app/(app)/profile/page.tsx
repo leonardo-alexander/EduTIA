@@ -15,7 +15,25 @@ export default async function ProfilePage() {
       id: user.id,
     },
     include: {
-      profile: true,
+      profile: {
+        include: {
+          verification: true,
+        },
+      },
+      _count: {
+        select: {
+          enrollments: true,
+          jobApplications: true,
+        },
+      },
+      enrollments: {
+        where: {
+          progressPercent: 100,
+        },
+        select: {
+          id: true,
+        },
+      },
     },
   });
 
@@ -23,5 +41,14 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  return <ProfileContainer user={userData} profile={userData.profile} />;
+  return (
+    <ProfileContainer
+      user={userData}
+      profile={userData.profile}
+      verification={userData.profile?.verification ?? null}
+      totalEnrollments={userData?._count.enrollments ?? 0}
+      completedEnrollments={userData?.enrollments.length ?? 0}
+      totalJobApplications={userData?._count.jobApplications ?? 0}
+    />
+  );
 }
