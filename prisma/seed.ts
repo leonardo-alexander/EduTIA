@@ -372,7 +372,8 @@ async function main() {
         workMode: "REMOTE",
         level: "JUNIOR",
 
-        paycheck: 4000000,
+        paycheckMin: 4000000,
+        paycheckMax: 4500000,
 
         userId: corp.id,
       },
@@ -380,6 +381,7 @@ async function main() {
         title: "Data Scientist",
         slug: slugify("Data Scientist"),
         description: "Analyze business and product data to support decisions.",
+        location: "Bogor",
         status: "PUBLISHED",
 
         categoryId: jobCategoryMap["data-ai"],
@@ -388,7 +390,8 @@ async function main() {
         workMode: "REMOTE",
         level: "SENIOR",
 
-        paycheck: 10000000,
+        paycheckMin: 9000000,
+        paycheckMax: 10000000,
 
         userId: corp.id,
       },
@@ -404,7 +407,8 @@ async function main() {
         workMode: "REMOTE",
         level: "MID",
 
-        paycheck: 5000000,
+        paycheckMin: 5000000,
+        paycheckMax: 7500000,
 
         userId: corp.id,
       },
@@ -420,7 +424,8 @@ async function main() {
         workMode: "HYBRID",
         level: "LEAD",
 
-        paycheck: 1000000,
+        paycheckMin: 1000000,
+        paycheckMax: 3500000,
 
         userId: corp.id,
       },

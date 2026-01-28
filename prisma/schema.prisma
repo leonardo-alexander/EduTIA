@@ -283,6 +283,7 @@ model JobPosting {
   title       String
   slug        String   @unique
   description String
+  location    String?
 
   views       Int @default(0)
   applicators Int @default(0)
@@ -296,7 +297,8 @@ model JobPosting {
   workMode    WorkMode
   level       ExperienceLevel?
 
-  paycheck    Int?
+  paycheckMin Int?
+  paycheckMax Int?
 
   userId      String
   user        User @relation(fields: [userId], references: [id], onDelete: Cascade)

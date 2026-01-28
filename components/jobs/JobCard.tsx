@@ -15,8 +15,8 @@ export default function JobCard({
   job: JobUI;
   isAuthenticated: boolean;
 }) {
-  const formatPaycheck = (paycheck: number | null) => {
-    if (!paycheck) return "Undisclosed";
+  const formatPaycheck = (min: number | null, max: number | null) => {
+    if (!min && !max) return "Undisclosed";
 
     const format = (num: number) =>
       new Intl.NumberFormat("id-ID", {
@@ -26,7 +26,9 @@ export default function JobCard({
         notation: "compact",
       }).format(num);
 
-    if (paycheck) return `${format(paycheck)}`;
+    if (min && max) return `${format(min)} - ${format(max)}`;
+    if (min) return `From ${format(min)}`;
+    if (max) return `Up to ${format(max)}`;
     return "";
   };
 
@@ -65,21 +67,21 @@ export default function JobCard({
         </p>
 
         <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-slate-100">
-          {job.paycheck && (
+          {(job.paycheckMin || job.paycheckMax) && (
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100/50">
               <Banknote className="w-3.5 h-3.5" />
               <span className="text-xs font-semibold">
-                {formatPaycheck(job.paycheck)}
+                {formatPaycheck(job.paycheckMin, job.paycheckMax)}
               </span>
             </div>
           )}
 
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
             <MapPin className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-xs font-medium capitalize">
-              {job.user.profile?.companyAddress
-                ? job.user.profile.companyAddress
-                : job.workMode.toLowerCase()}
+            <span className="text-xs font-medium">
+              {job.location ??
+                job.user.profile?.companyAddress ??
+                "Job Location"}
             </span>
           </div>
 

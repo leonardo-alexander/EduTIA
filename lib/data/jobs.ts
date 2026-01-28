@@ -54,13 +54,13 @@ export async function getJobs(
 
   if (min) {
     and.push({
-      paycheck: { gte: min },
+      paycheckMax: { gte: min },
     });
   }
 
   if (max) {
     and.push({
-      paycheck: { lte: max },
+      paycheckMin: { lte: max },
     });
   }
 

@@ -84,9 +84,21 @@ export default function JobDetail({
     }
   };
 
-  const formatPaycheck = () => {
-    if (!job.paycheck) return "Not specified";
-    if (job.paycheck) return `Rp${job.paycheck}`;
+  const formatPaycheck = (min: number | null, max: number | null) => {
+    if (!min && !max) return "Undisclosed";
+
+    const format = (num: number) =>
+      new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 1,
+        notation: "compact",
+      }).format(num);
+
+    if (min && max) return `${format(min)} - ${format(max)}`;
+    if (min) return `From ${format(min)}`;
+    if (max) return `Up to ${format(max)}`;
+    return "";
   };
 
   const hireRate =
@@ -121,7 +133,7 @@ export default function JobDetail({
 
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4" />
-                {formatPaycheck()}
+                {formatPaycheck(job.paycheckMin, job.paycheckMax)}
               </div>
             </div>
             <div className="text-sm text-slate-300">
