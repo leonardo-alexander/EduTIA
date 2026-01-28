@@ -1,21 +1,7 @@
 import Link from "next/link";
-import { JobUI } from "@/types/job.ui";
+import { JobUI, TYPE_LABELS } from "@/types/job.ui";
 import { ExperienceLevel, JobType, WorkMode } from "@prisma/client";
 import { Building2, MapPin, Banknote, Clock, Briefcase } from "lucide-react";
-
-const WORK_MODE_LABELS: Record<WorkMode, string> = {
-  ONSITE: "On-site",
-  REMOTE: "Remote",
-  HYBRID: "Hybrid",
-};
-
-const JOB_TYPE_LABELS: Record<JobType, string> = {a
-  FULL_TIME: "Full Time",
-  PART_TIME: "Part Time",
-  CONTRACT: "Contract",
-  FREELANCE: "Freelance",
-  INTERNSHIP: "Internship",
-};
 
 const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
   JUNIOR: "Junior",
@@ -93,18 +79,16 @@ export default function JobCard({
 
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
             <MapPin className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-xs font-medium">
+            <span className="text-xs font-medium capitalize">
               {job.user.profile?.companyAddress
                 ? job.user.profile.companyAddress
-                : WORK_MODE_LABELS[job.workMode]}
+                : job.workMode.toLowerCase()}
             </span>
           </div>
 
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-xs font-medium">
-              {JOB_TYPE_LABELS[job.type]}
-            </span>
+            <span className="text-xs font-medium">{TYPE_LABELS[job.type]}</span>
           </div>
 
           {job.level && (

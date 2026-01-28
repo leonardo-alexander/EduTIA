@@ -110,6 +110,10 @@ export default function JobDetail({
             <h1 className="text-4xl font-extrabold">{job.title}</h1>
             <div className="flex flex-wrap gap-4 text-sm text-slate-300">
               <div className="flex items-center gap-2">
+                <Layers className="w-4 h-4" />
+                {job.level || "ANY"}
+              </div>
+              <div className="flex items-center gap-2">
                 <Briefcase className="w-4 h-4" />
                 {job.type.replace("_", " ")}
               </div>
@@ -117,11 +121,6 @@ export default function JobDetail({
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
                 {job.workMode}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4" />
-                {job.level || "Any level"}
               </div>
 
               <div className="flex items-center gap-2">
