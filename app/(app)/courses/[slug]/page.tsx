@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import CourseDetails from "@/components/CourseDetail";
 import { CourseDetailUI } from "@/types/course.ui";
-import { getCourseProgress } from "@/actions/progress";
 import { getNextCourseItem } from "@/actions/resume";
 
 export const dynamic = "force-dynamic";
@@ -127,7 +126,9 @@ export default async function CourseDetailPage({ params }: PageProps) {
     : null;
 
   const isAuthenticated = !!user;
-  const progress = isAuthenticated ? await getCourseProgress(course.id) : 0;
+  const progress = isAuthenticated
+    ? Number(enrollment?.progressPercent ?? 0)
+    : 0;
   const nextItem = isAuthenticated ? await getNextCourseItem(course.id) : null;
 
   return (

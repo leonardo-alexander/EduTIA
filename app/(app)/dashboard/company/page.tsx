@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 export default async function CompanyDashboard() {
   const user = await getCurrentUser();
@@ -43,7 +44,7 @@ export default async function CompanyDashboard() {
 
       {/* Job List */}
       <div className="bg-white rounded-xl border">
-        <div className="p-4 font-semibold">Your Job Posts</div>
+        <div className="p-4 font-semibold border-b shadow">Your Job Posts</div>
         <div className="divide-y">
           {jobs.map((job) => (
             <div key={job.id} className="p-4 flex justify-between items-center">
@@ -54,12 +55,12 @@ export default async function CompanyDashboard() {
                 </p>
               </div>
 
-              <a
-                href={`/dashboard/company/jobs/${job.id}`}
+              <Link
+                href={`/dashboard/company/jobs/${job.slug}`}
                 className="text-blue-600 text-sm font-medium"
               >
                 View →
-              </a>
+              </Link>
             </div>
           ))}
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -46,6 +46,7 @@ export default function CourseItemViewer({
 }: CourseItemViewerProps) {
   const router = useRouter();
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
+  // const [state, formAction, isPending] = useActionState(handleMark, null);
 
   const handleComplete = async () => {
     const newStatus = !isCompleted;

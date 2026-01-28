@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { CourseUI } from "@/types/course.ui";
 
 export async function getNextCourseItem(courseId: string) {
   const user = await getCurrentUser();
