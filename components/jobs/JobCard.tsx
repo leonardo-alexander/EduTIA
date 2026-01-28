@@ -1,105 +1,122 @@
 import Link from "next/link";
-import { JobUI, TYPE_LABELS } from "@/types/job.ui";
-import { JobType, WorkMode, ExperienceLevel } from "@prisma/client";
+import { JobUI } from "@/types/job.ui";
+import { ExperienceLevel, JobType, WorkMode } from "@prisma/client";
+import { Building2, MapPin, Banknote, Clock, Briefcase } from "lucide-react";
+
+const WORK_MODE_LABELS: Record<WorkMode, string> = {
+  ONSITE: "On-site",
+  REMOTE: "Remote",
+  HYBRID: "Hybrid",
+};
+
+const JOB_TYPE_LABELS: Record<JobType, string> = {a
+  FULL_TIME: "Full Time",
+  PART_TIME: "Part Time",
+  CONTRACT: "Contract",
+  FREELANCE: "Freelance",
+  INTERNSHIP: "Internship",
+};
+
+const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
+  JUNIOR: "Junior",
+  MID: "Mid",
+  SENIOR: "Senior",
+  LEAD: "Lead",
+};
 
 export default function JobCard({
   job,
-  isAuthenticated,
 }: {
   job: JobUI;
   isAuthenticated: boolean;
 }) {
-  const EXPERIENCE_LEVEL_STYLES: Record<ExperienceLevel, string> = {
-    JUNIOR: "bg-green-100 text-green-700",
-    MID: "bg-yellow-100 text-yellow-700",
-    SENIOR: "bg-orange-100 text-orange-700",
-    LEAD: "bg-red-100 text-red-700",
-  };
+  const formatSalary = (min: number | null, max: number | null) => {
+    if (!min && !max) return "Undisclosed";
 
-  const JOB_TYPE_STYLES: Record<JobType, string> = {
-    FULL_TIME: "bg-emerald-100 text-emerald-700",
-    PART_TIME: "bg-blue-100 text-blue-700",
-    CONTRACT: "bg-amber-100 text-amber-700",
-    FREELANCE: "bg-purple-100 text-purple-700",
-    INTERNSHIP: "bg-pink-100 text-pink-700",
-  };
+    const format = (num: number) =>
+      new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0,
+        notation: "compact",
+      }).format(num);
 
-  const WORK_MODE_STYLES: Record<WorkMode, string> = {
-    ONSITE: "bg-slate-100 text-slate-700",
-    REMOTE: "bg-green-100 text-green-700",
-    HYBRID: "bg-indigo-100 text-indigo-700",
+    if (min && max) return `${format(min)} - ${format(max)}`;
+    if (min) return `From ${format(min)}`;
+    if (max) return `Up to ${format(max)}`;
+    return "";
   };
 
   return (
-    <Link
-      href={`/jobs/${job.slug}`}
-      className="group bg-white rounded-2xl overflow-hidden border border-slate-200/60 shadow-lg shadow-slate-900/5 hover:shadow-2xl hover:shadow-slate-900/10 hover:-translate-y-1 transition-all duration-300 flex h-full cursor-pointer"
-    >
-      <div className="relative h-full overflow-hidden">
-        <img
-          src={job.user.profile?.pictureUrl || "/avatars/male.svg"}
-          alt={job.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+    <div className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-blue-300 hover:shadow-lg transition-all duration-300 flex flex-col h-full hover:-translate-y-0.5">
+      <div className="flex gap-4 items-center">
+        <div className="shrink-0">
+          <div className="w-14 h-14 rounded-lg border border-slate-100 bg-slate-50 overflow-hidden flex items-center justify-center">
+            <img
+              src={job.user.profile?.pictureUrl || "/avatars/male.svg"}
+              alt={job.user.profile?.name || "Company Logo"}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
 
-        <div className="absolute inset-0 bg-linear-to-t from-black/30 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-        <span className="absolute top-4 left-4 bg-white/80 backdrop-blur-md text-slate-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
-          {job.category.name}
-        </span>
+        <div className="flex-1 min-w-0">
+          <Link
+            href={`/jobs/${job.slug}`}
+            className="block text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors truncate"
+          >
+            {job.title}
+          </Link>
+          <div className="flex items-center gap-1.5 text-sm text-slate-500 font-medium mt-1">
+            <Building2 className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+            <span className="truncate">
+              {job.user.profile?.name || "Unknown Company"}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="p-6 flex flex-col h-full">
-        <div>
-          <h3 className="text-lg font-bold leading-snug text-slate-900 group-hover:text-eduBlue transition-colors line-clamp-2">
-            {job.title}
-          </h3>
+      <div className="mt-4 flex flex-col gap-4 grow">
+        <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed">
+          {job.description}
+        </p>
 
-          <p className="text-black text-sm leading-relaxed">
-            {job.user.profile?.name} <br />
-            {job.user.profile?.companyAddress}
-          </p>
-
-          <p className="text-slate-600 text-sm leading-relaxed grow">
-            {job.description}
-          </p>
-        </div>
-        <div className="mt-auto">
-          <div>
-            <p className="text-black text-sm font-semibold">
-              Salary Expectation:
-            </p>
-            <p className="text-sm font-semibold text-emerald-700">
-              Rp{job.salaryMin} – Rp{job.salaryMax} IDR
-            </p>
-          </div>
-
-          <div className="mt-3">
-            <p className="text-sm font-semibold text-black">Tags:</p>
-
-            <div className="flex items-center gap-2 flex-wrap pt-2">
-              {job.level ? (
-                <span
-                  className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${EXPERIENCE_LEVEL_STYLES[job.level]}`}
-                >
-                  {job.level.toLowerCase()}
-                </span>
-              ) : null}
-
-              <span
-                className={`text-xs font-semibold px-3 py-1 rounded-full ${JOB_TYPE_STYLES[job.type]}`}
-              >
-                {TYPE_LABELS[job.type]}
-              </span>
-              <span
-                className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${WORK_MODE_STYLES[job.workMode]}`}
-              >
-                {job.workMode.toLowerCase()}
+        <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-slate-100">
+          {(job.salaryMin || job.salaryMax) && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100/50">
+              <Banknote className="w-3.5 h-3.5" />
+              <span className="text-xs font-semibold">
+                {formatSalary(job.salaryMin, job.salaryMax)}
               </span>
             </div>
+          )}
+
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
+            <MapPin className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-xs font-medium">
+              {job.user.profile?.companyAddress
+                ? job.user.profile.companyAddress
+                : WORK_MODE_LABELS[job.workMode]}
+            </span>
           </div>
+
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
+            <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-xs font-medium">
+              {JOB_TYPE_LABELS[job.type]}
+            </span>
+          </div>
+
+          {job.level && (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
+              <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-xs font-medium">
+                {EXPERIENCE_LEVEL_LABELS[job.level]}
+              </span>
+            </div>
+          )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
