@@ -372,8 +372,7 @@ async function main() {
         workMode: "REMOTE",
         level: "JUNIOR",
 
-        salaryMin: 600,
-        salaryMax: 1200,
+        paycheck: 4000000,
 
         userId: corp.id,
       },
@@ -389,8 +388,7 @@ async function main() {
         workMode: "REMOTE",
         level: "SENIOR",
 
-        salaryMin: 600,
-        salaryMax: 1200,
+        paycheck: 10000000,
 
         userId: corp.id,
       },
@@ -406,8 +404,7 @@ async function main() {
         workMode: "REMOTE",
         level: "MID",
 
-        salaryMin: 600,
-        salaryMax: 1200,
+        paycheck: 5000000,
 
         userId: corp.id,
       },
@@ -423,8 +420,7 @@ async function main() {
         workMode: "HYBRID",
         level: "LEAD",
 
-        salaryMin: 600,
-        salaryMax: 1200,
+        paycheck: 1000000,
 
         userId: corp.id,
       },

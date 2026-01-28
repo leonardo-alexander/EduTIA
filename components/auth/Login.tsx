@@ -16,6 +16,8 @@ export default function Login() {
       router.push("/admin");
     } else if (state.status) {
       router.push("/profile?edit=true");
+    } else if (state.role === "COMPANY") {
+      router.push("/dashboard/company");
     } else {
       router.push("/dashboard");
     }

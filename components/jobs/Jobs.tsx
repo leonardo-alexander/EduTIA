@@ -15,7 +15,7 @@ type CoursesProps = {
   isAuthenticated: boolean;
 };
 
-const SALARY_OPTIONS = [
+const PAYCHECK_OPTIONS = [
   { label: "Any", value: "" },
   { label: "5 jt", value: "5000000" },
   { label: "10 jt", value: "10000000" },
@@ -38,8 +38,8 @@ export default function Jobs({
     [searchParams],
   );
 
-  const [salaryMin, setSalaryMin] = useState("");
-  const [salaryMax, setSalaryMax] = useState("");
+  const [paycheckMin, setPaycheckMin] = useState("");
+  const [paycheckMax, setPaycheckMax] = useState("");
 
   function updateParams(mutator: (params: URLSearchParams) => void) {
     const next = new URLSearchParams(params);
@@ -111,15 +111,19 @@ export default function Jobs({
     });
   }
 
-  function applySalaryFilter() {
-    if (salaryMin && salaryMax && Number(salaryMin) > Number(salaryMax)) {
-      alert("Minimum salary cannot be higher than maximum salary");
+  function applyPaycheckFilter() {
+    if (
+      paycheckMin &&
+      paycheckMax &&
+      Number(paycheckMin) > Number(paycheckMax)
+    ) {
+      alert("Minimum paycheck cannot be higher than maximum paycheck");
       return;
     }
 
     updateParams((params) => {
-      salaryMin ? params.set("min", salaryMin) : params.delete("min");
-      salaryMax ? params.set("max", salaryMax) : params.delete("max");
+      paycheckMin ? params.set("min", paycheckMin) : params.delete("min");
+      paycheckMax ? params.set("max", paycheckMax) : params.delete("max");
     });
   }
 
@@ -331,17 +335,17 @@ export default function Jobs({
 
               <div className="mb-8">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-                  Salary
+                  Paycheck
                 </h3>
 
                 <div className="flex items-center gap-2">
                   <select
-                    value={salaryMin}
-                    onChange={(e) => setSalaryMin(e.target.value)}
+                    value={paycheckMin}
+                    onChange={(e) => setPaycheckMin(e.target.value)}
                     className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
                   >
                     <option value="">Min</option>
-                    {SALARY_OPTIONS.map((opt) => (
+                    {PAYCHECK_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
                         {opt.label}
                       </option>
@@ -351,12 +355,12 @@ export default function Jobs({
                   <span className="text-slate-400">—</span>
 
                   <select
-                    value={salaryMax}
-                    onChange={(e) => setSalaryMax(e.target.value)}
+                    value={paycheckMax}
+                    onChange={(e) => setPaycheckMax(e.target.value)}
                     className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
                   >
                     <option value="">Max</option>
-                    {SALARY_OPTIONS.map((opt) => (
+                    {PAYCHECK_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
                         {opt.label}
                       </option>
@@ -365,7 +369,7 @@ export default function Jobs({
                 </div>
 
                 <button
-                  onClick={applySalaryFilter}
+                  onClick={applyPaycheckFilter}
                   className="mt-3 w-full bg-eduBlue text-white py-2 rounded-lg text-sm font-semibold hover:bg-eduBlue/90 transition"
                 >
                   Apply

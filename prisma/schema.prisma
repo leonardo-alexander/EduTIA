@@ -296,8 +296,7 @@ model JobPosting {
   workMode    WorkMode
   level       ExperienceLevel?
 
-  salaryMin   Int?
-  salaryMax   Int?
+  paycheck    Int?
 
   userId      String
   user        User @relation(fields: [userId], references: [id], onDelete: Cascade)

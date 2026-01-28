@@ -84,13 +84,9 @@ export default function JobDetail({
     }
   };
 
-  const formatSalary = () => {
-    if (!job.salaryMin && !job.salaryMax) return "Not specified";
-    if (job.salaryMin && job.salaryMax)
-      return `Rp${job.salaryMin} - Rp${job.salaryMax}`;
-    return job.salaryMin
-      ? `From Rp${job.salaryMin}`
-      : `Up to Rp${job.salaryMax}`;
+  const formatPaycheck = () => {
+    if (!job.paycheck) return "Not specified";
+    if (job.paycheck) return `Rp${job.paycheck}`;
   };
 
   const hireRate =
@@ -125,7 +121,7 @@ export default function JobDetail({
 
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4" />
-                {formatSalary()}
+                {formatPaycheck()}
               </div>
             </div>
             <div className="text-sm text-slate-300">
