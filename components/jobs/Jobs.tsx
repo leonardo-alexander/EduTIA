@@ -130,7 +130,7 @@ export default function Jobs({
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-6 py-4 lg:px-8">
           <div className="flex items-center justify-between gap-3 md:flex-row">
             <h1 className="text-lg font-bold text-slate-900">Jobs</h1>
             <div className="flex-1">
@@ -147,13 +147,13 @@ export default function Jobs({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <aside
             className={`z-40
             fixed inset-0 bg-white lg:bg-transparent 
             lg:sticky lg:top-6 lg:w-64 lg:block lg:h-[calc(100vh-3rem)] lg:overflow-y-auto 
-            overflow-y-auto transition-transform duration-300 ease-in-out lg:px-2
+            overflow-y-auto transition-transform duration-300 ease-in-out
             ${
               mobileFiltersOpen
                 ? "translate-x-0 sm:w-80"
@@ -379,7 +379,6 @@ export default function Jobs({
             </div>
           </aside>
 
-          {/* main contents */}
           <main className="flex-1">
             <div className="flex items-center justify-between mb-6">
               <p className="text-slate-500 font-medium">
@@ -404,13 +403,9 @@ export default function Jobs({
                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-slate-300" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">
-                  No courses found
+                <h3 className="text-lg font-bold text-slate-300 mb-2">
+                  No jobs found
                 </h3>
-                <p className="text-slate-500">
-                  Try adjusting your search or filters to find what you're
-                  looking for.
-                </p>
                 <Link
                   href="/jobs"
                   className="mt-6 inline-block px-1 py-2 text-sm font-bold text-eduBlue hover:underline hover:text-eduBlue/80 transition-colors"
