@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { JobUI } from "@/types/job.ui";
+import { JobUI, TYPE_LABELS } from "@/types/job.ui";
 import { JobType, WorkMode, ExperienceLevel } from "@prisma/client";
 
 export default function JobCard({
@@ -9,27 +9,6 @@ export default function JobCard({
   job: JobUI;
   isAuthenticated: boolean;
 }) {
-  const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
-    JUNIOR: "Junior",
-    MID: "Mid",
-    SENIOR: "Senior",
-    LEAD: "Lead",
-  };
-
-  const JOB_TYPE_LABELS: Record<JobType, string> = {
-    FULL_TIME: "Full Time",
-    PART_TIME: "Part Time",
-    CONTRACT: "Contract",
-    FREELANCE: "Freelance",
-    INTERNSHIP: "Internship",
-  };
-
-  const WORK_MODE_LABELS: Record<WorkMode, string> = {
-    ONSITE: "On-site",
-    REMOTE: "Remote",
-    HYBRID: "Hybrid",
-  };
-
   const EXPERIENCE_LEVEL_STYLES: Record<ExperienceLevel, string> = {
     JUNIOR: "bg-green-100 text-green-700",
     MID: "bg-yellow-100 text-yellow-700",
@@ -101,21 +80,21 @@ export default function JobCard({
             <div className="flex items-center gap-2 flex-wrap pt-2">
               {job.level ? (
                 <span
-                  className={`text-xs font-semibold px-3 py-1 rounded-full ${EXPERIENCE_LEVEL_STYLES[job.level]}`}
+                  className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${EXPERIENCE_LEVEL_STYLES[job.level]}`}
                 >
-                  {EXPERIENCE_LEVEL_LABELS[job.level]}
+                  {job.level.toLowerCase()}
                 </span>
               ) : null}
 
               <span
                 className={`text-xs font-semibold px-3 py-1 rounded-full ${JOB_TYPE_STYLES[job.type]}`}
               >
-                {JOB_TYPE_LABELS[job.type]}
+                {TYPE_LABELS[job.type]}
               </span>
               <span
-                className={`text-xs font-semibold px-3 py-1 rounded-full ${WORK_MODE_STYLES[job.workMode]}`}
+                className={`text-xs font-semibold px-3 py-1 rounded-full capitalize ${WORK_MODE_STYLES[job.workMode]}`}
               >
-                {WORK_MODE_LABELS[job.workMode]}
+                {job.workMode.toLowerCase()}
               </span>
             </div>
           </div>

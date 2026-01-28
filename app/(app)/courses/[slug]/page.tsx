@@ -33,7 +33,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function CourseDetailsPage({ params }: PageProps) {
+export default async function CourseDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const user = await getCurrentUser();
 

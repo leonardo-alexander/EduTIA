@@ -2,32 +2,17 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
-import { Search, Filter, ChevronDown, X, Star } from "lucide-react";
+import { Search, Filter, ChevronDown, X } from "lucide-react";
 import JobCard from "./JobCard";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CategoryUI } from "@/types/category.ui";
-import { JobUI } from "@/types/job.ui";
+import { JobUI, TYPE_LABELS } from "@/types/job.ui";
 import { ExperienceLevel, JobType, WorkMode } from "@prisma/client";
 
 type CoursesProps = {
   jobs: JobUI[];
   categories: CategoryUI[];
   isAuthenticated: boolean;
-};
-
-const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
-  JUNIOR: "Junior",
-  MID: "Mid",
-  SENIOR: "Senior",
-  LEAD: "Lead",
-};
-
-const TYPE_LABELS: Record<JobType, string> = {
-  FULL_TIME: "Full Time",
-  PART_TIME: "Part Time",
-  CONTRACT: "Contract",
-  FREELANCE: "Freelance",
-  INTERNSHIP: "Internship",
 };
 
 const SALARY_OPTIONS = [
@@ -259,7 +244,7 @@ export default function Jobs({
                         </svg>
                       </div>
                       <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
-                        {EXPERIENCE_LEVEL_LABELS[level]}
+                        {level.toLowerCase()}
                       </span>
                     </label>
                   ))}

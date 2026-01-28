@@ -1,11 +1,13 @@
 "use server";
 
+import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
 import { CourseLevel } from "@prisma/client";
 
 export async function createCourseAction(_prevState: any, formData: FormData) {
   try {
+    await requireAdminUser();
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const categoryId = formData.get("categoryId") as string;
@@ -42,6 +44,7 @@ export async function createCourseAction(_prevState: any, formData: FormData) {
 
 export async function updateCourseAction(_prev: any, formData: FormData) {
   try {
+    await requireAdminUser();
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const thumbnailUrl = formData.get("thumbnailUrl") as string;
@@ -120,6 +123,7 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
 }
 
 export async function deleteCourseAction(courseId: string) {
+  await requireAdminUser();
   await prisma.course.delete({
     where: { id: courseId },
   });

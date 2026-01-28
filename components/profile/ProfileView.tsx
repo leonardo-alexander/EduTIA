@@ -21,7 +21,6 @@ import {
   Rss,
   ListCheck,
 } from "lucide-react";
-import Link from "next/link";
 
 type ProfileViewProps = {
   profile: Profile | null;
@@ -153,7 +152,7 @@ export default function ProfileView({
         </div>
       </div>
 
-      {!isProfileComplete && (
+      {user.role === "COMPANY" && !isProfileComplete && (
         <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
           <strong>Profile incomplete.</strong>
           <p className="mt-1">

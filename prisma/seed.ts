@@ -72,6 +72,7 @@ async function main() {
         name: "TechCorp Solutions",
         companyWebsite: "https://techcorp.com",
         companyAddress: "Jakarta",
+        pictureUrl: "https://www.pengenkuliah.com/university_logo/bca.png",
         bio: "Enterprise technology solutions provider",
       },
     ],
