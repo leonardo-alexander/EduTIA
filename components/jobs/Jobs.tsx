@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
-import { Search, Filter, ChevronDown, X } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 import JobCard from "./JobCard";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CategoryUI } from "@/types/category.ui";
-import { JobUI, TYPE_LABELS } from "@/types/job.ui";
+import { JobUI } from "@/types/job.ui";
 import { ExperienceLevel, JobType, WorkMode } from "@prisma/client";
 
 type CoursesProps = {
@@ -150,16 +150,7 @@ export default function Jobs({
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <aside
-            className={`z-40
-            fixed inset-0 bg-white lg:bg-transparent 
-            lg:sticky lg:top-6 lg:w-64 lg:block lg:h-[calc(100vh-3rem)] lg:overflow-y-auto 
-            overflow-y-auto transition-transform duration-300 ease-in-out
-            ${
-              mobileFiltersOpen
-                ? "translate-x-0 sm:w-80"
-                : "-translate-x-full lg:translate-x-0"
-            }
-          `}
+            className={`z-40 fixed inset-0 bg-white lg:bg-transparent lg:sticky lg:top-6 lg:w-64 lg:block lg:h-[calc(100vh-3rem)] lg:overflow-y-auto overflow-y-auto transition-transform duration-300 ease-in-out px-2 ${mobileFiltersOpen ? "translate-x-0 sm:w-80" : "-translate-x-full lg:translate-x-0"}`}
           >
             <div className="p-6 lg:p-0 h-full">
               <div className="flex items-center justify-between lg:hidden mb-6">
@@ -281,7 +272,7 @@ export default function Jobs({
                         </svg>
                       </div>
                       <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
-                        {TYPE_LABELS[type]}
+                        {type.replace("_", " ").toLowerCase()}
                       </span>
                     </label>
                   ))}

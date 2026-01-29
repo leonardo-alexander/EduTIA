@@ -163,7 +163,7 @@ export default function ProfileView({
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-        {!isProfileComplete && (
+        {user.role === "COMPANY" && !isProfileComplete && (
           <div className="mb-8 rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
             <strong>Profile incomplete.</strong>
             <p className="mt-1">
@@ -428,9 +428,7 @@ function StatCard({
 }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 flex flex-col justify-center items-center text-center gap-3">
-      <div className={`p-3 rounded-xl ${iconBg} ${iconColor}`}>
-        {icon}
-      </div>
+      <div className={`p-3 rounded-xl ${iconBg} ${iconColor}`}>{icon}</div>
       <div>
         <div className="text-2xl font-bold text-slate-900">{value ?? 0}</div>
         <div className="text-sm font-medium text-slate-500 mt-0.5">{label}</div>

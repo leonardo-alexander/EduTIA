@@ -76,7 +76,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
       >
         <div className="flex lg:flex-1">
-          <Link href={user ? "/dashboard" : "/"}>
+          <Link href={"/dashboard"}>
             <img
               alt="EduTIA Logo"
               src="/logo/blue.svg"
@@ -158,7 +158,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
         <div className="hidden lg:flex lg:flex-2 lg:justify-end">
           <div className="flex items-center gap-x-8">
             <a
-              href="/dashboard"
+              href={"/dashboard"}
               className="text-sm font-semibold text-gray-900"
             >
               Dashboard
@@ -211,17 +211,6 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                         Logout
                       </button>
                     </MenuItem>
-
-                    {user.role === "ADMIN" && (
-                      <MenuItem>
-                        <Link
-                          href="/admin"
-                          className="block px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition"
-                        >
-                          Admin Dashboard
-                        </Link>
-                      </MenuItem>
-                    )}
                   </MenuItems>
                 </Menu>
               )}
@@ -238,7 +227,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
         <div className="fixed inset-0 z-50 bg-black/30" />
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
-            <a href="/" className="-m-1.5 p-1.5">
+            <a href={"/dashboard"} className="-m-1.5 p-1.5">
               <img
                 alt="EduTIA Logo"
                 src="/logo/blue.svg"
@@ -279,7 +268,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                   </DisclosurePanel>
                 </Disclosure>
                 <a
-                  href="/dashboard"
+                  href={"/dashboard"}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Dashboard

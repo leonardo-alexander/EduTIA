@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { JobUI } from "@/types/job.ui";
 import { ExperienceLevel, JobType, WorkMode } from "@prisma/client";
-import { Building2, MapPin, Banknote, Clock, Briefcase } from "lucide-react";
+import {
+  Building2,
+  MapPin,
+  Banknote,
+  Clock,
+  Briefcase,
+  ArrowUpDown,
+} from "lucide-react";
 
 const WORK_MODE_LABELS: Record<WorkMode, string> = {
   ONSITE: "On-site",
@@ -75,12 +82,13 @@ export default function JobCard({
           {job.description}
         </p>
 
-        <div className="flex flex-nowrap items-center gap-2 mt-auto pt-4 border-t border-slate-100 overflow-hidden">
-          {job.paycheck && (
+        <div className="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-slate-100">
+          {job.paycheckMin && job.paycheckMax && (
             <div className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100/50">
               <Banknote className="w-3.5 h-3.5" />
               <span className="text-xs font-semibold whitespace-nowrap">
-                {formatSalary(job.paycheck)}
+                {formatSalary(job.paycheckMin)} -{" "}
+                {formatSalary(job.paycheckMax)}
               </span>
             </div>
           )}
@@ -88,27 +96,30 @@ export default function JobCard({
           <div className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
             <MapPin className="w-3.5 h-3.5 text-slate-400" />
             <span className="text-xs font-medium whitespace-nowrap">
-              {job.user.profile?.companyAddress
-                ? job.user.profile.companyAddress
-                : WORK_MODE_LABELS[job.workMode]}
+              {job.location ?? job.user.profile?.companyAddress ?? "Address"}
+            </span>
+          </div>
+
+          <div className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
+            <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-xs font-medium whitespace-nowrap capitalize">
+              {job.level?.toLowerCase() ?? "Any"}
             </span>
           </div>
 
           <div className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-xs font-medium whitespace-nowrap">
-              {JOB_TYPE_LABELS[job.type]}
+            <span className="text-xs font-medium whitespace-nowrap capitalize">
+              {job.type.replace("_", " ").toLowerCase()}
             </span>
           </div>
 
-          {job.level && (
-            <div className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
-              <Briefcase className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-xs font-medium whitespace-nowrap">
-                {EXPERIENCE_LEVEL_LABELS[job.level]}
-              </span>
-            </div>
-          )}
+          <div className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 text-slate-600 border border-slate-100">
+            <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-xs font-medium whitespace-nowrap capitalize">
+              {job.workMode.toLowerCase()}
+            </span>
+          </div>
         </div>
       </div>
     </div>

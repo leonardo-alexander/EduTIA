@@ -5,7 +5,6 @@ import { getCurrentUser } from "@/lib/auth";
 import BackButton from "@/components/BackButton";
 import Certificate from "@/components/Certificate";
 
-
 interface PageProps {
   params: Promise<{
     slug: string;
@@ -62,6 +61,8 @@ export default async function CertificatePage({ params }: PageProps) {
     },
   });
 
+  if (!enrollment) notFound();
+
   const isCompleted = enrollment?.status === "COMPLETED";
 
   return (
@@ -70,14 +71,17 @@ export default async function CertificatePage({ params }: PageProps) {
         <BackButton />
       </div>
 
-      {(
+      {/* {
         <Certificate
           userName={user.profile?.name || user.email.split("@")[0]}
           courseTitle={course.title}
-          completionDate={enrollment.certificate?.issuedAt || enrollment.updatedAt || new Date()}
+          completionDate={
+            enrollment.certificate?.issuedAt
+            new Date()
+          }
           certificateId={enrollment.certificate?.certificateCode}
         />
-      )}
+      } */}
     </div>
   );
 }

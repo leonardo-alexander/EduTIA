@@ -13,7 +13,7 @@ import {
   ArrowUpDown,
   Banknote,
 } from "lucide-react";
-import { JobUI, TYPE_LABELS } from "@/types/job.ui";
+import { JobUI } from "@/types/job.ui";
 import { ApplicationStatus } from "@prisma/client";
 import BackButton from "../BackButton";
 
@@ -144,10 +144,10 @@ export default function JobDetail({
                 <ArrowUpDown className="w-4 h-4" />
                 {job.workMode}
               </div>
-              <div className="flex items-center gap-2">
-                <Banknote className="w-4 h-4" />
-                {formatPaycheck(job.paycheckMin, job.paycheckMax)}
-              </div>
+            </div>
+            <div className="text-sm text-slate-300 flex items-center gap-2">
+              <Banknote className="w-4 h-4" />
+              {formatPaycheck(job.paycheckMin, job.paycheckMax)}
             </div>
             <div className="text-sm text-slate-300">
               <div className="flex items-center gap-2">
@@ -286,7 +286,9 @@ export default function JobDetail({
 
             <div className="flex justify-between text-sm">
               <span>Type</span>
-              <span>{TYPE_LABELS[job.type]}</span>
+              <span className="capitalize">
+                {job.type.replace("_", " ").toLowerCase()}
+              </span>
             </div>
 
             <div className="flex justify-between text-sm">
