@@ -80,7 +80,12 @@ export default async function CompanyDashboard() {
           {jobs.map((job) => (
             <div key={job.id} className="p-4 flex justify-between items-center">
               <div>
-                <p className="font-medium">{job.title}</p>
+                <p className="font-medium">
+                  {job.title}{" "}
+                  <span className="text-gray-500">
+                    {job.status === "DRAFT" && "| DRAFT"}
+                  </span>
+                </p>
                 <p className="text-sm text-gray-500">
                   {job._count.applications} applicants
                 </p>

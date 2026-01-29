@@ -4,8 +4,6 @@ import Link from "next/link";
 import {
   Briefcase,
   MapPin,
-  Layers,
-  DollarSign,
   CheckCircle,
   Send,
   Clock,
@@ -258,8 +256,8 @@ export default function JobDetail({
                   type="submit"
                   className="w-full flex items-center justify-center gap-2 text-eduBlue hover:text-eduBlue/80 py-3 rounded-lg font-semibold"
                 >
-                  <Bookmark className="w-5 h-5" />
-                  Save Job
+                  {/* <Bookmark className="w-5 h-5" />
+                  Save Job */}
                 </button>
               </form>
             </div>

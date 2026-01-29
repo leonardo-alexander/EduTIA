@@ -420,6 +420,23 @@ async function main() {
 
         userId: corp.id,
       },
+      {
+        title: "Test",
+        slug: slugify("Test"),
+        description: "Analyze business and product data to support decisions.",
+        status: "DRAFT",
+
+        categoryId: jobCategoryMap["data-ai"],
+
+        type: "PART_TIME",
+        workMode: "HYBRID",
+        level: "LEAD",
+
+        paycheckMin: 1000000,
+        paycheckMax: 3500000,
+
+        userId: corp.id,
+      },
     ],
   });
 }
