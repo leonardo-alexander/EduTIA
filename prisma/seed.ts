@@ -13,7 +13,7 @@ async function main() {
   await prisma.enrollment.deleteMany();
   await prisma.certificate.deleteMany();
   await prisma.workshopSubmission.deleteMany();
-  await prisma.workshopRegistration.deleteMany();
+  // await prisma.workshopRegistration.deleteMany();
   await prisma.workshop.deleteMany();
   await prisma.moduleProgress.deleteMany();
   await prisma.courseItem.deleteMany();
@@ -296,12 +296,14 @@ async function main() {
   });
 
   // ===== WORKSHOP REGISTRATION =====
+  /*
   await prisma.workshopRegistration.create({
     data: {
       userId: student.id,
       workshopId: workshop.id,
     },
   });
+  */
 
   // ===== ENROLLMENT =====
   await prisma.enrollment.create({
