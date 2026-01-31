@@ -47,7 +47,16 @@ export default async function CompanyDashboard() {
         },
       },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [
+      {
+        applications: {
+          _count: "desc",
+        },
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
   });
 
   const jobCategories = await prisma.jobCategory.findMany({

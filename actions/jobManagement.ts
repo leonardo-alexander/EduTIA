@@ -146,3 +146,51 @@ export async function deleteJob(jobId: string) {
     where: { id: jobId },
   });
 }
+
+export async function acceptApplication(appId: string): Promise<void> {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "COMPANY") return;
+
+  const application = await prisma.jobApplication.findUnique({
+    where: { id: appId },
+    include: { job: true },
+  });
+
+  if (!application) return;
+  if (application.job.userId !== user.id) return;
+  if (application.status !== "APPLIED") return;
+
+  await prisma.jobApplication.update({
+    where: { id: appId },
+    data: {
+      status: "ACCEPTED",
+      decidedAt: new Date(),
+    },
+  });
+}
+
+export async function rejectApplication(appId: string): Promise<void> {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "COMPANY") {
+    return;
+  }
+
+  const application = await prisma.jobApplication.findUnique({
+    where: { id: appId },
+    include: {
+      job: true,
+    },
+  });
+
+  if (!application) return;
+  if (application.job.userId !== user.id) return;
+  if (application.status !== "APPLIED") return;
+
+  await prisma.jobApplication.update({
+    where: { id: appId },
+    data: {
+      status: "REJECTED",
+      decidedAt: new Date(),
+    },
+  });
+}

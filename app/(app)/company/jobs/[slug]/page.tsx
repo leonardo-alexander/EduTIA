@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import UpdateJobPopover from "@/components/jobs/UpdateJob";
 import DeleteJobButton from "@/components/jobs/DeleteJob";
+import { AppActions } from "@/components/jobs/AppActions";
 
 interface PageProps {
   params: Promise<{
@@ -99,27 +100,7 @@ export default async function JobApplicantsPage({ params }: PageProps) {
                 </p>
               </div>
             </div>
-
-            {/* Actions */}
-            <div className="flex gap-2">
-              <form action={`/api/applications/${app.id}/accept`} method="POST">
-                <button
-                  className="px-4 py-2 rounded-md bg-green-600 text-white text-sm hover:bg-green-700 transition"
-                  disabled={app.status !== "APPLIED"}
-                >
-                  Accept
-                </button>
-              </form>
-
-              <form action={`/api/applications/${app.id}/reject`} method="POST">
-                <button
-                  className="px-4 py-2 rounded-md bg-red-500 text-white text-sm hover:bg-red-600 transition"
-                  disabled={app.status !== "APPLIED"}
-                >
-                  Reject
-                </button>
-              </form>
-            </div>
+            <AppActions app={app} />
           </div>
         ))}
       </div>

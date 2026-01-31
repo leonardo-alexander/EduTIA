@@ -293,7 +293,6 @@ model JobPosting {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   expiresAt   DateTime?
-  deletedAt   DateTime?
 
   @@index([slug])
   @@index([status])
