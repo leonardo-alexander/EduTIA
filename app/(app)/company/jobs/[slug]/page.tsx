@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import UpdateJobPopover from "@/components/jobs/UpdateJob";
 import DeleteJobButton from "@/components/jobs/DeleteJob";
 import { AppActions } from "@/components/jobs/AppActions";
+import Link from "next/link";
 
 interface PageProps {
   params: Promise<{
@@ -53,33 +54,27 @@ export default async function JobApplicantsPage({ params }: PageProps) {
         </div>
 
         <div className="flex gap-2">
-          {/* Edit */}
           <UpdateJobPopover job={job} categories={jobCategories} />
-          {/* Delete */}
           <DeleteJobButton jobId={job.id} />
         </div>
       </div>
 
-      {/* Empty State */}
       {job.applications.length === 0 && (
         <div className="text-center py-16 text-gray-500">
           No one has applied yet.
         </div>
       )}
 
-      {/* Applicants */}
       <div className="space-y-4">
         {job.applications.map((app) => (
           <div
             key={app.id}
             className="flex items-center justify-between rounded-xl border bg-white p-5 shadow-sm hover:shadow transition"
           >
-            {/* Left */}
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
+              <span className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
                 {app.user.profile?.name?.[0] ?? app.user.email[0].toUpperCase()}
-              </div>
-
+              </span>
               <div>
                 <p className="font-semibold">
                   {app.user.profile?.name || app.user.email}
@@ -100,7 +95,9 @@ export default async function JobApplicantsPage({ params }: PageProps) {
                 </p>
               </div>
             </div>
-            <AppActions app={app} />
+            <Link href={`/company/jobs/${job.slug}/applications/${app.id}`}>
+              View application detail
+            </Link>
           </div>
         ))}
       </div>

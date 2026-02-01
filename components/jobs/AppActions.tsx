@@ -5,7 +5,6 @@ import { acceptApplication, rejectApplication } from "@/actions/jobManagement";
 export function AppActions({ app }: { app: any }) {
   return (
     <div className="flex gap-2">
-      {/* ACCEPT */}
       <form action={acceptApplication.bind(null, app.id)}>
         <button
           disabled={app.status !== "APPLIED"}
@@ -15,7 +14,6 @@ export function AppActions({ app }: { app: any }) {
         </button>
       </form>
 
-      {/* REJECT */}
       <form action={rejectApplication.bind(null, app.id)}>
         <button
           disabled={app.status !== "APPLIED"}
