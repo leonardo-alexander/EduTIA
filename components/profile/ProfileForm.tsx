@@ -52,10 +52,43 @@ export default function ProfileForm({
 
   const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setFileError("Only images allowed");
+      return;
+    }
+
+    if (file.size > 1024 * 1024) {
+      setFileError("Image must be under 1MB");
+      return;
+    }
+
+    setFileError(null);
+
+    const form = new FormData();
+    form.append("file", file);
+
+    const res = await fetch("/api/upload/avatar", {
+      method: "POST",
+      body: form,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setFileError(data.error || "Upload failed");
+      return;
+    }
+
+    setPreview(data.url);
+  };
+
   return (
     <form
       action={formAction}
-      encType="multipart/form-data"
       className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50/30"
     >
       <div className="bg-eduBlue">
@@ -74,30 +107,12 @@ export default function ProfileForm({
 
                 <input
                   type="file"
-                  name="avatar"
                   accept="image/png,image/jpeg,image/webp"
                   className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-
-                    setFileError(null);
-
-                    if (!file.type.startsWith("image/")) {
-                      alert("Only image files are allowed.");
-                      e.target.value = "";
-                      return;
-                    }
-
-                    if (file.size > MAX_FILE_SIZE) {
-                      setFileError("Image must be under 1MB");
-                      return;
-                    }
-
-                    const url = URL.createObjectURL(file);
-                    setPreview(url);
-                  }}
+                  onChange={handleAvatarChange}
                 />
+
+                <input type="hidden" name="pictureUrl" value={preview ?? ""} />
               </label>
 
               {fileError && (

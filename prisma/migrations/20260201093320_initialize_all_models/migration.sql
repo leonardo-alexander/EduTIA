@@ -50,8 +50,8 @@ CREATE TABLE "User" (
 CREATE TABLE "Profile" (
     "id" TEXT NOT NULL,
     "pictureUrl" TEXT,
-    "bio" TEXT,
     "name" TEXT,
+    "bio" TEXT,
     "dob" TIMESTAMP(3),
     "gender" "Gender",
     "companyWebsite" TEXT,
@@ -171,16 +171,6 @@ CREATE TABLE "Workshop" (
 );
 
 -- CreateTable
-CREATE TABLE "WorkshopRegistration" (
-    "id" TEXT NOT NULL,
-    "registeredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" TEXT NOT NULL,
-    "workshopId" TEXT NOT NULL,
-
-    CONSTRAINT "WorkshopRegistration_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "WorkshopSubmission" (
     "id" TEXT NOT NULL,
     "submissionUrl" TEXT NOT NULL,
@@ -209,6 +199,7 @@ CREATE TABLE "Certificate" (
     "id" TEXT NOT NULL,
     "certificateCode" TEXT NOT NULL,
     "issuedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "fileUrl" TEXT NOT NULL,
     "enrollmentId" TEXT NOT NULL,
 
     CONSTRAINT "Certificate_pkey" PRIMARY KEY ("id")
@@ -255,7 +246,6 @@ CREATE TABLE "JobPosting" (
     "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "location" TEXT,
-    "views" INTEGER NOT NULL DEFAULT 0,
     "applicators" INTEGER NOT NULL DEFAULT 0,
     "hired" INTEGER NOT NULL DEFAULT 0,
     "categoryId" TEXT NOT NULL,
@@ -269,7 +259,6 @@ CREATE TABLE "JobPosting" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "expiresAt" TIMESTAMP(3),
-    "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "JobPosting_pkey" PRIMARY KEY ("id")
 );
@@ -311,7 +300,7 @@ CREATE TABLE "Experience" (
 -- CreateTable
 CREATE TABLE "CV" (
     "id" TEXT NOT NULL,
-    "template" TEXT NOT NULL,
+    "fileUrl" TEXT NOT NULL,
     "generatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
 
@@ -363,9 +352,6 @@ CREATE INDEX "ModuleProgress_moduleId_idx" ON "ModuleProgress"("moduleId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ModuleProgress_userId_moduleId_key" ON "ModuleProgress"("userId", "moduleId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "WorkshopRegistration_userId_workshopId_key" ON "WorkshopRegistration"("userId", "workshopId");
 
 -- CreateIndex
 CREATE INDEX "WorkshopSubmission_userId_idx" ON "WorkshopSubmission"("userId");
@@ -468,12 +454,6 @@ ALTER TABLE "ModuleProgress" ADD CONSTRAINT "ModuleProgress_userId_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "ModuleProgress" ADD CONSTRAINT "ModuleProgress_moduleId_fkey" FOREIGN KEY ("moduleId") REFERENCES "Module"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WorkshopRegistration" ADD CONSTRAINT "WorkshopRegistration_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "WorkshopRegistration" ADD CONSTRAINT "WorkshopRegistration_workshopId_fkey" FOREIGN KEY ("workshopId") REFERENCES "Workshop"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "WorkshopSubmission" ADD CONSTRAINT "WorkshopSubmission_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

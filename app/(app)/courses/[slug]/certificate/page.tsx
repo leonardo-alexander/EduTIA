@@ -1,53 +1,25 @@
 import { notFound, redirect } from "next/navigation";
-import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import BackButton from "@/components/BackButton";
-import Certificate from "@/components/Certificate";
+import { generatePdfCertificate } from "@/lib/certGenerator";
+import CertificateComponent from "@/components/Certificate";
+import PrintButton from "@/components/PrintButton";
+import { Certificate } from "@prisma/client";
 
 interface PageProps {
-  params: Promise<{
-    slug: string;
-  }>;
-}
-
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const course = await prisma.course.findUnique({
-    where: { slug },
-    select: { title: true },
-  });
-
-  if (!course) {
-    return { title: "Certificate Not Found" };
-  }
-
-  return {
-    title: `Certificate - ${course.title} | Learning Platform`,
-  };
+  params: { slug: string };
 }
 
 export default async function CertificatePage({ params }: PageProps) {
   const { slug } = await params;
-  const user = await getCurrentUser();
 
-  if (!user) {
-    redirect(`/login?redirect=/courses/${slug}/certificate`);
-  }
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
   const course = await prisma.course.findUnique({
     where: { slug },
-    select: {
-      id: true,
-      title: true,
-    },
   });
-
-  if (!course) {
-    notFound();
-  }
+  if (!course) notFound();
 
   const enrollment = await prisma.enrollment.findUnique({
     where: {
@@ -63,25 +35,33 @@ export default async function CertificatePage({ params }: PageProps) {
 
   if (!enrollment) notFound();
 
-  const isCompleted = enrollment?.status === "COMPLETED";
+  if (enrollment.status !== "COMPLETED") {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-xl font-semibold">
+          Complete the course to unlock your certificate
+        </h2>
+      </div>
+    );
+  }
+
+  const certificate: Certificate =
+    enrollment.certificate ?? (await generatePdfCertificate(enrollment.id));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="print:hidden mb-6">
-        <BackButton />
+    <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="print:hidden">
+        <PrintButton certificate={certificate} />
       </div>
 
-      {/* {
-        <Certificate
-          userName={user.profile?.name || user.email.split("@")[0]}
+      <div id="print-area">
+        <CertificateComponent
+          userName={user.profile?.name ?? user.email}
           courseTitle={course.title}
-          completionDate={
-            enrollment.certificate?.issuedAt
-            new Date()
-          }
-          certificateId={enrollment.certificate?.certificateCode}
+          completionDate={certificate.issuedAt}
+          certificateId={certificate.certificateCode}
         />
-      } */}
+      </div>
     </div>
   );
 }

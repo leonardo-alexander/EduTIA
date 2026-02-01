@@ -136,7 +136,7 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
           <div>
             <p className="font-medium mb-1">CV</p>
             <a
-              href={applicant.cvs[0].template}
+              href={applicant.cvs[0].fileUrl}
               target="_blank"
               className="text-blue-600 underline"
             >
