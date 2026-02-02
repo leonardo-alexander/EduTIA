@@ -8,7 +8,7 @@ import {
   Skill,
   Experience,
 } from "@prisma/client";
-import { useEffect, useActionState } from "react";
+import { useEffect, useActionState, useState } from "react";
 import {
   User as UserIcon,
   Calendar,
@@ -28,10 +28,19 @@ import {
   ListCheck,
   IdCard,
   Briefcase,
+  Trash2,
 } from "lucide-react";
 import AddSkillPopover from "../AddSkillsPopover";
-import { addSkill, addExperience } from "@/actions/moreProfile";
+import {
+  addSkill,
+  addExperience,
+  deleteSkill,
+  updateSkill,
+} from "@/actions/moreProfile";
 import AddExperiencePopover from "../AddExperiencesPopover";
+import ExperienceActions from "./ExperienceAction";
+import EditSkillPopover from "./EditSkillPopover";
+import ConfirmDialog from "../ui/ConfirmDialog";
 
 type ProfileViewProps = {
   profile: Profile | null;
@@ -59,6 +68,8 @@ export default function ProfileView({
   onIncompleteProfile,
 }: ProfileViewProps) {
   const [state, formAction, isPending] = useActionState(verifyCompany, null);
+  const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
+  const [skillToEdit, setSkillToEdit] = useState<Skill | null>(null);
 
   const websiteUrl = profile?.companyWebsite
     ? profile.companyWebsite.startsWith("http")
@@ -406,9 +417,8 @@ export default function ProfileView({
 
         {user.role === "EDUCATEE" && (
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Skills */}
             <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-              <div className="px-6 py-4 border-b bg-slate-50 flex items-center justify-between">
+              <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-indigo-50 rounded-xl">
                     <ListCheck className="w-5 h-5 text-indigo-600" />
@@ -428,23 +438,58 @@ export default function ProfileView({
                 {skills.length ? (
                   <div className="flex flex-wrap gap-2">
                     {skills.map((skill) => (
-                      <span
+                      <div
                         key={skill.id}
-                        className="px-3 py-1.5 rounded-full text-sm bg-blue-50 text-blue-700 font-medium"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50"
                       >
-                        {skill.name}
-                      </span>
+                        <span className="text-sm font-medium text-blue-700">
+                          {skill.name}
+                        </span>
+
+                        <button
+                          onClick={() => setSkillToEdit(skill)}
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+
+                        <button
+                          onClick={() => setSkillToDelete(skill)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 ) : (
                   <p className="text-slate-400 italic">No skills added yet</p>
                 )}
+                {skillToEdit && (
+                  <EditSkillPopover
+                    skill={skillToEdit}
+                    onClose={() => setSkillToEdit(null)}
+                  />
+                )}
+                {skillToDelete && (
+                  <ConfirmDialog
+                    open={true}
+                    title="Delete skill"
+                    description={`Are you sure you want to delete "${skillToDelete.name}"?`}
+                    confirmText="Delete"
+                    onCancel={() => setSkillToDelete(null)}
+                    onConfirm={async () => {
+                      await deleteSkill(skillToDelete.id);
+                      setSkillToDelete(null);
+                      window.location.reload();
+                    }}
+                  />
+                )}
               </div>
             </div>
 
-            {/* Experience */}
             <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-              <div className="px-6 py-4 border-b bg-slate-50 flex items-center justify-between">
+              <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-emerald-50 rounded-xl">
                     <Briefcase className="w-5 h-5 text-emerald-600" />
@@ -465,18 +510,22 @@ export default function ProfileView({
                   experiences.map((exp) => (
                     <div
                       key={exp.id}
-                      className="border-b last:border-none pb-4"
+                      className="group flex justify-between items-start gap-4 border-b last:border-none pb-4"
                     >
-                      <h3 className="font-semibold">{exp.jobTitle}</h3>
-                      <p className="text-sm text-slate-600">
-                        {exp.companyName}
-                      </p>
-                      <p className="text-xs text-slate-400 mt-1">
-                        {new Date(exp.startDate).toLocaleDateString()} —{" "}
-                        {exp.endDate
-                          ? new Date(exp.endDate).toLocaleDateString()
-                          : "Present"}
-                      </p>
+                      <div>
+                        <h3 className="font-semibold">{exp.jobTitle}</h3>
+                        <p className="text-sm text-slate-600">
+                          {exp.companyName}
+                        </p>
+                        <p className="text-xs text-slate-400 mt-1">
+                          {new Date(exp.startDate).toLocaleDateString()} —{" "}
+                          {exp.endDate
+                            ? new Date(exp.endDate).toLocaleDateString()
+                            : "Present"}
+                        </p>
+                      </div>
+
+                      <ExperienceActions exp={exp} />
                     </div>
                   ))
                 ) : (
