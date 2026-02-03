@@ -44,7 +44,8 @@ export async function createCourseAction(_prevState: any, formData: FormData) {
 
 export async function updateCourseAction(_prev: any, formData: FormData) {
   try {
-    await requireAdminUser();
+    const admin = await requireAdminUser();
+
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const thumbnailUrl = formData.get("thumbnailUrl") as string;
@@ -55,6 +56,17 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
     if (!title || !description || !categoryId || !level) {
       return { error: "All fields are required" };
     }
+
+    const existingCourse = await prisma.course.findUnique({
+      where: { slug: slugify(title) },
+      select: { isPublished: true },
+    });
+
+    if (!existingCourse) {
+      return { error: "Course not found" };
+    }
+
+    const isPublishing = !existingCourse.isPublished && isPublished === true;
 
     await prisma.course.update({
       where: { slug: slugify(title) },
@@ -114,6 +126,15 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
         }),
       ),
     );
+
+    if (isPublishing) {
+      await prisma.adminAction.create({
+        data: {
+          userId: admin.id,
+          actionType: "APPROVE_COURSE",
+        },
+      });
+    }
 
     return { success: true };
   } catch (err) {

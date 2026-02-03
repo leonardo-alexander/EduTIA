@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function verifyCorp(formData: FormData) {
-  const user = await requireAdminUser();
+  const admin = await requireAdminUser();
   const id = formData.get("id") as string;
 
   const data = await prisma.companyVerification.findUnique({
@@ -18,19 +18,31 @@ export async function verifyCorp(formData: FormData) {
 
   if (!data) return;
 
+  const isVerifying = data.status !== "VERIFIED";
+
   await prisma.$transaction([
     prisma.companyVerification.update({
       where: { id },
       data: {
         status: "VERIFIED",
         verifiedAt: new Date(),
-        verifiedBy: user.id,
+        verifiedBy: admin.id,
       },
     }),
     prisma.user.update({
       where: { id: data.profile.userId },
       data: { role: "COMPANY" },
     }),
+    ...(isVerifying
+      ? [
+          prisma.adminAction.create({
+            data: {
+              userId: admin.id,
+              actionType: "VERIFY_COMPANY",
+            },
+          }),
+        ]
+      : []),
   ]);
 
   revalidatePath(`/admin/companies/${id}`);
