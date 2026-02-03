@@ -38,7 +38,7 @@ export default function LearningPathCard({
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-slate-900/80 via-slate-900/30 to-transparent pointer-events-none" />
 
       <div className="absolute inset-0 p-8 flex flex-col items-end justify-end text-right z-10">
-        <h3 className="text-4xl md:text-5xl font-bold text-white leading-tight drop-shadow-sm group-hover:text-blue-200 transition-colors mb-2">
+        <h3 className="text-4xl md:text-5xl font-bold text-white leading-tight drop-shadow-sm">
           {learningPath.title}
         </h3>
 

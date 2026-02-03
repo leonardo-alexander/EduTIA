@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Courses from "@/components/Courses";
 import { getCourses } from "@/lib/data/courses";
 import { getCategories } from "@/lib/data/categories";
@@ -7,6 +8,10 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export const metadata: Metadata = {
+  title: "Courses | EduTIA"
 };
 
 export default async function Page({ searchParams }: PageProps) {

@@ -310,16 +310,12 @@ export default function Courses({
                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="w-8 h-8 text-slate-300" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">
+                <h3 className="text-lg font-bold text-slate-300 mb-2">
                   No courses found
                 </h3>
-                <p className="text-slate-500">
-                  Try adjusting your search or filters to find what you're
-                  looking for.
-                </p>
                 <Link
                   href="/courses"
-                  className="mt-6 inline-block px-1 py-2 text-sm font-bold text-eduBlue hover:underline hover:text-eduBlue/80 transition-colors"
+                  className="mt-1 inline-block px-1 py-2 text-sm font-bold text-eduBlue hover:underline hover:text-eduBlue/80 transition-colors"
                 >
                   Clear all filters
                 </Link>

@@ -3,9 +3,7 @@ import LearningPaths from "@/components/path/LearningPaths";
 import { getPaths } from "@/lib/data/paths";
 
 export const metadata: Metadata = {
-  title: "Learning Paths | EduTIA",
-  description:
-    "Structured paths to help you master new skills and technologies.",
+  title: "Learning Paths | EduTIA"
 };
 
 export default async function Page() {

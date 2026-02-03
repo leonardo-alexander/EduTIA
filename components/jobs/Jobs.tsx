@@ -399,7 +399,7 @@ export default function Jobs({
                 </h3>
                 <Link
                   href="/jobs"
-                  className="mt-6 inline-block px-1 py-2 text-sm font-bold text-eduBlue hover:underline hover:text-eduBlue/80 transition-colors"
+                  className="mt-1 inline-block px-1 py-2 text-sm font-bold text-eduBlue hover:underline hover:text-eduBlue/80 transition-colors"
                 >
                   Clear all filters
                 </Link>

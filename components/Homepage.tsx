@@ -196,8 +196,8 @@ export default function Homepage({
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mx-15 lg:mx-0">
-              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col items-center text-center">
-                <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-eduBlue group-hover:bg-eduBlue group-hover:text-white transition-all duration-300">
+              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl flex flex-col items-center text-center">
+                <div className="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-eduBlue">
                   <Waypoints className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Skill-sharing</h3>
@@ -207,8 +207,8 @@ export default function Homepage({
                 </p>
               </div>
 
-              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col items-center text-center">
-                <div className="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center mb-4 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
+              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl flex flex-col items-center text-center">
+                <div className="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center mb-4 text-green-600">
                   <Briefcase className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Job Listing</h3>
@@ -218,8 +218,8 @@ export default function Homepage({
                 </p>
               </div>
 
-              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col items-center text-center">
-                <div className="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center mb-4 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
+              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl flex flex-col items-center text-center">
+                <div className="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center mb-4 text-purple-600">
                   <Users className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Workshop</h3>
@@ -229,8 +229,8 @@ export default function Homepage({
                 </p>
               </div>
 
-              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex flex-col items-center text-center">
-                <div className="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mb-4 text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
+              <div className="group p-6 rounded-2xl bg-white text-slate-900 shadow-lg hover:shadow-xl flex flex-col items-center text-center">
+                <div className="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mb-4 text-orange-600">
                   <Award className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Certification & CV</h3>
@@ -242,7 +242,7 @@ export default function Homepage({
             </div>
           </div>
         </section>
-
+        
         <section className="py-24 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
