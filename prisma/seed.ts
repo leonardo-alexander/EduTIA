@@ -1,42 +1,56 @@
-import { prisma } from "@/lib/prisma";
-import { slugify } from "@/lib/slugify";
+import { CourseLevel, PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { Category, Course } from "@prisma/client";
+import { randomUUID } from "crypto";
+
+const prisma = new PrismaClient();
+
+const slugify = (str: string) =>
+  str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 
 async function main() {
-  // ===== CLEAN DATABASE =====
-  await prisma.jobApplication.deleteMany();
-  await prisma.jobPosting.deleteMany();
-  await prisma.jobCategory.deleteMany();
-  await prisma.learningPathItem.deleteMany();
-  await prisma.learningPath.deleteMany();
-  await prisma.enrollment.deleteMany();
-  await prisma.certificate.deleteMany();
-  await prisma.workshopSubmission.deleteMany();
-  await prisma.workshop.deleteMany();
-  await prisma.moduleProgress.deleteMany();
-  await prisma.courseItem.deleteMany();
-  await prisma.module.deleteMany();
-  await prisma.course.deleteMany();
-  await prisma.category.deleteMany();
-  await prisma.companyVerification.deleteMany();
-  await prisma.profile.deleteMany();
-  await prisma.user.deleteMany();
+  /* ===================== CLEAN ===================== */
+  await prisma.$transaction([
+    prisma.adminAction.deleteMany(),
+    prisma.jobApplication.deleteMany(),
+    prisma.jobPosting.deleteMany(),
+    prisma.jobCategory.deleteMany(),
+    prisma.learningPathItem.deleteMany(),
+    prisma.learningPath.deleteMany(),
+    prisma.certificate.deleteMany(),
+    prisma.enrollment.deleteMany(),
+    prisma.workshopSubmission.deleteMany(),
+    prisma.workshop.deleteMany(),
+    prisma.moduleProgress.deleteMany(),
+    prisma.courseItem.deleteMany(),
+    prisma.module.deleteMany(),
+    prisma.review.deleteMany(),
+    prisma.favorite.deleteMany(),
+    prisma.course.deleteMany(),
+    prisma.category.deleteMany(),
+    prisma.companyVerification.deleteMany(),
+    prisma.skill.deleteMany(),
+    prisma.experience.deleteMany(),
+    prisma.cV.deleteMany(),
+    prisma.profile.deleteMany(),
+    prisma.user.deleteMany(),
+  ]);
 
-  // ===== USERS =====
+  /* ===================== USERS ===================== */
   const admin = await prisma.user.create({
     data: {
       email: "admin@edutia.com",
       password: await bcrypt.hash("admin123", 10),
       role: "ADMIN",
-    },
-  });
-
-  await prisma.user.create({
-    data: {
-      email: "admin2@edutia.com",
-      password: await bcrypt.hash("admin123", 10),
-      role: "ADMIN",
+      profile: {
+        create: {
+          name: "System Admin",
+          bio: "Platform administrator",
+          gender: "MALE",
+        },
+      },
     },
   });
 
@@ -45,439 +59,398 @@ async function main() {
       email: "student@edutia.com",
       password: await bcrypt.hash("student123", 10),
       role: "EDUCATEE",
+      profile: {
+        create: {
+          name: "Jane Doe",
+          bio: "Aspiring data scientist",
+          gender: "FEMALE",
+          dob: new Date("2000-10-24"),
+          pictureUrl: "/avatars/female.svg",
+        },
+      },
     },
   });
 
-  const corp = await prisma.user.create({
+  const company = await prisma.user.create({
     data: {
       email: "corp@techcorp.com",
       password: await bcrypt.hash("corp123", 10),
       role: "COMPANY",
+      profile: {
+        create: {
+          name: "TechCorp Indonesia",
+          bio: "Data & AI company",
+          companyAddress: "Jakarta",
+          companyWebsite: "https://techcorp.io",
+        },
+      },
     },
   });
 
-  // ===== PROFILES =====
-  await prisma.profile.createMany({
-    data: [
-      { userId: admin.id, gender: "MALE", bio: "Platform administrator" },
-      {
-        userId: student.id,
-        name: "Jane Doe",
-        gender: "FEMALE",
-        dob: new Date(),
-        pictureUrl: "/avatars/female.svg",
-        bio: "Learner interested in technology",
-      },
-      {
-        userId: corp.id,
-        name: "TechCorp Solutions",
-        companyWebsite: "https://techcorp.com",
-        companyAddress: "Jakarta",
-        pictureUrl: "https://www.pengenkuliah.com/university_logo/bca.png",
-        bio: "Enterprise technology solutions provider",
-      },
-    ],
-  });
-
-  const corpProfile = await prisma.profile.findFirstOrThrow({
-    where: { userId: corp.id },
+  const companyProfile = await prisma.profile.findUniqueOrThrow({
+    where: { userId: company.id },
   });
 
   await prisma.companyVerification.create({
     data: {
-      profileId: corpProfile.id,
+      profileId: companyProfile.id,
       status: "VERIFIED",
       verifiedAt: new Date(),
+      verifiedBy: admin.id,
     },
   });
 
-  // ===== SKILL & EXPERIENCE =====
-  await prisma.skill.createMany({
-    data: [
-      { userId: student.id, name: "JavaScript" },
-      { userId: student.id, name: "TypeScript" },
-      { userId: student.id, name: "React" },
-      { userId: student.id, name: "Node.js" },
-      { userId: student.id, name: "SQL" },
-    ],
-  });
-
-  await prisma.experience.createMany({
-    data: [
-      {
-        userId: student.id,
-        jobTitle: "Frontend Developer Intern",
-        companyName: "TechLabs Indonesia",
-        startDate: new Date("2023-01-01"),
-        endDate: new Date("2023-06-30"),
-      },
-      {
-        userId: student.id,
-        jobTitle: "Junior Web Developer",
-        companyName: "EduTech Startup",
-        startDate: new Date("2023-07-01"),
-        endDate: null, // still working
-      },
-    ],
-  });
-
-  // ===== CATEGORIES =====
-  const categories = [
-    "Software Development",
+  /* ===================== CATEGORIES ===================== */
+  const categoryNames = [
     "Data & AI",
+    "Software Development",
     "Design & Creative",
     "IT & Infrastructure",
     "Business & Management",
   ];
 
   await prisma.category.createMany({
-    data: categories.map((name) => ({
+    data: categoryNames.map((name) => ({
       name,
       slug: slugify(name),
     })),
   });
 
-  const categoryList: Category[] = await prisma.category.findMany();
-  const categoryMap = Object.fromEntries(
-    categoryList.map((c) => [c.slug, c.id]),
-  );
+  const categories = await prisma.category.findMany();
+  const categoryBySlug = Object.fromEntries(categories.map((c) => [c.slug, c]));
 
-  // ===== COURSES =====
+  /* ===================== COURSES ===================== */
+  const courseData: {
+    title: string;
+    description: string;
+    level: CourseLevel;
+    duration: number;
+    category: string;
+  }[] = [
+    {
+      title: "Python for Data Analysis",
+      description: "Learn Python, Pandas, and NumPy for data analysis.",
+      level: CourseLevel.BEGINNER,
+      duration: 180,
+      category: "Data & AI",
+    },
+    {
+      title: "SQL for Data Science",
+      description: "Master SQL for analytical queries.",
+      level: CourseLevel.BEGINNER,
+      duration: 150,
+      category: "Data & AI",
+    },
+    {
+      title: "Machine Learning Fundamentals",
+      description: "Understand core ML concepts and algorithms.",
+      level: CourseLevel.INTERMEDIATE,
+      duration: 220,
+      category: "Data & AI",
+    },
+    {
+      title: "Deep Learning with TensorFlow",
+      description: "Build deep learning models using TensorFlow.",
+      level: CourseLevel.ADVANCED,
+      duration: 300,
+      category: "Data & AI",
+    },
+    {
+      title: "Backend Development with Node.js",
+      description: "Build scalable backend services using Node.js.",
+      level: CourseLevel.INTERMEDIATE,
+      duration: 210,
+      category: "Software Development",
+    },
+    {
+      title: "REST API Design",
+      description: "Design clean and scalable RESTful APIs.",
+      level: CourseLevel.BEGINNER,
+      duration: 160,
+      category: "Software Development",
+    },
+    {
+      title: "System Design Basics",
+      description: "Learn system design fundamentals.",
+      level: CourseLevel.INTERMEDIATE,
+      duration: 200,
+      category: "Software Development",
+    },
+  ];
+
   await prisma.course.createMany({
+    data: courseData.map((c) => ({
+      title: c.title,
+      slug: slugify(c.title),
+      description: c.description,
+      level: c.level,
+      duration: c.duration,
+      isPublished: true,
+      categoryId: categoryBySlug[slugify(c.category)].id,
+    })),
+  });
+
+  const courses = await prisma.course.findMany();
+  const courseBySlug = Object.fromEntries(courses.map((c) => [c.slug, c]));
+
+  /* ===================== MODULES + WORKSHOPS ===================== */
+  const createCourseFlow = async (courseId: string, title: string) => {
+    const base = slugify(title);
+
+    const intro = await prisma.module.create({
+      data: {
+        title: "Introduction",
+        contentUrl: `/content/${base}/intro`,
+      },
+    });
+
+    const core = await prisma.module.create({
+      data: {
+        title: "Core Concepts",
+        contentUrl: `/content/${base}/core`,
+      },
+    });
+
+    const workshop = await prisma.workshop.create({
+      data: {
+        title: "Final Project",
+        instructions: "Submit final assignment",
+      },
+    });
+
+    await prisma.courseItem.createMany({
+      data: [
+        {
+          courseId,
+          position: 1,
+          slug: slugify(intro.title),
+          type: "MODULE",
+          moduleId: intro.id,
+        },
+        {
+          courseId,
+          position: 2,
+          slug: slugify(core.title),
+          type: "MODULE",
+          moduleId: core.id,
+        },
+        {
+          courseId,
+          position: 3,
+          slug: slugify(workshop.title),
+          type: "WORKSHOP",
+          workshopId: workshop.id,
+        },
+      ],
+    });
+  };
+
+  for (const course of courses) {
+    await createCourseFlow(course.id, course.title);
+  }
+
+  /* ===================== LEARNING PATHS ===================== */
+  const dataScientistPath = await prisma.learningPath.create({
+    data: {
+      title: "Data Scientist Path",
+      slug: slugify("Data Scientist Path"),
+      description: "Roadmap to become a Data Scientist",
+      isPublished: true,
+    },
+  });
+
+  const backendEngineerPath = await prisma.learningPath.create({
+    data: {
+      title: "Backend Engineer Path",
+      slug: slugify("Backend Engineer Path"),
+      description: "Roadmap to become a Backend Engineer",
+      isPublished: true,
+    },
+  });
+
+  await prisma.learningPathItem.createMany({
     data: [
       {
-        title: "Python for Data Analysis",
-        slug: slugify("Python for Data Analysis"),
-        description: "Analyze data using Python.",
-        categoryId: categoryMap[slugify("Data & AI")],
-        level: "BEGINNER",
-        duration: 180,
-        isPublished: true,
-      },
-      {
-        title: "Machine Learning Fundamentals",
-        slug: slugify("Machine Learning Fundamentals"),
-        description: "Learn core machine learning concepts and algorithms.",
-        categoryId: categoryMap[slugify("Data & AI")],
-        level: "INTERMEDIATE",
-        duration: 240,
-        isPublished: true,
-      },
-      {
-        title: "Deep Learning with TensorFlow",
-        slug: slugify("Deep Learning with TensorFlow"),
-        description: "Build deep learning models using TensorFlow.",
-        categoryId: categoryMap[slugify("Data & AI")],
-        level: "ADVANCED",
-        duration: 300,
-        isPublished: true,
-      },
-      {
-        title: "Web Development with HTML, CSS, and JavaScript",
-        slug: slugify("Web Development with HTML CSS and JavaScript"),
-        description: "Build responsive websites from scratch.",
-        categoryId: categoryMap[slugify("Software Development")],
-        level: "BEGINNER",
-        duration: 200,
-        isPublished: true,
-      },
-      {
-        title: "Backend Development with Node.js",
-        slug: slugify("Backend Development with Node.js"),
-        description: "Create RESTful APIs using Node.js and Express.",
-        categoryId: categoryMap[slugify("Software Development")],
-        level: "INTERMEDIATE",
-        duration: 220,
-        isPublished: true,
-      },
-      {
-        title: "Database Design and SQL",
-        slug: slugify("Database Design and SQL"),
-        description:
-          "Design relational databases and write efficient SQL queries.",
-        categoryId: categoryMap[slugify("Software Development")],
-        level: "BEGINNER",
-        duration: 160,
-        isPublished: true,
-        avgRating: 5.0,
-        reviewCount: 10,
-      },
-      {
-        title: "System Design for Software Engineers",
-        slug: slugify("System Design for Software Engineers"),
-        description: "Learn scalable system design concepts and patterns.",
-        categoryId: categoryMap[slugify("Software Development")],
-        level: "ADVANCED",
-        duration: 260,
-        isPublished: true,
-        avgRating: 3.0,
-        reviewCount: 8,
-      },
-      {
-        title: "UI/UX Design Basics",
-        slug: slugify("UI UX Design Basics"),
-        description:
-          "Understand the fundamentals of user interface and user experience design.",
-        categoryId: categoryMap[slugify("Design & Creative")],
-        level: "BEGINNER",
-        duration: 140,
-        isPublished: true,
-      },
-      {
-        title: "Mobile App Development with Flutter",
-        slug: slugify("Mobile App Development with Flutter"),
-        description: "Build cross-platform mobile applications using Flutter.",
-        categoryId: categoryMap[slugify("Software Development")],
-        level: "INTERMEDIATE",
-        duration: 230,
-        isPublished: true,
-      },
-      {
-        title: "DevOps Fundamentals",
-        slug: slugify("DevOps Fundamentals"),
-        description:
-          "Learn CI/CD, Docker, and basic cloud deployment practices.",
-        categoryId: categoryMap[slugify("IT & Infrastructure")],
-        level: "BEGINNER",
-        duration: 190,
-        isPublished: true,
-      },
-    ],
-  });
-
-  const courseList: Course[] = await prisma.course.findMany();
-  const courseMap = Object.fromEntries(courseList.map((c) => [c.slug, c.id]));
-
-  // ===== MODULES =====
-  const module1 = await prisma.module.create({
-    data: {
-      title: "Python Basics",
-      contentUrl: "/thumbnail.jpeg",
-    },
-  });
-
-  const module2 = await prisma.module.create({
-    data: {
-      title: "Data Analysis with Pandas",
-      contentUrl: "/thumbnail.jpeg",
-    },
-  });
-
-  // ===== MODULE PROGRESS =====
-  await prisma.moduleProgress.create({
-    data: {
-      userId: student.id,
-      moduleId: module1.id,
-      completedAt: new Date(),
-    },
-  });
-
-  await prisma.moduleProgress.create({
-    data: {
-      userId: student.id,
-      moduleId: module2.id,
-      completedAt: new Date(),
-    },
-  });
-
-  // ===== WORKSHOP =====
-  const workshop = await prisma.workshop.create({
-    data: {
-      title: "Python Hands-on Workshop",
-      instructions: "Complete the data analysis task.",
-    },
-  });
-
-  // ===== WORKSHOP SUBMISSION
-  await prisma.workshopSubmission.create({
-    data: {
-      submissionUrl: "test",
-      score: 100,
-      submittedAt: new Date(),
-      userId: student.id,
-      workshopId: workshop.id,
-    },
-  });
-
-  // ===== COURSE TIMELINE =====
-  await prisma.courseItem.createMany({
-    data: [
-      {
-        courseId: courseMap[slugify("Python for Data Analysis")],
-        slug: slugify(module1.title),
+        learningPathId: dataScientistPath.id,
+        courseId: courseBySlug[slugify("Python for Data Analysis")].id,
         position: 1,
-        type: "MODULE",
-        moduleId: module1.id,
       },
       {
-        courseId: courseMap[slugify("Python for Data Analysis")],
-        slug: slugify(module2.title),
+        learningPathId: dataScientistPath.id,
+        courseId: courseBySlug[slugify("SQL for Data Science")].id,
         position: 2,
-        type: "MODULE",
-        moduleId: module2.id,
       },
       {
-        courseId: courseMap[slugify("Python for Data Analysis")],
-        slug: slugify(workshop.title),
+        learningPathId: dataScientistPath.id,
+        courseId: courseBySlug[slugify("Machine Learning Fundamentals")].id,
         position: 3,
-        type: "WORKSHOP",
-        workshopId: workshop.id,
+      },
+      {
+        learningPathId: dataScientistPath.id,
+        courseId: courseBySlug[slugify("Deep Learning with TensorFlow")].id,
+        position: 4,
       },
     ],
   });
 
-  // ===== ENROLLMENT =====
-  await prisma.enrollment.create({
+  await prisma.learningPathItem.createMany({
+    data: [
+      {
+        learningPathId: backendEngineerPath.id,
+        courseId: courseBySlug[slugify("Backend Development with Node.js")].id,
+        position: 1,
+      },
+      {
+        learningPathId: backendEngineerPath.id,
+        courseId: courseBySlug[slugify("REST API Design")].id,
+        position: 2,
+      },
+      {
+        learningPathId: backendEngineerPath.id,
+        courseId: courseBySlug[slugify("System Design Basics")].id,
+        position: 3,
+      },
+    ],
+  });
+
+  /* ===================== RESOLVE CANONICAL COURSE ===================== */
+  const mainCourse = courseBySlug[slugify("Python for Data Analysis")];
+
+  const mainCourseItems = await prisma.courseItem.findMany({
+    where: { courseId: mainCourse.id },
+    include: { module: true, workshop: true },
+    orderBy: { position: "asc" },
+  });
+
+  const mainModules = mainCourseItems
+    .filter((i) => i.module)
+    .map((i) => i.module!);
+
+  const mainWorkshop = mainCourseItems.find((i) => i.workshop)?.workshop!;
+
+  /* ===================== ENROLLMENT ===================== */
+  const enrollment = await prisma.enrollment.create({
     data: {
       userId: student.id,
-      courseId: courseMap[slugify("Python for Data Analysis")],
+      courseId: mainCourse.id,
       progressPercent: 100,
       status: "COMPLETED",
     },
   });
 
-  // ===== LEARNING PATH =====
-  const ds_path = await prisma.learningPath.create({
+  /* ===================== MODULE PROGRESS ===================== */
+  await prisma.moduleProgress.createMany({
+    data: mainModules.map((m) => ({
+      userId: student.id,
+      moduleId: m.id,
+      completedAt: new Date(),
+    })),
+  });
+
+  /* ===================== WORKSHOP SUBMISSION ===================== */
+  await prisma.workshopSubmission.create({
     data: {
-      title: "Data Science",
-      slug: slugify("Data Science"),
-      description: "Data science path that provides with ...",
-      isPublished: true,
+      userId: student.id,
+      workshopId: mainWorkshop.id,
+      submissionUrl: "/submissions/final.zip",
+      score: 95,
+      feedback: "Excellent analysis",
     },
   });
 
-  // ===== PATH TIMELINE =====
-  await prisma.learningPathItem.createMany({
+  /* ===================== REVIEW ===================== */
+  await prisma.review.create({
+    data: {
+      userId: student.id,
+      courseId: mainCourse.id,
+      rating: 5,
+      comment: "Very clear and practical course!",
+    },
+  });
+
+  await prisma.course.update({
+    where: { id: mainCourse.id },
+    data: {
+      avgRating: 5,
+      reviewCount: 1,
+    },
+  });
+
+  /* ===================== FAVORITE ===================== */
+  await prisma.favorite.create({
+    data: {
+      userId: student.id,
+      courseId: mainCourse.id,
+    },
+  });
+
+  /* ===================== JOB CATEGORY ===================== */
+  const jobCat = await prisma.jobCategory.create({
+    data: {
+      name: "Data & AI",
+      slug: slugify("Data & AI"),
+    },
+  });
+
+  /* ===================== JOB POSTING ===================== */
+  const job = await prisma.jobPosting.create({
+    data: {
+      title: "Junior Data Analyst",
+      slug: slugify("Junior Data Analyst"),
+      description: "Analyze business data and create reports.",
+      location: "Jakarta",
+      status: "PUBLISHED",
+      type: "FULL_TIME",
+      workMode: "HYBRID",
+      level: "JUNIOR",
+      paycheckMin: 5000000,
+      paycheckMax: 7000000,
+      categoryId: jobCat.id,
+      userId: company.id,
+      expiresAt: new Date(Date.now() + 30 * 86400000),
+    },
+  });
+
+  /* ===================== JOB APPLICATION ===================== */
+  await prisma.jobApplication.create({
+    data: {
+      userId: student.id,
+      jobId: job.id,
+      status: "APPLIED",
+    },
+  });
+
+  await prisma.jobPosting.update({
+    where: { id: job.id },
+    data: { applicators: 1 },
+  });
+
+  await prisma.profile.update({
+    where: { id: companyProfile.id },
+    data: {
+      totalJobs: 1,
+      totalApplicants: 1,
+    },
+  });
+
+  /* ===================== SKILLS ===================== */
+  await prisma.skill.createMany({
     data: [
-      {
-        position: 1,
-        learningPathId: ds_path.id,
-        courseId: courseMap[slugify("Python for Data Analysis")],
-      },
+      { userId: student.id, name: "Python" },
+      { userId: student.id, name: "Pandas" },
+      { userId: student.id, name: "SQL" },
     ],
   });
 
-  // ===== JOBS =====
-  const jobCategories = [
-    { name: "Software Development", slug: "software-development" },
-    { name: "Data & AI", slug: "data-ai" },
-    { name: "Design & Creative", slug: "design-creative" },
-    { name: "IT & Infrastructure", slug: "it-infrastructure" },
-    { name: "Business & Management", slug: "business-management" },
-    { name: "Marketing & Sales", slug: "marketing-sales" },
-    { name: "Finance & Accounting", slug: "finance-accounting" },
-    { name: "Human Resources", slug: "human-resources" },
-    { name: "Product Management", slug: "product-management" },
-    { name: "Customer Support", slug: "customer-support" },
-  ];
-
-  await prisma.jobCategory.createMany({
-    data: jobCategories,
-  });
-
-  const jobCategoryList = await prisma.jobCategory.findMany();
-
-  const jobCategoryMap = Object.fromEntries(
-    jobCategoryList.map((c) => [c.slug, c.id]),
-  );
-
-  await prisma.jobPosting.createMany({
-    data: [
-      {
-        title: "Data Analyst",
-        slug: slugify("Data Analyst"),
-        description: "Analyze business and product data to support decisions.",
-        status: "PUBLISHED",
-
-        categoryId: jobCategoryMap["data-ai"],
-
-        type: "FULL_TIME",
-        workMode: "REMOTE",
-        level: "JUNIOR",
-
-        paycheckMin: 4000000,
-        paycheckMax: 4500000,
-
-        userId: corp.id,
-      },
-      {
-        title: "Data Scientist",
-        slug: slugify("Data Scientist"),
-        description: "Analyze business and product data to support decisions.",
-        location: "Bogor",
-        status: "PUBLISHED",
-
-        categoryId: jobCategoryMap["data-ai"],
-
-        type: "FULL_TIME",
-        workMode: "REMOTE",
-        level: "SENIOR",
-
-        paycheckMin: 9000000,
-        paycheckMax: 10000000,
-
-        userId: corp.id,
-      },
-      {
-        title: "Data Engineer",
-        slug: slugify("Data Engineer"),
-        description: "Analyze business and product data to support decisions.",
-        status: "PUBLISHED",
-
-        categoryId: jobCategoryMap["data-ai"],
-
-        type: "FULL_TIME",
-        workMode: "REMOTE",
-        level: "MID",
-
-        paycheckMin: 5000000,
-        paycheckMax: 7500000,
-
-        userId: corp.id,
-      },
-      {
-        title: "UI/UX Designer",
-        slug: slugify("UI/UX Designer"),
-        description: "Analyze business and product data to support decisions.",
-        status: "PUBLISHED",
-
-        categoryId: jobCategoryMap["data-ai"],
-
-        type: "PART_TIME",
-        workMode: "HYBRID",
-        level: "LEAD",
-
-        paycheckMin: 1000000,
-        paycheckMax: 3500000,
-
-        userId: corp.id,
-      },
-      {
-        title: "Test",
-        slug: slugify("Test"),
-        description: "Analyze business and product data to support decisions.",
-        status: "DRAFT",
-
-        categoryId: jobCategoryMap["data-ai"],
-
-        type: "PART_TIME",
-        workMode: "HYBRID",
-        level: "LEAD",
-
-        paycheckMin: 1000000,
-        paycheckMax: 3500000,
-
-        userId: corp.id,
-      },
-    ],
+  /* ===================== ADMIN ACTION ===================== */
+  await prisma.adminAction.create({
+    data: {
+      userId: admin.id,
+      actionType: "VERIFY_COMPANY",
+    },
   });
 }
 
 main()
-  .catch((e) => {
-    console.error("Seeding error:", e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());

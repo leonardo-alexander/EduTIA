@@ -40,12 +40,19 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
   const pathname = usePathname();
   const searchFromUrl = searchParams.get("search") ?? "";
 
+  const [mounted, setMounted] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [query, setQuery] = useState(searchFromUrl);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     setQuery(searchFromUrl);
   }, [searchFromUrl]);
+
+  if (!mounted) return null;
 
   const categoriesUI = (categories ?? []).map((c: CategoryUI) => ({
     id: c.id,
