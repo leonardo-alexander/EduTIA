@@ -40,6 +40,62 @@ export async function deleteSkill(skillId: string) {
   });
 }
 
+export async function addEducation(
+  data: {
+    institution: string;
+    degree?: string;
+    fieldOfStudy?: string;
+    startDate: string;
+    endDate?: string;
+    description?: string;
+  },
+  userId: string,
+) {
+  if (!data.institution.trim() || !data.startDate) return;
+
+  await prisma.education.create({
+    data: {
+      institution: data.institution.trim(),
+      degree: data.degree?.trim() || null,
+      fieldOfStudy: data.fieldOfStudy?.trim() || null,
+      description: data.description?.trim() || null,
+      startDate: new Date(data.startDate),
+      endDate: data.endDate ? new Date(data.endDate) : null,
+      userId,
+    },
+  });
+}
+
+export async function updateEducation(
+  educationId: string,
+  data: {
+    institution: string;
+    degree?: string;
+    fieldOfStudy?: string;
+    startDate: string;
+    endDate?: string;
+    description?: string;
+  },
+) {
+  await prisma.education.update({
+    where: { id: educationId },
+    data: {
+      institution: data.institution.trim(),
+      degree: data.degree?.trim() || null,
+      fieldOfStudy: data.fieldOfStudy?.trim() || null,
+      description: data.description?.trim() || null,
+      startDate: new Date(data.startDate),
+      endDate: data.endDate ? new Date(data.endDate) : null,
+    },
+  });
+}
+
+export async function deleteEducation(educationId: string) {
+  await prisma.education.delete({
+    where: { id: educationId },
+  });
+}
+
 export async function updateExperience(
   experienceId: string,
   data: {

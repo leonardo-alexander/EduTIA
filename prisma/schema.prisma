@@ -25,6 +25,7 @@ model User {
   jobPostings           JobPosting[]
   jobApplications       JobApplication[]
   skills                Skill[]
+  educations            Education[]
   experiences           Experience[]
   cvs                   CV[]
   adminActions          AdminAction[]
@@ -222,8 +223,10 @@ model Enrollment {
 model Certificate {
   id              String   @id @default(uuid())
   certificateCode String   @unique
+
+  name            String   // snapshot name, immutable
   issuedAt        DateTime @default(now())
-  fileUrl         String   
+  fileUrl         String
 
   enrollmentId    String   @unique
   enrollment      Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
@@ -326,6 +329,22 @@ model Skill {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, name])
+}
+
+model Education {
+  id            String   @id @default(uuid())
+  institution   String
+  degree        String?
+  fieldOfStudy  String?
+  startDate     DateTime
+  endDate       DateTime?
+  description   String?
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Experience {

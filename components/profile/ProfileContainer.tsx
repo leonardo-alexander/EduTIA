@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import {
   CompanyVerification,
+  Education,
   Experience,
   Profile,
   Skill,
@@ -16,6 +17,7 @@ type ProfileContainerProps = {
   user: User;
   profile: Profile | null;
   skills: Skill[];
+  educations: Education[];
   experiences: Experience[];
   verification: CompanyVerification | null;
   totalEnrollments: number;
@@ -27,6 +29,7 @@ export default function ProfileContainer({
   user,
   profile,
   skills,
+  educations,
   experiences,
   verification,
   totalEnrollments,
@@ -70,6 +73,7 @@ export default function ProfileContainer({
       user={user}
       profile={profile}
       skills={skills}
+      educations={educations}
       experiences={experiences}
       verification={verification}
       totalEnrollments={totalEnrollments}

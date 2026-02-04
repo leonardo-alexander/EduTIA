@@ -7,6 +7,7 @@ import {
   User,
   Skill,
   Experience,
+  Education,
 } from "@prisma/client";
 import { useEffect, useActionState, useState } from "react";
 import {
@@ -31,12 +32,19 @@ import {
   Trash2,
 } from "lucide-react";
 import AddSkillPopover from "../AddSkillsPopover";
-import { addSkill, addExperience, deleteSkill } from "@/actions/moreProfile";
+import {
+  addSkill,
+  addExperience,
+  deleteSkill,
+  addEducation,
+} from "@/actions/moreProfile";
 import AddExperiencePopover from "../AddExperiencesPopover";
 import ExperienceActions from "./ExperienceAction";
 import EditSkillPopover from "./EditSkillPopover";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import { generateUserCV } from "@/actions/generateCV";
+import AddEducationsPopover from "../AddEducationsPopover";
+import EducationActions from "./EducationAction";
 
 type ProfileViewProps = {
   profile: Profile | null;
@@ -46,6 +54,7 @@ type ProfileViewProps = {
   completedEnrollments: number;
   totalJobApplications: number;
   skills: Skill[];
+  educations: Education[];
   experiences: Experience[];
   onEdit: () => void;
   onIncompleteProfile: () => void;
@@ -59,6 +68,7 @@ export default function ProfileView({
   completedEnrollments,
   totalJobApplications,
   skills,
+  educations,
   experiences,
   onEdit,
   onIncompleteProfile,
@@ -481,6 +491,60 @@ export default function ProfileView({
                       window.location.reload();
                     }}
                   />
+                )}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+              <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-violet-50 rounded-xl">
+                    <IdCard className="w-5 h-5 text-violet-600" />
+                  </div>
+                  <h2 className="text-lg font-semibold">Education</h2>
+                </div>
+
+                <AddEducationsPopover
+                  onAdd={async (data) => {
+                    await addEducation(data, user.id);
+                    window.location.reload();
+                  }}
+                />
+              </div>
+
+              <div className="p-6 space-y-6">
+                {educations.length ? (
+                  educations.map((edu) => (
+                    <div
+                      key={edu.id}
+                      className="group flex justify-between items-start gap-4 border-b last:border-none pb-4"
+                    >
+                      <div>
+                        <h3 className="font-semibold">{edu.institution}</h3>
+
+                        {(edu.degree || edu.fieldOfStudy) && (
+                          <p className="text-sm text-slate-600">
+                            {[edu.degree, edu.fieldOfStudy]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </p>
+                        )}
+
+                        <p className="text-xs text-slate-400 mt-1">
+                          {new Date(edu.startDate).toLocaleDateString()} —{" "}
+                          {edu.endDate
+                            ? new Date(edu.endDate).toLocaleDateString()
+                            : "Present"}
+                        </p>
+                      </div>
+
+                      <EducationActions edu={edu} />
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-slate-400 italic">
+                    No education added yet
+                  </p>
                 )}
               </div>
             </div>

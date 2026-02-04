@@ -25,6 +25,10 @@ export async function generatePdfCertificate(enrollmentId: string) {
     throw new Error("Invalid enrollment");
   }
 
+  if (!enrollment.user.profile || !enrollment.user.profile.name) {
+    throw new Error("Incomplete profile");
+  }
+
   const certificateId = `CERT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
   const filename = `certificate-${certificateId}.pdf`;
 
@@ -217,6 +221,7 @@ export async function generatePdfCertificate(enrollmentId: string) {
 
   return prisma.certificate.create({
     data: {
+      name: enrollment.user.profile.name,
       certificateCode: certificateId,
       fileUrl: `/uploads/certificates/${filename}`,
       enrollment: {

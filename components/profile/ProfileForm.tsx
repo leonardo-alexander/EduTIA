@@ -9,7 +9,6 @@ import {
   FileText,
   Building2,
   Globe,
-  Image,
   X,
   Save,
   Loader2,
@@ -49,8 +48,6 @@ export default function ProfileForm({
 
     return () => clearTimeout(t);
   }, [state, router, onCancel]);
-
-  const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

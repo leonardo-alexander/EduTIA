@@ -48,6 +48,7 @@ export default async function ProfilePage() {
         },
       },
       skills: true,
+      educations: true,
       experiences: true,
     },
   });
@@ -61,6 +62,7 @@ export default async function ProfilePage() {
       user={userData}
       profile={userData.profile}
       skills={userData.skills}
+      educations={userData.educations}
       experiences={userData.experiences}
       verification={userData.profile?.verification ?? null}
       totalEnrollments={userData?._count.enrollments ?? 0}
