@@ -24,11 +24,13 @@ Step:
 - npm run dev
 
 ## Meet the team:
-**Product Owner **
-(2802538492) Darren Pratama Wijaya
-**Scrum Master **
-(2802540156) Vincent Tanaka
-**Developer Team **
-(2802540143) Adriel Bernhard T - SDET
-(2802538694) Leonardo Alexander Wijaya - Backend Developer
-(2802538744) Olivia The - Frontend Developer
+**Product Owner**
+- (2802538492) Darren Pratama Wijaya
+
+**Scrum Master**
+- (2802540156) Vincent Tanaka
+
+**Developer Team**
+- (2802540143) Adriel Bernhard T - Quality Assurance and Tester
+- (2802538694) Leonardo Alexander Wijaya - Backend Developer
+- (2802538744) Olivia The - Frontend Developer
