@@ -1,5 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Company Applications | Admin | EduTIA",
+  description: "Review and manage company verification requests.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminCompanysPage() {
   const requests = await prisma.companyVerification.findMany({

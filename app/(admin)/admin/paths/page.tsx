@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CreatePathPopover from "@/components/admin/CreatePath";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Admin Learning Paths | EduTIA",
+    description: "Manage and organize learning paths on the platform.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function AdminPathsPage() {
   const paths = await prisma.learningPath.findMany({

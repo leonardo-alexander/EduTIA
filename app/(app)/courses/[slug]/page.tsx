@@ -18,17 +18,36 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+
   const course = await prisma.course.findUnique({
     where: { slug },
-    select: { title: true, description: true },
+    select: {
+      title: true,
+      description: true,
+      thumbnailUrl: true,
+    },
   });
 
   if (!course) {
-    return { title: "Course Not Found" };
+    return {
+      title: "Course Not Found | EduTIA",
+      robots: { index: false, follow: false },
+    };
   }
+
+  const description =
+    course.description ||
+    "Explore this course on EduTIA and start learning today.";
+
   return {
-    title: `${course.title} | Learning Platform`,
-    description: course.description,
+    title: `${course.title} | EduTIA`,
+    description,
+    openGraph: {
+      title: course.title,
+      description,
+      images: course.thumbnailUrl ? [{ url: course.thumbnailUrl }] : undefined,
+      type: "website",
+    },
   };
 }
 

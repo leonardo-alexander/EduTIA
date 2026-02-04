@@ -10,11 +10,26 @@ type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export const metadata: Metadata = {
-  title: "Courses | EduTIA"
-};
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const params = await searchParams;
 
-export default async function Page({ searchParams }: PageProps) {
+  const category = typeof params.category === "string" ? params.category : null;
+
+  const title = category ? `${category} Courses | EduTIA` : "Courses | EduTIA";
+
+  const description = category
+    ? `Browse ${category} courses on EduTIA and start learning today.`
+    : "Browse all available courses on EduTIA and start learning today.";
+
+  return {
+    title,
+    description,
+  };
+}
+
+export default async function CoursesPage({ searchParams }: PageProps) {
   const user = await getCurrentUser();
   const resolvedSearchParams = await searchParams;
   const params = new URLSearchParams();

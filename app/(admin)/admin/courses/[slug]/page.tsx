@@ -5,8 +5,20 @@ import { ArrowLeft, Star } from "lucide-react";
 import { getCategories } from "@/lib/data/categories";
 import UpdateCoursePopover from "@/components/admin/UpdateCourse";
 import DeleteCourseButton from "@/components/admin/DeleteCourse";
+import type { Metadata } from "next";
 
-export default async function AdminCourseDetail({
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Admin Course Detail | EduTIA",
+    description: "View and manage a course on the platform.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
+
+export default async function AdminCourseDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;

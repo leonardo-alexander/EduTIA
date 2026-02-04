@@ -2,6 +2,19 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import ProfileContainer from "@/components/profile/ProfileContainer";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "My Profile | EduTIA",
+    description:
+      "View and manage your personal profile, skills, and learning progress.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();

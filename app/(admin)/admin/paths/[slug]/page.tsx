@@ -2,12 +2,23 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import DeleteCourseButton from "@/components/admin/DeleteCourse";
 import UpdatePathPopover from "@/components/admin/UpdatePath";
 import { PathUI } from "@/types/path.ui";
 import DeletePathButton from "@/components/admin/DeletePath";
+import type { Metadata } from "next";
 
-export default async function AdminPageDetail({
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Admin Path Detail | EduTIA",
+    description: "View and manage a learning path.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
+
+export default async function AdminPathDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;

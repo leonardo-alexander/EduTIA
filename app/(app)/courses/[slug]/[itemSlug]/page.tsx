@@ -28,20 +28,28 @@ export async function generateMetadata({
       slug: itemSlug,
       course: { slug },
     },
-    include: {
+    select: {
       module: { select: { title: true } },
       workshop: { select: { title: true } },
     },
   });
 
   if (!course || !item) {
-    return { title: "Item Not Found" };
+    return {
+      title: "Item Not Found | EduTIA",
+      robots: { index: false, follow: false },
+    };
   }
 
-  const title = item.module?.title ?? item.workshop?.title ?? "Course Item";
+  const itemTitle = item.module?.title ?? item.workshop?.title ?? "Course Item";
 
   return {
-    title: `${title} - ${course.title} | Learning Platform`,
+    title: `${itemTitle} – ${course.title} | EduTIA`,
+    description: `Lesson from the course "${course.title}".`,
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 

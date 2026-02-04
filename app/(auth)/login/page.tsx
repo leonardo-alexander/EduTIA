@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "Login to your EduTIA account",
 };
 
-export default function Page() {
+export default function LoginPage() {
   return <Login />;
 }

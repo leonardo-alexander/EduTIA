@@ -12,23 +12,38 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+
   const path = await prisma.learningPath.findUnique({
     where: { slug },
+    select: {
+      title: true,
+      description: true,
+    },
   });
 
   if (!path) {
     return {
-      title: "Path Not Found",
+      title: "Path Not Found | EduTIA",
+      robots: { index: false, follow: false },
     };
   }
 
+  const description =
+    path.description ||
+    "Explore this learning path and follow a structured journey to master new skills.";
+
   return {
-    title: `${path.title} | Learning Path`,
-    description: path.description,
+    title: `${path.title} | Learning Path | EduTIA`,
+    description,
+    openGraph: {
+      title: `${path.title} | Learning Path`,
+      description,
+      type: "website",
+    },
   };
 }
 
-export default async function PathDetailsPage({ params }: Props) {
+export default async function PathDetailPage({ params }: Props) {
   const user = await getCurrentUser();
   const { slug } = await params;
 

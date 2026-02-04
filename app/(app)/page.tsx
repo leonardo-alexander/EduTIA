@@ -5,10 +5,18 @@ import { mapCourseToUI } from "@/lib/mappers/course";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "EduTIA"
+  title: "EduTIA – Learn, Upskill, and Get Hired",
+  description:
+    "EduTIA helps you learn new skills, follow structured learning paths, and connect with job opportunities.",
+  openGraph: {
+    title: "EduTIA – Learn, Upskill, and Get Hired",
+    description:
+      "Learn new skills, follow curated learning paths, and connect with job opportunities on EduTIA.",
+    type: "website",
+  },
 };
 
-export default async function Page() {
+export default async function LandingPage() {
   const user = await getCurrentUser();
   const userId = user?.id;
 

@@ -1,6 +1,18 @@
 import { prisma } from "@/lib/prisma";
+import type { Metadata } from "next";
 
-export default async function AdminDashboard() {
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Admin Dashboard | EduTIA",
+    description: "Administrative overview and platform statistics.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
+
+export default async function AdminDashboardPage() {
   const [users, courses, enrollments] = await Promise.all([
     prisma.user.count(),
     prisma.course.count(),

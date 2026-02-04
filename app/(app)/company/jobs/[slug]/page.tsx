@@ -4,11 +4,27 @@ import { getCurrentUser } from "@/lib/auth";
 import UpdateJobPopover from "@/components/jobs/UpdateJob";
 import DeleteJobButton from "@/components/jobs/DeleteJob";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  return {
+    title: `Job Applicants | ${slug} | EduTIA`,
+    description: "Manage and review applicants for your job posting.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
 }
 
 export default async function JobApplicantsPage({ params }: PageProps) {

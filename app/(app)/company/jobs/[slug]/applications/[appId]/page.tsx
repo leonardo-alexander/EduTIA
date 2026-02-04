@@ -3,11 +3,23 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { ReviewApp } from "@/components/jobs/ReviewApp";
 import { AcceptApp } from "@/components/jobs/AcceptApp";
+import type { Metadata } from "next";
 
 interface PageProps {
   params: {
     slug: string;
     appId: string;
+  };
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Applicant Detail | EduTIA",
+    description: "Review applicant information and manage application status.",
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
@@ -36,7 +48,7 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
   if (application.job.userId !== user.id) redirect("/dashboard");
 
   const applicant = application.user;
-  const profile = applicant.profile;
+  const { profile } = applicant;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-8 min-h-screen">

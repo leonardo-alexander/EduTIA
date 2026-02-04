@@ -2,6 +2,18 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CreateCoursePopover from "@/components/admin/CreateCourse";
 import { getCategories } from "@/lib/data/categories";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Admin Courses | EduTIA",
+    description: "Manage and organize courses on the platform.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function AdminCoursesPage() {
   const courses = await prisma.course.findMany({

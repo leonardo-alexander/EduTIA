@@ -2,8 +2,18 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { verifyCorp, unverifyCorp } from "@/actions/compAdmin";
+import type { Metadata } from "next";
 
-export default async function ReviewCorp({
+export const metadata: Metadata = {
+  title: "Review Company Application | Admin | EduTIA",
+  description: "Review and verify a company application.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export default async function ReviewCorpPage({
   params,
 }: {
   params: Promise<{ id: string }>;

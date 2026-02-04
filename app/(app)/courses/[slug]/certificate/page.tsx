@@ -5,9 +5,25 @@ import { generatePdfCertificate } from "@/lib/certGenerator";
 import CertificateComponent from "@/components/Certificate";
 import PrintButton from "@/components/PrintButton";
 import { Certificate } from "@prisma/client";
+import type { Metadata } from "next";
 
 interface PageProps {
   params: { slug: string };
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = params;
+
+  return {
+    title: `Certificate | ${slug} | EduTIA`,
+    description: "View and download your course completion certificate.",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
 }
 
 export default async function CertificatePage({ params }: PageProps) {
