@@ -27,7 +27,7 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
   const user = await getCurrentUser();
   if (!user || user.role !== "COMPANY") redirect("/dashboard");
 
-  const { slug, appId } = await params;
+  const { appId } = await params;
 
   const application = await prisma.jobApplication.findUnique({
     where: { id: appId },
@@ -36,6 +36,7 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
         include: {
           profile: true,
           skills: true,
+          educations: true,
           experiences: true,
           cvs: true,
         },
@@ -61,8 +62,18 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
 
       <div className="rounded-xl border bg-white p-6 shadow-sm space-y-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
-            {profile?.name?.[0] ?? applicant.email[0].toUpperCase()}
+          <div className="w-14 h-14 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-lg font-semibold">
+            {profile?.pictureUrl ? (
+              <img
+                src={profile.pictureUrl}
+                alt="Profile picture"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span>
+                {profile?.name?.[0] ?? applicant.email[0].toUpperCase()}
+              </span>
+            )}
           </div>
           <div>
             <p className="font-semibold text-lg">
@@ -127,6 +138,34 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {applicant.educations.length > 0 && (
+          <div>
+            <p className="font-medium mb-1">Education</p>
+            <ul className="space-y-2">
+              {applicant.educations.map((edu) => (
+                <li key={edu.id} className="border rounded p-3">
+                  <p className="font-semibold">{edu.institution}</p>
+
+                  {(edu.degree || edu.fieldOfStudy) && (
+                    <p className="text-sm text-gray-600">
+                      {[edu.degree, edu.fieldOfStudy]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  )}
+
+                  <p className="text-xs text-gray-500 mt-1">
+                    {new Date(edu.startDate).getFullYear()} –{" "}
+                    {edu.endDate
+                      ? new Date(edu.endDate).getFullYear()
+                      : "Present"}
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
