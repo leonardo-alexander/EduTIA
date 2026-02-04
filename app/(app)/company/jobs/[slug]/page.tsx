@@ -45,9 +45,7 @@ export default async function JobApplicantsPage({ params }: PageProps) {
             include: { profile: true },
           },
         },
-        orderBy: {
-          appliedAt: "desc",
-        },
+        orderBy: [{ status: "asc" }, { appliedAt: "desc" }],
       },
     },
   });
@@ -87,9 +85,21 @@ export default async function JobApplicantsPage({ params }: PageProps) {
             className="flex items-center justify-between rounded-xl border bg-white p-5 shadow-sm hover:shadow transition"
           >
             <div className="flex items-center gap-4">
-              <span className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
-                {app.user.profile?.name?.[0] ?? app.user.email[0].toUpperCase()}
-              </span>
+              <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-lg font-semibold">
+                {app.user.profile?.pictureUrl ? (
+                  <img
+                    src={app.user.profile.pictureUrl}
+                    alt="Profile picture"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>
+                    {app.user.profile?.name?.[0] ??
+                      app.user.email[0].toUpperCase()}
+                  </span>
+                )}
+              </div>
+
               <div>
                 <p className="font-semibold">
                   {app.user.profile?.name || app.user.email}

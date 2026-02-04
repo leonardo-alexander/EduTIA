@@ -39,6 +39,11 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
           educations: true,
           experiences: true,
           cvs: true,
+          workshopSubmissions: {
+            include: {
+              workshop: true,
+            },
+          },
         },
       },
       job: true,
@@ -177,6 +182,51 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
                 <li key={exp.id} className="border rounded p-3">
                   <p className="font-semibold">{exp.jobTitle}</p>
                   <p className="text-sm text-gray-500">{exp.companyName}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {applicant.workshopSubmissions.length > 0 && (
+          <div>
+            <p className="font-medium mb-1">Completed Workshops</p>
+
+            <ul className="space-y-2">
+              {applicant.workshopSubmissions.map((sub) => (
+                <li
+                  key={sub.id}
+                  className="border rounded p-3 flex justify-between items-start gap-4"
+                >
+                  <div>
+                    <p className="font-semibold">{sub.workshop.title}</p>
+
+                    <p className="text-xs text-gray-500 mt-1">
+                      Submitted on{" "}
+                      {new Date(sub.submittedAt).toLocaleDateString()}
+                    </p>
+
+                    {sub.score !== null && (
+                      <p className="text-xs text-gray-600 mt-1">
+                        Score: <b>{sub.score}</b>
+                      </p>
+                    )}
+
+                    {sub.feedback && (
+                      <p className="text-xs text-gray-500 mt-1 italic">
+                        “{sub.feedback}”
+                      </p>
+                    )}
+                  </div>
+
+                  <a
+                    href={sub.submissionUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 text-sm underline whitespace-nowrap"
+                  >
+                    View Submission
+                  </a>
                 </li>
               ))}
             </ul>

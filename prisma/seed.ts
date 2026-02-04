@@ -203,27 +203,52 @@ async function main() {
   const createCourseFlow = async (courseId: string, title: string) => {
     const base = slugify(title);
 
+    /* ===================== MODULES ===================== */
     const intro = await prisma.module.create({
       data: {
         title: "Introduction",
-        contentUrl: `/content/${base}/intro`,
+        contentUrl: "https://www.youtube.com/watch?v=rfscVS0vtbw",
       },
     });
 
     const core = await prisma.module.create({
       data: {
         title: "Core Concepts",
-        contentUrl: `/content/${base}/core`,
+        contentUrl: "https://www.youtube.com/watch?v=LHBE6Q9XlzI",
       },
     });
 
+    /* ===================== WORKSHOP ===================== */
     const workshop = await prisma.workshop.create({
       data: {
         title: "Final Project",
-        instructions: "Submit final assignment",
+        instructions: `
+You are required to complete a hands-on project based on the materials in this course.
+
+Instructions:
+1. Choose a dataset related to the course topic (CSV or Excel format).
+2. Perform data analysis or implementation based on the course focus.
+3. Document your approach and results clearly.
+
+Submission Guidelines:
+- Submit either:
+  • A Google Colab notebook link, OR
+  • A GitHub repository link
+- The submission must include:
+  • Code
+  • Explanation of steps
+  • Final results or conclusions
+
+Evaluation Criteria:
+- Correctness
+- Code quality
+- Clarity of explanation
+- Practical relevance
+      `.trim(),
       },
     });
 
+    /* ===================== COURSE FLOW ===================== */
     await prisma.courseItem.createMany({
       data: [
         {
@@ -462,6 +487,51 @@ async function main() {
       { userId: student.id, name: "Python" },
       { userId: student.id, name: "Pandas" },
       { userId: student.id, name: "SQL" },
+    ],
+  });
+
+  /* ===================== EDUCATION ===================== */
+  await prisma.education.createMany({
+    data: [
+      {
+        userId: student.id,
+        institution: "University of Indonesia",
+        degree: "Bachelor of Science",
+        fieldOfStudy: "Statistics",
+        startDate: new Date("2018-08-01"),
+        endDate: new Date("2022-07-01"),
+        description:
+          "Focused on data analysis, probability, and statistical modeling.",
+      },
+      {
+        userId: student.id,
+        institution: "EduTIA Bootcamp",
+        degree: "Professional Certificate",
+        fieldOfStudy: "Data Science",
+        startDate: new Date("2023-01-01"),
+        endDate: new Date("2023-06-01"),
+        description: "Hands-on training in Python, SQL, and machine learning.",
+      },
+    ],
+  });
+
+  /* ===================== EXPERIENCE ===================== */
+  await prisma.experience.createMany({
+    data: [
+      {
+        userId: student.id,
+        jobTitle: "Data Analyst Intern",
+        companyName: "Insight Analytics",
+        startDate: new Date("2021-06-01"),
+        endDate: new Date("2021-12-01"),
+      },
+      {
+        userId: student.id,
+        jobTitle: "Junior Data Analyst",
+        companyName: "TechCorp Indonesia",
+        startDate: new Date("2022-08-01"),
+        endDate: null,
+      },
     ],
   });
 
