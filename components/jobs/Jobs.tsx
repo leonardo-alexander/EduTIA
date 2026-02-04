@@ -327,7 +327,7 @@ export default function Jobs({
                   <select
                     value={paycheckMin}
                     onChange={(e) => setPaycheckMin(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
+                    className="w-full px-3 py-2 border-2 border-slate-300 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
                   >
                     <option value="">Min</option>
                     {PAYCHECK_OPTIONS.map((opt) => (
@@ -342,7 +342,7 @@ export default function Jobs({
                   <select
                     value={paycheckMax}
                     onChange={(e) => setPaycheckMax(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
+                    className="w-full px-3 py-2 border-2 border-slate-300 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-eduBlue/20"
                   >
                     <option value="">Max</option>
                     {PAYCHECK_OPTIONS.map((opt) => (
@@ -363,7 +363,7 @@ export default function Jobs({
 
               <Link
                 href="/jobs"
-                className="block w-full text-center py-3 text-sm font-bold text-slate-600 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                className="mt-6 block w-full text-center py-3 text-sm font-bold text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
                 Clear Filters
               </Link>
