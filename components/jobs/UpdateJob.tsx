@@ -5,6 +5,19 @@ import { updateJob } from "@/actions/jobManagement";
 import { useRouter } from "next/navigation";
 import { JobCategory } from "@prisma/client";
 import { JobUI } from "@/types/job.ui";
+import {
+  Briefcase,
+  FileText,
+  MapPin,
+  Layers,
+  Timer,
+  Building2,
+  Banknote,
+  Calendar,
+  CircleDot,
+  Pencil,
+  X,
+} from "lucide-react";
 
 export default function UpdateJobPopover({
   job,
@@ -23,7 +36,7 @@ export default function UpdateJobPopover({
       setOpen(false);
       router.refresh();
     }
-  }, [state]);
+  }, [state, router]);
 
   useEffect(() => {
     if (open) {
@@ -36,82 +49,101 @@ export default function UpdateJobPopover({
     };
   }, [open]);
 
+  const inputClasses =
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-eduBlue/20 focus:border-eduBlue transition-all";
+  const selectClasses =
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-eduBlue/20 focus:border-eduBlue transition-all appearance-none cursor-pointer";
+  const labelClasses =
+    "text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block";
+
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+        className="inline-flex items-center gap-2 rounded-xl bg-eduBlue px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
       >
-        Update Job
+        <Pencil className="w-4 h-4" />
+        Edit Job
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-xl max-h-[90vh] rounded-xl bg-white shadow-xl flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b px-6 py-4 shrink-0">
-              <h2 className="text-lg font-semibold">Update Job</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+          <div className="relative w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white shadow-2xl flex flex-col overflow-hidden">
+            <div className="shrink-0 bg-slate-900 px-6 py-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-eduBlue/20 rounded-xl">
+                  <Pencil className="w-5 h-5 text-eduBlue" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white">Edit Job</h2>
+                  <p className="text-sm text-slate-400">Update job details</p>
+                </div>
+              </div>
               <button
                 onClick={() => setOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             <form
               id="job-form"
               action={formAction}
-              className="flex-1 overflow-y-auto px-6 py-4 space-y-4"
+              className="flex-1 overflow-y-auto px-6 py-6 space-y-6"
             >
               <input type="hidden" name="slug" defaultValue={job.slug} />
-              {/* Title */}
+
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className={labelClasses}>
+                  <Briefcase className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                   Job Title
                 </label>
                 <input
                   name="title"
                   defaultValue={job.title}
-                  className="w-full rounded-md border px-3 py-2"
+                  placeholder="e.g. Senior Frontend Developer"
+                  className={inputClasses}
                 />
               </div>
 
-              {/* Description */}
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className={labelClasses}>
+                  <FileText className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                   Description
                 </label>
                 <textarea
                   name="description"
-                  rows={3}
+                  rows={4}
                   defaultValue={job.description}
-                  className="w-full rounded-md border px-3 py-2 resize-none"
+                  placeholder="Describe the role, responsibilities, and requirements..."
+                  className={`${inputClasses} resize-none`}
                 />
               </div>
 
-              {/* Location */}
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className={labelClasses}>
+                  <MapPin className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                   Location
                 </label>
                 <input
                   name="location"
                   defaultValue={job.location || ""}
-                  className="w-full rounded-md border px-3 py-2"
+                  placeholder="e.g. Jakarta, Indonesia"
+                  className={inputClasses}
                 />
               </div>
 
-              {/* Category + Type */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className={labelClasses}>
+                    <Layers className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Category
                   </label>
                   <select
                     name="categoryId"
                     defaultValue={job.category.id}
-                    className="w-full rounded-md border px-3 py-2"
+                    className={selectClasses}
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -122,13 +154,14 @@ export default function UpdateJobPopover({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className={labelClasses}>
+                    <Timer className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Job Type
                   </label>
                   <select
                     name="type"
                     defaultValue={job.type}
-                    className="w-full rounded-md border px-3 py-2"
+                    className={selectClasses}
                   >
                     <option value="FULL_TIME">Full Time</option>
                     <option value="PART_TIME">Part Time</option>
@@ -139,16 +172,16 @@ export default function UpdateJobPopover({
                 </div>
               </div>
 
-              {/* Mode + Level */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className={labelClasses}>
+                    <Building2 className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Work Mode
                   </label>
                   <select
                     name="mode"
                     defaultValue={job.workMode}
-                    className="w-full rounded-md border px-3 py-2"
+                    className={selectClasses}
                   >
                     <option value="ONSITE">Onsite</option>
                     <option value="REMOTE">Remote</option>
@@ -157,13 +190,14 @@ export default function UpdateJobPopover({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className={labelClasses}>
+                    <Layers className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Experience Level
                   </label>
                   <select
                     name="level"
                     defaultValue={job.level ?? ""}
-                    className="w-full rounded-md border px-3 py-2"
+                    className={selectClasses}
                   >
                     <option value="">Any</option>
                     <option value="JUNIOR">Junior</option>
@@ -174,37 +208,33 @@ export default function UpdateJobPopover({
                 </div>
               </div>
 
-              {/* Salary */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Min Salary
-                  </label>
+              <div>
+                <label className={labelClasses}>
+                  <Banknote className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
+                  Salary Range
+                </label>
+                <div className="grid grid-cols-2 gap-4">
                   <input
                     type="number"
                     name="paycheckMin"
                     defaultValue={job.paycheckMin ?? ""}
-                    className="w-full rounded-md border px-3 py-2"
+                    placeholder="Min salary"
+                    className={inputClasses}
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Max Salary
-                  </label>
                   <input
                     type="number"
                     name="paycheckMax"
                     defaultValue={job.paycheckMax ?? ""}
-                    className="w-full rounded-md border px-3 py-2"
+                    placeholder="Max salary"
+                    className={inputClasses}
                   />
                 </div>
               </div>
 
-              {/* Date + Status */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className={labelClasses}>
+                    <Calendar className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Expiration Date
                   </label>
                   <input
@@ -215,18 +245,19 @@ export default function UpdateJobPopover({
                         ? new Date(job.expiresAt).toISOString().split("T")[0]
                         : ""
                     }
-                    className="w-full rounded-md border px-3 py-2"
+                    className={inputClasses}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className={labelClasses}>
+                    <CircleDot className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Status
                   </label>
                   <select
                     name="status"
                     defaultValue={job.status}
-                    className="w-full rounded-md border px-3 py-2"
+                    className={selectClasses}
                   >
                     <option value="DRAFT">Draft</option>
                     <option value="PUBLISHED">Published</option>
@@ -236,14 +267,16 @@ export default function UpdateJobPopover({
             </form>
 
             {state?.error && (
-              <p className="text-sm text-red-600">{state.error}</p>
+              <div className="mx-6 mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-sm text-red-600 font-medium">{state.error}</p>
+              </div>
             )}
 
-            <div className="shrink-0 border-t bg-white px-6 py-4 flex justify-end gap-3">
+            <div className="shrink-0 border-t border-slate-200 bg-slate-50 px-6 py-4 flex justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="rounded-md border px-4 py-2 text-sm"
+                className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
               >
                 Cancel
               </button>
@@ -251,9 +284,10 @@ export default function UpdateJobPopover({
               <button
                 type="submit"
                 form="job-form"
-                className="rounded-md bg-eduBlue px-5 py-2 text-sm text-white"
+                disabled={isPending}
+                className="rounded-xl bg-eduBlue px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
               >
-                Update Job
+                {isPending ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </div>

@@ -172,7 +172,7 @@ export default function ProfileForm({
             switch (user.role) {
               case "COMPANY":
                 return (
-                  <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
                     <div className="px-6 py-5 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-indigo-50 rounded-xl">

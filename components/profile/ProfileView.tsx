@@ -220,136 +220,196 @@ export default function ProfileView({
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-stretch">
           <div className="lg:col-span-3 flex flex-col gap-8 h-full">
-            {(() => {
-              switch (user.role) {
-                case "COMPANY":
-                  return (
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                      <div className="px-6 py-4 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-indigo-50 rounded-xl">
-                            <Building2 className="w-5 h-5 text-indigo-600" />
-                          </div>
-                          <h2 className="text-lg font-semibold text-slate-900">
-                            Company Information
-                          </h2>
-                        </div>
-                      </div>
-                      <div className="p-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
-                          <DetailItem
-                            icon={<CaseSensitive className="w-4 h-4" />}
-                            label="Company Name"
-                            value={profile?.name}
-                            iconBg="bg-blue-50"
-                            iconColor="text-blue-600"
-                          />
-                          <DetailItem
-                            icon={<ChartArea className="w-4 h-4" />}
-                            label="Company Status"
-                            value={verification?.status ?? "UNVERIFIED"}
-                            iconBg="bg-yellow-50"
-                            iconColor="text-yellow-600"
-                          />
-                          <DetailItem
-                            icon={<MapPinned className="w-4 h-4" />}
-                            label="Company Address"
-                            value={profile?.companyAddress}
-                            iconBg="bg-purple-50"
-                            iconColor="text-purple-600"
-                          />
-                          <DetailItem
-                            icon={<Globe className="w-4 h-4" />}
-                            label="Company Website"
-                            value={
-                              profile?.companyWebsite ? (
-                                <a
-                                  href={websiteUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1.5 text-eduBlue hover:text-blue-700 transition-colors"
-                                >
-                                  {profile.companyWebsite}
-                                  <svg
-                                    className="w-3 h-3 opacity-60"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                    />
-                                  </svg>
-                                </a>
-                              ) : null
-                            }
-                            iconBg="bg-emerald-50"
-                            iconColor="text-emerald-600"
-                          />
-                          <DetailItem
-                            icon={<Mail className="w-4 h-4" />}
-                            label="Email"
-                            value={user.email}
-                            iconBg="bg-rose-50"
-                            iconColor="text-rose-600"
-                          />
-                        </div>
-                      </div>
+            {user.role === "COMPANY" ? (
+              <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                <div className="px-6 py-4 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-indigo-50 rounded-xl">
+                      <Building2 className="w-5 h-5 text-indigo-600" />
                     </div>
-                  );
+                    <h2 className="text-lg font-semibold text-slate-900">
+                      Company Information
+                    </h2>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+                    <DetailItem
+                      icon={<CaseSensitive className="w-4 h-4" />}
+                      label="Company Name"
+                      value={profile?.name}
+                      iconBg="bg-blue-50"
+                      iconColor="text-blue-600"
+                    />
+                    <DetailItem
+                      icon={<ChartArea className="w-4 h-4" />}
+                      label="Company Status"
+                      value={verification?.status ?? "UNVERIFIED"}
+                      iconBg="bg-yellow-50"
+                      iconColor="text-yellow-600"
+                    />
+                    <DetailItem
+                      icon={<Globe className="w-4 h-4" />}
+                      label="Company Website"
+                      value={
+                        profile?.companyWebsite ? (
+                          <a
+                            href={websiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-eduBlue hover:text-blue-700 transition-colors"
+                          >
+                            {profile.companyWebsite}
+                            <svg
+                              className="w-3 h-3 opacity-60"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                              />
+                            </svg>
+                          </a>
+                        ) : null
+                      }
+                      iconBg="bg-emerald-50"
+                      iconColor="text-emerald-600"
+                    />
+                    <DetailItem
+                      icon={<Mail className="w-4 h-4" />}
+                      label="Email"
+                      value={user.email}
+                      iconBg="bg-rose-50"
+                      iconColor="text-rose-600"
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                  <div className="px-6 py-4 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-indigo-50 rounded-xl">
+                        <UserIcon className="w-5 h-5 text-indigo-600" />
+                      </div>
+                      <h2 className="text-lg font-semibold text-slate-900">
+                        Personal Information
+                      </h2>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 gap-y-6">
+                      <DetailItem
+                        icon={<CaseSensitive className="w-4 h-4" />}
+                        label="Full Name"
+                        value={profile?.name || null}
+                        iconBg="bg-blue-50"
+                        iconColor="text-blue-600"
+                      />
+                      <DetailItem
+                        icon={<Calendar className="w-4 h-4" />}
+                        label="Date of Birth"
+                        value={formatDate(profile?.dob)}
+                        iconBg="bg-purple-50"
+                        iconColor="text-purple-600"
+                      />
+                      <DetailItem
+                        icon={<Users className="w-4 h-4" />}
+                        label="Gender"
+                        value={formatGender(profile?.gender)}
+                        iconBg="bg-emerald-50"
+                        iconColor="text-emerald-600"
+                      />
+                      <DetailItem
+                        icon={<Mail className="w-4 h-4" />}
+                        label="Email"
+                        value={user.email}
+                        iconBg="bg-rose-50"
+                        iconColor="text-rose-600"
+                      />
+                    </div>
+                  </div>
+                </div>
 
-                default:
-                  return (
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                      <div className="px-6 py-4 bg-linear-to-r from-slate-50 to-white border-b border-slate-100">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-indigo-50 rounded-xl">
-                            <UserIcon className="w-5 h-5 text-indigo-600" />
-                          </div>
-                          <h2 className="text-lg font-semibold text-slate-900">
-                            Personal Information
-                          </h2>
-                        </div>
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                  <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-indigo-50 rounded-xl">
+                        <ListCheck className="w-5 h-5 text-indigo-600" />
                       </div>
-                      <div className="p-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
-                          <DetailItem
-                            icon={<CaseSensitive className="w-4 h-4" />}
-                            label="Full Name"
-                            value={profile?.name || null}
-                            iconBg="bg-blue-50"
-                            iconColor="text-blue-600"
-                          />
-                          <DetailItem
-                            icon={<Calendar className="w-4 h-4" />}
-                            label="Date of Birth"
-                            value={formatDate(profile?.dob)}
-                            iconBg="bg-purple-50"
-                            iconColor="text-purple-600"
-                          />
-                          <DetailItem
-                            icon={<Users className="w-4 h-4" />}
-                            label="Gender"
-                            value={formatGender(profile?.gender)}
-                            iconBg="bg-emerald-50"
-                            iconColor="text-emerald-600"
-                          />
-                          <DetailItem
-                            icon={<Mail className="w-4 h-4" />}
-                            label="Email"
-                            value={user.email}
-                            iconBg="bg-rose-50"
-                            iconColor="text-rose-600"
-                          />
-                        </div>
-                      </div>
+                      <h2 className="text-lg font-semibold">Skills</h2>
                     </div>
-                  );
-              }
-            })()}
+
+                    <AddSkillPopover
+                      onAdd={async (name) => {
+                        await addSkill(name, user.id);
+                        window.location.reload();
+                      }}
+                    />
+                  </div>
+
+                  <div className="p-6">
+                    {skills.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {skills.map((skill) => (
+                          <div
+                            key={skill.id}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50"
+                          >
+                            <span className="text-sm font-medium text-blue-700">
+                              {skill.name}
+                            </span>
+
+                            <button
+                              onClick={() => setSkillToEdit(skill)}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+
+                            <button
+                              onClick={() => setSkillToDelete(skill)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-slate-400 italic">
+                        No skills added yet
+                      </p>
+                    )}
+                    {skillToEdit && (
+                      <EditSkillPopover
+                        skill={skillToEdit}
+                        onClose={() => setSkillToEdit(null)}
+                      />
+                    )}
+                    {skillToDelete && (
+                      <ConfirmDialog
+                        open={true}
+                        title="Delete skill"
+                        description={`Are you sure you want to delete "${skillToDelete.name}"?`}
+                        confirmText="Delete"
+                        onCancel={() => setSkillToDelete(null)}
+                        onConfirm={async () => {
+                          await deleteSkill(skillToDelete.id);
+                          setSkillToDelete(null);
+                          window.location.reload();
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex flex-col flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
               <div className="px-6 py-4 bg-linear-to-r from-slate-50 to-white border-b border-slate-100 shrink-0">
@@ -379,6 +439,23 @@ export default function ProfileView({
           <div className="lg:col-span-1 flex flex-col h-full justify-between gap-6">
             {user.role === "COMPANY" ? (
               <div className="contents">
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 flex flex-col justify-center items-center text-center gap-3">
+                  <div className="p-3 rounded-xl bg-purple-50 text-purple-600">
+                    <MapPinned className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-slate-500 mb-1">
+                      Location
+                    </div>
+                    <div className="text-base font-semibold text-slate-900">
+                      {profile?.companyAddress || (
+                        <span className="text-slate-400 font-normal">
+                          Not provided
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 <StatCard
                   label="Job Postings"
                   value={profile?.totalJobs}
@@ -403,6 +480,7 @@ export default function ProfileView({
                   iconBg="bg-yellow-50"
                   iconColor="text-yellow-600"
                 />
+
                 <StatCard
                   label="Certificates"
                   value={completedEnrollments}
@@ -424,77 +502,6 @@ export default function ProfileView({
 
         {user.role === "EDUCATEE" && (
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-              <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-50 rounded-xl">
-                    <ListCheck className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <h2 className="text-lg font-semibold">Skills</h2>
-                </div>
-
-                <AddSkillPopover
-                  onAdd={async (name) => {
-                    await addSkill(name, user.id);
-                    window.location.reload();
-                  }}
-                />
-              </div>
-
-              <div className="p-6">
-                {skills.length ? (
-                  <div className="flex flex-wrap gap-2">
-                    {skills.map((skill) => (
-                      <div
-                        key={skill.id}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50"
-                      >
-                        <span className="text-sm font-medium text-blue-700">
-                          {skill.name}
-                        </span>
-
-                        <button
-                          onClick={() => setSkillToEdit(skill)}
-                          className="text-blue-600 hover:text-blue-800"
-                        >
-                          <Pencil className="w-3.5 h-3.5" />
-                        </button>
-
-                        <button
-                          onClick={() => setSkillToDelete(skill)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-slate-400 italic">No skills added yet</p>
-                )}
-                {skillToEdit && (
-                  <EditSkillPopover
-                    skill={skillToEdit}
-                    onClose={() => setSkillToEdit(null)}
-                  />
-                )}
-                {skillToDelete && (
-                  <ConfirmDialog
-                    open={true}
-                    title="Delete skill"
-                    description={`Are you sure you want to delete "${skillToDelete.name}"?`}
-                    confirmText="Delete"
-                    onCancel={() => setSkillToDelete(null)}
-                    onConfirm={async () => {
-                      await deleteSkill(skillToDelete.id);
-                      setSkillToDelete(null);
-                      window.location.reload();
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-
             <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
               <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
                 <div className="flex items-center gap-3">

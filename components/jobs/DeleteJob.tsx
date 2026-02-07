@@ -4,6 +4,7 @@ import { deleteJob } from "@/actions/jobManagement";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { Trash2 } from "lucide-react";
 
 export default function DeleteJobButton({ jobId }: { jobId: string }) {
   const router = useRouter();
@@ -13,9 +14,10 @@ export default function DeleteJobButton({ jobId }: { jobId: string }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition"
+        className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition-all"
       >
-        Delete Job
+        <Trash2 className="w-4 h-4" />
+        Delete
       </button>
 
       <ConfirmDialog
