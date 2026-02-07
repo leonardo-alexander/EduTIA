@@ -60,7 +60,7 @@ export default async function CourseDetails({
     <div className="min-h-screen bg-slate-50 pb-20">
       {/* header */}
       <div className="bg-slate-900 text-white border-b border-slate-800 relative z-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-11.25">
           <BackButton />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
             <div className="lg:col-span-2 space-y-6">
@@ -75,7 +75,7 @@ export default async function CourseDetails({
                 )}
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight text-white">
+              <h1 className="text-4xl md:text-4xl font-extrabold tracking-tight leading-tight text-white">
                 {course.title}
               </h1>
 
