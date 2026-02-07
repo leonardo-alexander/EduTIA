@@ -5,6 +5,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import CreateJobPopover from "../jobs/CreateJob";
+import { ApplicantsChart } from "./ApplicantsChart";
+import { HiredPieChart } from "./HiredPieChart";
+import { JobPostCard } from "../jobs/JobPostCard";
 
 export default async function CompanyDashboard() {
   const user = await getCurrentUser();
@@ -50,6 +53,12 @@ export default async function CompanyDashboard() {
           applications: true,
         },
       },
+      applications: {
+        select: {
+          appliedAt: true,
+          status: true,
+        },
+      },
     },
     orderBy: [
       {
@@ -74,79 +83,114 @@ export default async function CompanyDashboard() {
 
   const hiredCount = jobs.reduce((sum, job) => sum + job.hired, 0);
 
+  const pendingCount = jobs.reduce(
+    (sum, job) =>
+      sum +
+      job.applications.filter(
+        (app) => app.status === "APPLIED" || app.status === "REVIEWED"
+      ).length,
+    0
+  );
+
+  const acceptedCount = jobs.reduce(
+    (sum, job) =>
+      sum + job.applications.filter((app) => app.status === "ACCEPTED").length,
+    0
+  );
+
+  const now = new Date();
+  const weeklyData = [];
+  for (let i = 7; i >= 0; i--) {
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - i * 7);
+    weekStart.setHours(0, 0, 0, 0);
+
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 7);
+
+    const weekApplicants = jobs.reduce((sum, job) => {
+      return (
+        sum +
+        job.applications.filter((app) => {
+          const appDate = new Date(app.appliedAt);
+          return appDate >= weekStart && appDate < weekEnd;
+        }).length
+      );
+    }, 0);
+
+    const weekLabel = weekStart.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+
+    weeklyData.push({
+      week: weekLabel,
+      applicants: weekApplicants,
+    });
+  }
+
+  const jobsForCards = jobs.map((job) => {
+    const pendingCount = job.applications.filter(
+      (app) => app.status === "APPLIED" || app.status === "REVIEWED"
+    ).length;
+
+    const acceptedCount = job.applications.filter(
+      (app) => app.status === "ACCEPTED"
+    ).length;
+
+    const { applications, ...rest } = job;
+    return {
+      ...rest,
+      pendingCount,
+      acceptedCount,
+    };
+  });
+
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 space-y-10 min-h-screen">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">
-            Company Dashboard
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Manage your job postings and applicants
-          </p>
+    <div className="max-w-7xl mx-auto px-6 py-10 space-y-8 min-h-screen">
+      <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+        Company Dashboard
+      </h1>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="lg:col-span-2 flex">
+          <ApplicantsChart data={weeklyData} />
         </div>
 
-        <CreateJobPopover categories={jobCategories} />
+        <div className="lg:col-span-1 flex">
+          <HiredPieChart hired={hiredCount} notHired={totalApplicants - hiredCount} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <Stat label="Jobs Posted" value={jobs.length} />
-        <Stat label="Applicants" value={totalApplicants} />
-        <Stat label="Hired" value={hiredCount} />
-      </div>
-
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
-          <h2 className="font-semibold text-slate-800">Your Job Posts</h2>
-          <span className="text-sm text-slate-500">{jobs.length} total</span>
+      <div className="bg-slate-50 rounded-3xl border border-slate-200/60 p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-bold text-slate-900">Job Posts</h2>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-slate-500">
+              Showing: {jobs.length}
+            </span>
+            <span className="text-sm text-amber-600">
+              Pending: {pendingCount}
+            </span>
+            <span className="text-sm text-green-600">
+              Accepted: {acceptedCount}
+            </span>
+            <CreateJobPopover categories={jobCategories} />
+          </div>
         </div>
 
-        {jobs.length ? (
-          <div className="divide-y">
-            {jobs.map((job) => (
-              <div
-                key={job.id}
-                className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition"
-              >
-                <div className="space-y-1">
-                  <p className="font-medium text-slate-900">
-                    {job.title}
-                    {job.status === "DRAFT" && (
-                      <span className="ml-2 text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-                        Draft
-                      </span>
-                    )}
-                  </p>
-
-                  <p className="text-sm text-slate-500">
-                    {job._count.applications} applicants
-                  </p>
-                </div>
-
-                <Link
-                  href={`/company/jobs/${job.slug}`}
-                  className="text-sm font-medium text-eduBlue hover:underline"
-                >
-                  View →
-                </Link>
-              </div>
+        {jobsForCards.length > 0 ? (
+          <div className="space-y-3 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+            {jobsForCards.map((job) => (
+              <JobPostCard key={job.id} job={job} />
             ))}
           </div>
         ) : (
           <div className="p-10 text-center text-slate-500">
-            No job postings yet.
+            No job posts yet.
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-6">
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-3xl font-bold text-slate-900">{value}</p>
     </div>
   );
 }
