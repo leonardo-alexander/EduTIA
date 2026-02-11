@@ -171,7 +171,7 @@ export default function JobDetail({
                 {job.title}
               </h1>
 
-              <p className="text-lg text-slate-300 leading-relaxed max-w-2xl whitespace-pre-line">
+              <p className="text-lg text-slate-300 leading-relaxed max-w-2xl">
                 {job.description}
               </p>
             </div>
@@ -184,8 +184,8 @@ export default function JobDetail({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-1 lg:order-last relative lg:pb-12">
             <div className="relative lg:-mt-48 z-10 lg:sticky top-24 self-start">
-              <div className="bg-white rounded-2xl border border-slate-200/60 shadow-2xl shadow-slate-900/5 overflow-hidden">
-                <div className="p-6 flex flex-col gap-6">
+              <div className="bg-white rounded-2xl border border-slate-200/60 shadow-2xl shadow-slate-900/5">
+                <div className="p-6 pb-8 flex flex-col gap-6">
                   <h3 className="text-xl font-bold text-slate-900">
                     Information
                   </h3>
@@ -193,13 +193,13 @@ export default function JobDetail({
                   <div className="space-y-5">
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-slate-100 rounded-xl">
-                        <MapPin className="w-6 h-6 text-slate-500" />
+                        <MapPin className="w-5 h-5 text-slate-500" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
                           Location
                         </p>
-                        <p className="text-lg font-semibold text-slate-900 capitalize">
+                        <p className="text-l font-semibold text-slate-900 capitalize">
                           {job.location ??
                             job.user.profile?.companyAddress ??
                             "Job Location"}
@@ -209,13 +209,13 @@ export default function JobDetail({
 
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-slate-100 rounded-xl">
-                        <Layers className="w-6 h-6 text-slate-500" />
+                        <Layers className="w-5 h-5 text-slate-500" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
                           Level
                         </p>
-                        <p className="text-lg font-semibold text-slate-900 capitalize">
+                        <p className="text-l font-semibold text-slate-900 capitalize">
                           {job.level?.toLowerCase() || "Any"}
                         </p>
                       </div>
@@ -223,13 +223,13 @@ export default function JobDetail({
 
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-slate-100 rounded-xl">
-                        <Timer className="w-6 h-6 text-slate-500" />
+                        <Timer className="w-5 h-5 text-slate-500" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
                           Type
                         </p>
-                        <p className="text-lg font-semibold text-slate-900 capitalize">
+                        <p className="text-l font-semibold text-slate-900 capitalize">
                           {job.type.replace("_", " ").toLowerCase()}
                         </p>
                       </div>
@@ -237,13 +237,13 @@ export default function JobDetail({
 
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-slate-100 rounded-xl">
-                        <Building2 className="w-6 h-6 text-slate-500" />
+                        <Building2 className="w-5 h-5 text-slate-500" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
                           Work Mode
                         </p>
-                        <p className="text-lg font-semibold text-slate-900 capitalize">
+                        <p className="text-l font-semibold text-slate-900 capitalize">
                           {job.workMode.toLowerCase()}
                         </p>
                       </div>
@@ -251,21 +251,17 @@ export default function JobDetail({
 
                     <div className="flex items-center gap-4">
                       <div className="p-3 bg-slate-100 rounded-xl">
-                        <Banknote className="w-6 h-6 text-slate-500" />
+                        <Banknote className="w-5 h-5 text-slate-500" />
                       </div>
                       <div>
                         <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">
                           Salary
                         </p>
-                        <p className="text-lg font-semibold text-slate-900">
+                        <p className="text-l font-semibold text-slate-900">
                           {formatPaycheck(job.paycheckMin, job.paycheckMax)}
                         </p>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="pt-5 border-t border-slate-200/60">
-                    {!applicationStatus && renderApplyButton()}
                   </div>
                 </div>
               </div>
@@ -275,12 +271,12 @@ export default function JobDetail({
           </div>
 
           <div className="lg:col-span-2 py-12 space-y-8">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
               <div className="p-8">
                 <div className="flex gap-4 items-start">
                   <div className="w-16 h-16 shrink-0 rounded-xl border border-slate-200 bg-slate-50 p-2 flex items-center justify-center">
                     <img
-                      src={job.user.profile?.pictureUrl || "/avatars/male.svg"}
+                      src={job.user.profile?.pictureUrl || "/thumbnail.jpeg"}
                       alt="Company Logo"
                       className="w-full h-full object-contain"
                     />
@@ -309,26 +305,26 @@ export default function JobDetail({
                   </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-slate-100">
-                  <p className="text-slate-600 text-sm leading-relaxed">
+                <div className="mt-2 pt-2">
+                  <p className="text-slate-600">
                     {job.user.profile?.bio || "No company bio available."}
                   </p>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-slate-100 grid grid-cols-2 gap-4">
-                  <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-center">
+                <div className="mt-6 pt-6 border-t border-slate-200 grid grid-cols-2 gap-4">
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
                     <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">
                       Jobs Posted
                     </p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-xl font-bold text-slate-900">
                       {job.user.profile?.totalJobs || 0}
                     </p>
                   </div>
-                  <div className="bg-slate-50 p-5 rounded-xl border border-slate-100 text-center">
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
                     <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">
                       Hire Rate
                     </p>
-                    <p className="text-2xl font-bold text-slate-900">
+                    <p className="text-xl font-bold text-slate-900">
                       {Math.round(hireRate) || 0}%
                     </p>
                   </div>
@@ -337,31 +333,31 @@ export default function JobDetail({
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 text-center">
-                <p className="text-sm font-semibold text-slate-600 mb-3">
-                  Applicants
-                </p>
-                <div className="flex justify-center mb-3">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 text-center">
+                <div className="mt-2 flex justify-center mb-0.5">
                   <div className="p-3 bg-blue-50 rounded-xl">
-                    <Users className="w-6 h-6 text-blue-600" />
+                    <Users className="w-5 h-5 text-blue-600" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-slate-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {job.applicators}
+                </p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                  Applicants
                 </p>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 text-center">
-                <p className="text-sm font-semibold text-slate-600 mb-3">
-                  Hired
-                </p>
-                <div className="flex justify-center mb-3">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 text-center">
+                <div className="mt-2 flex justify-center mb-0.5">
                   <div className="p-3 bg-emerald-50 rounded-xl">
-                    <UserCheck className="w-6 h-6 text-emerald-600" />
+                    <UserCheck className="w-5 h-5 text-emerald-600" />
                   </div>
                 </div>
-                <p className="text-3xl font-bold text-emerald-600">
+                <p className="text-2xl font-bold text-slate-600">
                   {job.hired}
+                </p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
+                  Hired
                 </p>
               </div>
             </div>
