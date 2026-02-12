@@ -28,11 +28,26 @@ export default function AddExperiencePopover({
 
   const openPopover = () => {
     if (!buttonRef.current) return;
+
     const rect = buttonRef.current.getBoundingClientRect();
 
+    const popoverWidth = 320;
+    const margin = 12;
+
+    const spaceRight = window.innerWidth - rect.left;
+    const spaceLeft = rect.right;
+
+    let left;
+
+    if (spaceRight < popoverWidth + margin && spaceLeft > popoverWidth) {
+      left = rect.right + window.scrollX - popoverWidth;
+    } else {
+      left = rect.left + window.scrollX;
+    }
+
     setPos({
-      top: rect.bottom + 8,
-      left: Math.min(rect.left, window.innerWidth - 300),
+      top: rect.bottom + window.scrollY + 8,
+      left,
     });
 
     setOpen(true);
@@ -41,17 +56,21 @@ export default function AddExperiencePopover({
   useEffect(() => {
     if (!open) return;
 
-    const close = (e: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (
-        !popoverRef.current?.contains(e.target as Node) &&
-        !buttonRef.current?.contains(e.target as Node)
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
       ) {
         setOpen(false);
       }
     };
 
-    window.addEventListener("mousedown", close);
-    return () => window.removeEventListener("mousedown", close);
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [open]);
 
   return (
@@ -69,37 +88,80 @@ export default function AddExperiencePopover({
         createPortal(
           <div
             ref={popoverRef}
-            className="fixed z-9999 w-72 bg-white border rounded-xl shadow-xl p-4 space-y-3"
+            className="absolute z-9999 w-72 bg-white border rounded-xl shadow-xl p-4 space-y-3"
             style={{
               top: pos.top,
               left: pos.left,
             }}
           >
-            <input
-              placeholder="Job Title"
-              className="w-full border rounded px-3 py-2 text-sm"
-              onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
-            />
+            <div>
+              <label
+                htmlFor="jobTitle"
+                className="text-xs font-medium text-slate-600"
+              >
+                Job Title <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="jobTitle"
+                required
+                className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                value={form.jobTitle}
+                onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
+              />
+            </div>
 
-            <input
-              placeholder="Company Name"
-              className="w-full border rounded px-3 py-2 text-sm"
-              onChange={(e) =>
-                setForm({ ...form, companyName: e.target.value })
-              }
-            />
+            <div>
+              <label
+                htmlFor="companyName"
+                className="text-xs font-medium text-slate-600"
+              >
+                Company Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="companyName"
+                required
+                className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                value={form.companyName}
+                onChange={(e) =>
+                  setForm({ ...form, companyName: e.target.value })
+                }
+              />
+            </div>
 
-            <input
-              type="date"
-              className="w-full border rounded px-3 py-2 text-sm"
-              onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-            />
+            <div>
+              <label
+                htmlFor="startDate"
+                className="text-xs font-medium text-slate-600"
+              >
+                Start Date <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="startDate"
+                type="date"
+                required
+                className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                value={form.startDate}
+                onChange={(e) =>
+                  setForm({ ...form, startDate: e.target.value })
+                }
+              />
+            </div>
 
-            <input
-              type="date"
-              className="w-full border rounded px-3 py-2 text-sm"
-              onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-            />
+            <div>
+              <label
+                htmlFor="endDate"
+                className="text-xs font-medium text-slate-600"
+              >
+                End Date
+              </label>
+              <input
+                id="endDate"
+                type="date"
+                className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                value={form.endDate}
+                onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+              />
+            </div>
 
             <div className="flex justify-end gap-2 pt-2">
               <button

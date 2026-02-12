@@ -254,7 +254,7 @@ export async function generatePdfCV(userId: string) {
     writeStream.on("finish", resolve);
   });
 
-  const url = `/uploads/cv/${filename}`;
+  const url = `/uploads/cvs/${filename}`;
 
   await prisma.cV.create({
     data: {

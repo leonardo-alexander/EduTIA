@@ -12,29 +12,54 @@ export default function AddSkillPopover({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ top: 0, left: 0 });
 
   const openPopover = () => {
     if (!buttonRef.current) return;
+
     const rect = buttonRef.current.getBoundingClientRect();
 
+    const popoverWidth = 320;
+    const margin = 12;
+
+    const spaceRight = window.innerWidth - rect.left;
+    const spaceLeft = rect.right;
+
+    let left;
+
+    if (spaceRight < popoverWidth + margin && spaceLeft > popoverWidth) {
+      left = rect.right + window.scrollX - popoverWidth;
+    } else {
+      left = rect.left + window.scrollX;
+    }
+
     setPos({
-      top: rect.bottom + 8,
-      left: Math.min(rect.left, window.innerWidth - 280),
+      top: rect.bottom + window.scrollY + 8,
+      left,
     });
 
     setOpen(true);
   };
 
   useEffect(() => {
-    const close = (e: MouseEvent) => {
-      if (!(e.target as HTMLElement).closest(".skill-popover")) {
+    if (!open) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };
 
-    if (open) window.addEventListener("mousedown", close);
-    return () => window.removeEventListener("mousedown", close);
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [open]);
 
   return (
@@ -51,14 +76,14 @@ export default function AddSkillPopover({
       {open &&
         createPortal(
           <div
-            className="skill-popover fixed z-9999 w-64 bg-white border rounded-xl shadow-xl p-4"
+            ref={popoverRef}
+            className="skill-popover absolute z-9999 w-64 bg-white border rounded-xl shadow-xl p-4"
             style={{
               top: pos.top,
               left: pos.left,
             }}
           >
             <input
-              autoFocus
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="e.g. React, Python"

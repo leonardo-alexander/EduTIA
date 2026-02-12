@@ -13,7 +13,6 @@ export default function EditSkillPopover({
 }) {
   const [name, setName] = useState(skill.name);
 
-  // lock background scroll
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";

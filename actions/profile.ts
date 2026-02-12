@@ -17,6 +17,10 @@ export async function updateProfile(_: any, formData: FormData) {
         ? Gender.FEMALE
         : null;
 
+  const dob = formData.get("dob")
+    ? new Date(formData.get("dob") as string)
+    : null;
+
   const pictureUrl =
     providedPictureUrl ||
     (gender === Gender.FEMALE
@@ -31,6 +35,7 @@ export async function updateProfile(_: any, formData: FormData) {
     companyWebsite: formData.get("companyWebsite")?.toString(),
     companyAddress: formData.get("companyAddress")?.toString(),
     gender,
+    dob,
     pictureUrl,
   };
 

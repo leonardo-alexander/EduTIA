@@ -3,11 +3,24 @@ import { getCurrentUser } from "@/lib/auth";
 import { getJobs } from "@/lib/data/jobs";
 import { prisma } from "@/lib/prisma";
 import { JobUI } from "@/types/job.ui";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export const metadata: Metadata = {
+  title: "Jobs – Find Opportunities | EduTIA",
+  description:
+    "Browse curated job opportunities tailored to your skills. Discover roles across tech, design, business, and more on EduTIA.",
+  openGraph: {
+    title: "Jobs – Find Opportunities | EduTIA",
+    description:
+      "Explore curated job listings matched to your skills and completed courses.",
+    type: "website",
+  },
 };
 
 export default async function Page({ searchParams }: PageProps) {

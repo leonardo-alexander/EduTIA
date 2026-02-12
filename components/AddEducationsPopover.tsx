@@ -36,11 +36,26 @@ export default function AddEducationsPopover({
 
   const openPopover = () => {
     if (!buttonRef.current) return;
+
     const rect = buttonRef.current.getBoundingClientRect();
 
+    const popoverWidth = 320;
+    const margin = 12;
+
+    const spaceRight = window.innerWidth - rect.left;
+    const spaceLeft = rect.right;
+
+    let left;
+
+    if (spaceRight < popoverWidth + margin && spaceLeft > popoverWidth) {
+      left = rect.right + window.scrollX - popoverWidth;
+    } else {
+      left = rect.left + window.scrollX;
+    }
+
     setPos({
-      top: rect.bottom + 8,
-      left: Math.min(rect.left, window.innerWidth - 320),
+      top: rect.bottom + window.scrollY + 8,
+      left,
     });
 
     setOpen(true);
@@ -49,17 +64,21 @@ export default function AddEducationsPopover({
   useEffect(() => {
     if (!open) return;
 
-    const close = (e: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (
-        !popoverRef.current?.contains(e.target as Node) &&
-        !buttonRef.current?.contains(e.target as Node)
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
       ) {
         setOpen(false);
       }
     };
 
-    window.addEventListener("mousedown", close);
-    return () => window.removeEventListener("mousedown", close);
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [open]);
 
   return (
@@ -77,7 +96,7 @@ export default function AddEducationsPopover({
         createPortal(
           <div
             ref={popoverRef}
-            className="fixed z-50 w-80 bg-white border rounded-xl shadow-xl p-4 space-y-3"
+            className="absolute z-50 w-80 bg-white border rounded-xl shadow-xl p-4 space-y-3"
             style={{ top: pos.top, left: pos.left }}
           >
             <div>
