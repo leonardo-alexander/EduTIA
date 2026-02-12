@@ -11,13 +11,9 @@ interface PageProps {
   params: { slug: string };
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug } = params;
-
+export async function generateMetadata() {
   return {
-    title: `Certificate | ${slug} | EduTIA`,
+    title: `Certificate | EduTIA`,
     description: "View and download your course completion certificate.",
     robots: {
       index: false,

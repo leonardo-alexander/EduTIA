@@ -61,6 +61,7 @@ async function main() {
       role: "EDUCATEE",
       profile: {
         create: {
+          name: "Jane Doe",
           bio: "Aspiring data scientist",
           gender: "FEMALE",
           dob: new Date("2000-10-24"),

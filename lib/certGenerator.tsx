@@ -25,11 +25,12 @@ export async function generatePdfCertificate(enrollmentId: string) {
     throw new Error("Invalid enrollment");
   }
 
-  if (!enrollment.user.profile || !enrollment.user.profile.name) {
+  if (!enrollment.user.profile?.name) {
     throw new Error("Incomplete profile");
   }
 
   const certificateId = `CERT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+
   const filename = `certificate-${certificateId}.pdf`;
 
   const dir = path.join(process.cwd(), "public/uploads/certificates");
@@ -40,91 +41,108 @@ export async function generatePdfCertificate(enrollmentId: string) {
   const logoBase64 = fs.readFileSync(logoPath).toString("base64");
   const logoSrc = `data:image/png;base64,${logoBase64}`;
 
+  const medalPath = path.join(process.cwd(), "public/icons/medal.png");
+  const medalBase64 = fs.readFileSync(medalPath).toString("base64");
+  const medalIconBase64 = `data:image/png;base64,${medalBase64}`;
+
   const styles = StyleSheet.create({
     page: {
-      padding: 28,
+      width: "100%",
+      height: "100%",
+      padding: 40,
       backgroundColor: "#ffffff",
     },
 
     outerBorder: {
-      border: "3 solid #c7d2fe",
-      padding: 8,
+      flex: 1,
+      border: "4 solid #c7d2fe",
+      padding: 15,
     },
 
     innerBorder: {
-      border: "2 solid #bfdbfe",
-      paddingVertical: 60,
-      paddingHorizontal: 48,
+      flex: 1,
+      paddingVertical: 40,
+      paddingHorizontal: 60,
       alignItems: "center",
-      textAlign: "center",
+      justifyContent: "space-between",
       backgroundColor: "#fafafa",
     },
 
+    topSection: {
+      alignItems: "center",
+    },
+
+    centerSection: {
+      alignItems: "center",
+      marginVertical: 20,
+    },
+
+    bottomSection: {
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginTop: 40,
+    },
+
     title: {
-      fontSize: 40,
+      fontSize: 50,
       fontFamily: "Times-Bold",
-      letterSpacing: 2,
-      marginBottom: 6,
+      letterSpacing: 4,
+      marginBottom: 12,
       textTransform: "uppercase",
       color: "#0f172a",
     },
 
     subtitle: {
-      fontSize: 14,
-      letterSpacing: 4,
+      fontSize: 16,
+      letterSpacing: 6,
       color: "#64748b",
-      marginBottom: 50,
+      marginBottom: 40,
       textTransform: "uppercase",
     },
 
     italicText: {
-      fontSize: 14,
+      fontSize: 16,
       fontStyle: "italic",
       color: "#64748b",
     },
 
     name: {
-      fontSize: 32,
+      fontSize: 44,
       fontFamily: "Times-Bold",
       color: "#2563eb",
-      marginTop: 16,
-      marginBottom: 10,
+      marginTop: 22,
+      marginBottom: 14,
+      letterSpacing: 1,
     },
 
     underline: {
-      width: 260,
-      height: 1,
-      backgroundColor: "#e5e7eb",
-      marginBottom: 30,
+      width: 420,
+      height: 1.5,
+      backgroundColor: "#cbd5e1",
+      marginBottom: 35,
     },
 
     course: {
-      fontSize: 24,
+      fontSize: 28,
       fontFamily: "Times-Bold",
-      marginTop: 10,
-      color: "#1e293b",
-    },
-
-    footerRow: {
-      marginTop: 70,
-      width: "100%",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      marginTop: 18,
+      color: "#0f172a",
     },
 
     dateBlock: {
-      textAlign: "center",
+      alignItems: "center",
     },
 
     dateText: {
-      fontSize: 14,
+      fontSize: 16,
       fontFamily: "Times-Bold",
     },
 
     dateLabel: {
-      fontSize: 9,
-      letterSpacing: 1,
+      fontSize: 10,
+      letterSpacing: 2,
       color: "#94a3b8",
       marginTop: 4,
       textTransform: "uppercase",
@@ -135,29 +153,24 @@ export async function generatePdfCertificate(enrollmentId: string) {
     },
 
     medalCircle: {
-      width: 70,
-      height: 70,
-      borderRadius: 35,
-      border: "3 solid #bfdbfe",
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      border: "2 solid #bfdbfe",
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "#ffffff",
     },
 
-    medalIcon: {
-      fontSize: 26,
-    },
-
     certId: {
       fontSize: 9,
-      marginTop: 8,
+      marginTop: 6,
       color: "#94a3b8",
       fontFamily: "Courier",
     },
 
     logo: {
-      width: "auto",
-      height: 25,
+      height: 35,
     },
   });
 
@@ -169,28 +182,29 @@ export async function generatePdfCertificate(enrollmentId: string) {
 
   const pdf = (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" orientation="landscape" style={styles.page} wrap={false}>
         <View style={styles.outerBorder}>
           <View style={styles.innerBorder}>
-            <Text style={styles.title}>Certificate</Text>
-            <Text style={styles.subtitle}>Of Completion</Text>
+            <View style={styles.topSection}>
+              <Text style={styles.title}>Certificate</Text>
+              <Text style={styles.subtitle}>Of Completion</Text>
+            </View>
 
-            <Text style={styles.italicText}>This certifies that</Text>
+            <View style={styles.centerSection}>
+              <Text style={styles.italicText}>This certifies that</Text>
 
-            <Text style={styles.name}>
-              {enrollment.user.profile?.name || enrollment.user.email}
-            </Text>
+              <Text style={styles.name}>{enrollment.user.profile.name}</Text>
 
-            <View style={styles.underline} />
+              <View style={styles.underline} />
 
-            <Text style={styles.italicText}>
-              has successfully completed the course
-            </Text>
+              <Text style={styles.italicText}>
+                has successfully completed the course
+              </Text>
 
-            <Text style={styles.course}>{enrollment.course.title}</Text>
+              <Text style={styles.course}>{enrollment.course.title}</Text>
+            </View>
 
-            {/* Footer */}
-            <View style={styles.footerRow}>
+            <View style={styles.bottomSection}>
               <View style={styles.dateBlock}>
                 <Text style={styles.dateText}>{issuedDate}</Text>
                 <Text style={styles.dateLabel}>Date Issued</Text>
@@ -198,7 +212,10 @@ export async function generatePdfCertificate(enrollmentId: string) {
 
               <View style={styles.medalBlock}>
                 <View style={styles.medalCircle}>
-                  <Text style={styles.medalIcon}>🎓</Text>
+                  <Image
+                    src={medalIconBase64}
+                    style={{ width: 28, height: 28 }}
+                  />
                 </View>
                 <Text style={styles.certId}>ID: {certificateId}</Text>
               </View>
