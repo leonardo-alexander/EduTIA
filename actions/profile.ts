@@ -21,13 +21,25 @@ export async function updateProfile(_: any, formData: FormData) {
     ? new Date(formData.get("dob") as string)
     : null;
 
-  const pictureUrl =
-    providedPictureUrl ||
-    (gender === Gender.FEMALE
-      ? "/avatars/female.svg"
-      : gender === Gender.MALE
-        ? "/avatars/male.svg"
-        : null);
+  const existingProfile = await prisma.profile.findUnique({
+    where: { userId: user.id },
+    select: { pictureUrl: true },
+  });
+
+  let pictureUrl = existingProfile?.pictureUrl ?? null;
+
+  if (providedPictureUrl) {
+    pictureUrl = providedPictureUrl;
+  }
+
+  if (!pictureUrl) {
+    pictureUrl =
+      gender === Gender.FEMALE
+        ? "/avatars/female.svg"
+        : gender === Gender.MALE
+          ? "/avatars/male.svg"
+          : null;
+  }
 
   const profileData = {
     name: formData.get("name")?.toString(),

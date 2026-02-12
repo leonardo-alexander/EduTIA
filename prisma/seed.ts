@@ -61,7 +61,6 @@ async function main() {
       role: "EDUCATEE",
       profile: {
         create: {
-          name: "Jane Doe",
           bio: "Aspiring data scientist",
           gender: "FEMALE",
           dob: new Date("2000-10-24"),
@@ -360,7 +359,7 @@ Evaluation Criteria:
   const mainWorkshop = mainCourseItems.find((i) => i.workshop)?.workshop!;
 
   /* ===================== ENROLLMENT ===================== */
-  const enrollment = await prisma.enrollment.create({
+  await prisma.enrollment.create({
     data: {
       userId: student.id,
       courseId: mainCourse.id,
