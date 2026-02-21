@@ -524,7 +524,7 @@ export default function ProfileView({
                   educations.map((edu) => (
                     <div
                       key={edu.id}
-                      className="group flex justify-between items-start gap-4 border-b last:border-none pb-4"
+                      className="group flex justify-between items-start gap-4 border-b last:border-none pb-4 border-slate-200"
                     >
                       <div>
                         <h3 className="font-semibold">{edu.institution}</h3>
@@ -578,7 +578,7 @@ export default function ProfileView({
                   experiences.map((exp) => (
                     <div
                       key={exp.id}
-                      className="group flex justify-between items-start gap-4 border-b last:border-none pb-4"
+                      className="group flex justify-between items-start gap-4 border-b last:border-none pb-4 border-slate-200"
                     >
                       <div>
                         <h3 className="font-semibold">{exp.jobTitle}</h3>

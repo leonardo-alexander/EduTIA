@@ -5,19 +5,7 @@ import { updateJob } from "@/actions/jobManagement";
 import { useRouter } from "next/navigation";
 import { JobCategory } from "@prisma/client";
 import { JobUI } from "@/types/job.ui";
-import {
-  Briefcase,
-  FileText,
-  MapPin,
-  Layers,
-  Timer,
-  Building2,
-  Banknote,
-  Calendar,
-  CircleDot,
-  Pencil,
-  X,
-} from "lucide-react";
+import { Pencil } from "lucide-react";
 
 export default function UpdateJobPopover({
   job,
@@ -69,24 +57,6 @@ export default function UpdateJobPopover({
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
           <div className="relative w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white shadow-2xl flex flex-col overflow-hidden">
-            <div className="shrink-0 bg-slate-900 px-6 py-5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-eduBlue/20 rounded-xl">
-                  <Pencil className="w-5 h-5 text-eduBlue" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-white">Edit Job</h2>
-                  <p className="text-sm text-slate-400">Update job details</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
             <form
               id="job-form"
               action={formAction}
@@ -96,7 +66,6 @@ export default function UpdateJobPopover({
 
               <div>
                 <label className={labelClasses}>
-                  <Briefcase className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                   Job Title
                 </label>
                 <input
@@ -109,7 +78,6 @@ export default function UpdateJobPopover({
 
               <div>
                 <label className={labelClasses}>
-                  <FileText className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                   Description
                 </label>
                 <textarea
@@ -123,7 +91,6 @@ export default function UpdateJobPopover({
 
               <div>
                 <label className={labelClasses}>
-                  <MapPin className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                   Location
                 </label>
                 <input
@@ -137,7 +104,6 @@ export default function UpdateJobPopover({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClasses}>
-                    <Layers className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Category
                   </label>
                   <select
@@ -155,7 +121,6 @@ export default function UpdateJobPopover({
 
                 <div>
                   <label className={labelClasses}>
-                    <Timer className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Job Type
                   </label>
                   <select
@@ -175,7 +140,6 @@ export default function UpdateJobPopover({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClasses}>
-                    <Building2 className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Work Mode
                   </label>
                   <select
@@ -191,7 +155,6 @@ export default function UpdateJobPopover({
 
                 <div>
                   <label className={labelClasses}>
-                    <Layers className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Experience Level
                   </label>
                   <select
@@ -210,7 +173,6 @@ export default function UpdateJobPopover({
 
               <div>
                 <label className={labelClasses}>
-                  <Banknote className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                   Salary Range
                 </label>
                 <div className="grid grid-cols-2 gap-4">
@@ -234,7 +196,6 @@ export default function UpdateJobPopover({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelClasses}>
-                    <Calendar className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Expiration Date
                   </label>
                   <input
@@ -251,7 +212,6 @@ export default function UpdateJobPopover({
 
                 <div>
                   <label className={labelClasses}>
-                    <CircleDot className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
                     Status
                   </label>
                   <select
