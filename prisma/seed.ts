@@ -460,14 +460,6 @@ Evaluation Criteria:
   });
 
   /* ===================== JOB APPLICATION ===================== */
-  await prisma.jobApplication.create({
-    data: {
-      userId: student.id,
-      jobId: job.id,
-      status: "APPLIED",
-    },
-  });
-
   await prisma.jobPosting.update({
     where: { id: job.id },
     data: { applicators: 1 },
