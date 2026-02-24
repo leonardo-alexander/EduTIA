@@ -48,13 +48,9 @@ export default function JobDetail({
     }
 
     if (user.role !== "EDUCATEE") return null;
+    if (applicationStatus) return null;
 
-    if (
-      !profile ||
-      !profile.name ||
-      !profile.gender ||
-      !profile.dob
-    ) {
+    if (!profile || !profile.name || !profile.gender || !profile.dob) {
       return (
         <p className="text-sm text-red-600 bg-red-50 p-3 rounded-xl border border-red-100 font-medium text-center">
           Complete your profile to apply
@@ -271,6 +267,8 @@ export default function JobDetail({
                 </div>
               </div>
 
+              <div className="mt-6">{renderApplyButton()}</div>
+
               {renderStatusCard()}
             </div>
           </div>
@@ -358,9 +356,7 @@ export default function JobDetail({
                     <UserCheck className="w-5 h-5 text-emerald-600" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-slate-600">
-                  {job.hired}
-                </p>
+                <p className="text-2xl font-bold text-slate-600">{job.hired}</p>
                 <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                   Hired
                 </p>
