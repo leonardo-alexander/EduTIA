@@ -96,15 +96,15 @@ export default function AddEducationsPopover({
         createPortal(
           <div
             ref={popoverRef}
-            className="absolute z-50 w-80 bg-white border rounded-xl shadow-xl p-4 space-y-3"
+            className="absolute z-50 w-80 bg-white rounded-xl shadow-xl p-4 space-y-3"
             style={{ top: pos.top, left: pos.left }}
           >
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-sm font-medium text-slate-700">
                 Institution <span className="text-red-500">*</span>
               </label>
               <input
-                className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                className="mt-1 w-full px-4 py-3 rounded-xl bg-slate-50 text-sm text-slate-800 border border-slate-200 focus:outline-none focus:border-[#2269e9] focus:bg-white focus:ring-2 focus:ring-[#2269e9]/10 transition-all"
                 value={form.institution}
                 onChange={(e) =>
                   setForm({ ...form, institution: e.target.value })
@@ -113,22 +113,22 @@ export default function AddEducationsPopover({
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-sm font-medium text-slate-700">
                 Degree
               </label>
               <input
-                className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                className="mt-1 w-full px-4 py-3 rounded-xl bg-slate-50 text-sm text-slate-800 border border-slate-200 focus:outline-none focus:border-[#2269e9] focus:bg-white focus:ring-2 focus:ring-[#2269e9]/10 transition-all"
                 value={form.degree}
                 onChange={(e) => setForm({ ...form, degree: e.target.value })}
               />
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-600">
+              <label className="text-sm font-medium text-slate-700">
                 Field of Study
               </label>
               <input
-                className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                className="mt-1 w-full px-4 py-3 rounded-xl bg-slate-50 text-sm text-slate-800 border border-slate-200 focus:outline-none focus:border-[#2269e9] focus:bg-white focus:ring-2 focus:ring-[#2269e9]/10 transition-all"
                 value={form.fieldOfStudy}
                 onChange={(e) =>
                   setForm({ ...form, fieldOfStudy: e.target.value })
@@ -138,12 +138,12 @@ export default function AddEducationsPopover({
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-sm font-medium text-slate-700">
                   Start Date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
-                  className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                  className="mt-1 w-full px-4 py-3 rounded-xl bg-slate-50 text-sm text-slate-800 border border-slate-200 focus:outline-none focus:border-[#2269e9] focus:bg-white focus:ring-2 focus:ring-[#2269e9]/10 transition-all"
                   value={form.startDate}
                   onChange={(e) =>
                     setForm({ ...form, startDate: e.target.value })
@@ -152,12 +152,12 @@ export default function AddEducationsPopover({
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-600">
+                <label className="text-sm font-medium text-slate-700">
                   End Date
                 </label>
                 <input
                   type="date"
-                  className="mt-1 w-full border rounded px-3 py-2 text-sm"
+                  className="mt-1 w-full px-4 py-3 rounded-xl bg-slate-50 text-sm text-slate-800 border border-slate-200 focus:outline-none focus:border-[#2269e9] focus:bg-white focus:ring-2 focus:ring-[#2269e9]/10 transition-all"
                   value={form.endDate}
                   onChange={(e) =>
                     setForm({ ...form, endDate: e.target.value })
@@ -169,7 +169,7 @@ export default function AddEducationsPopover({
             <div className="flex justify-end gap-2 pt-3">
               <button
                 onClick={() => setOpen(false)}
-                className="text-sm text-gray-500"
+                className="text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
               >
                 Cancel
               </button>
@@ -180,10 +180,10 @@ export default function AddEducationsPopover({
                   await onAdd(form);
                   setOpen(false);
                 }}
-                className={`px-3 py-1.5 text-sm rounded-md font-medium transition ${
+                className={`px-4 py-2 text-sm rounded-xl font-semibold transition-all ${
                   isValid
-                    ? "bg-eduBlue text-white hover:bg-blue-700"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    ? "bg-eduBlue text-white hover:shadow-md"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >
                 Add
